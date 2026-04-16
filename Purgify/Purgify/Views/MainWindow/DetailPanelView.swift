@@ -55,124 +55,139 @@ struct DetailPanelView: View {
 
             Divider()
 
-            ScrollView {
-                VStack(spacing: 16) {
-                    // Description GroupBox
-                    groupBox(label: l10n.t("detail.description")) {
-                        Text(l10n.t(item.detailKey))
-                            .font(.system(size: 13))
-                            .foregroundColor(.primary)
-                    }
+            // Fixed info sections
+            VStack(spacing: 12) {
+                groupBox(label: l10n.t("detail.description")) {
+                    Text(l10n.t(item.detailKey))
+                        .font(.system(size: 13))
+                        .foregroundColor(.primary)
+                }
 
-                    // Location GroupBox
-                    groupBox(label: l10n.t("detail.location")) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "folder.fill")
+                groupBox(label: l10n.t("detail.location")) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "folder.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(.accentColor)
+                        Text(item.path)
+                            .font(.system(size: 13))
+                            .foregroundColor(.accentColor)
+                        Spacer()
+                        Button {
+                            scanner.openInFinder(item.path)
+                        } label: {
+                            Image(systemName: "arrow.up.right.square")
                                 .font(.system(size: 12))
-                                .foregroundColor(.accentColor)
-                            Text(item.path)
-                                .font(.system(size: 13))
-                                .foregroundColor(.accentColor)
-                            Spacer()
+                                .foregroundColor(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                groupBox(label: l10n.t("detail.riskLevel")) {
+                    HStack(spacing: 8) {
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(item.risk.color)
+                            .frame(width: 20, height: 20)
+                            .overlay(
+                                Image(systemName: item.risk.icon)
+                                    .font(.system(size: 9, weight: .bold))
+                                    .foregroundColor(.white)
+                            )
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.risk.localizedName(l10n))
+                                .font(.system(size: 13, weight: .medium))
+                            Text(item.risk.localizedDesc(l10n))
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+            }
+            .padding(16)
+
+            // Related Projects — scrollable list, only visible for relevant caches
+            if scanner.selectedItemHasProjectIndicators {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(l10n.t("detail.relatedProjects"))
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(.secondary)
+
+                    Divider()
+
+                    if scanner.isLoadingRelatedApps {
+                        HStack(spacing: 6) {
+                            ProgressView().scaleEffect(0.7)
+                            Text(l10n.t("detail.searchingProjects"))
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 4)
+                    } else if scanner.relatedApps.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(l10n.t("detail.noProjectsFound"))
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
                             Button {
-                                scanner.openInFinder(item.path)
+                                NSWorkspace.shared.open(
+                                    URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders")!
+                                )
                             } label: {
-                                Image(systemName: "arrow.up.right.square")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.secondary)
+                                HStack(spacing: 4) {
+                                    Image(systemName: "lock.shield")
+                                        .font(.system(size: 11))
+                                    Text(l10n.t("detail.openPrivacySettings"))
+                                        .font(.system(size: 12))
+                                }
+                                .foregroundColor(.accentColor)
                             }
                             .buttonStyle(.plain)
                         }
-                    }
-
-                    // Risk Level GroupBox
-                    groupBox(label: l10n.t("detail.riskLevel")) {
-                        HStack(spacing: 8) {
-                            RoundedRectangle(cornerRadius: 5)
-                                .fill(item.risk.color)
-                                .frame(width: 20, height: 20)
-                                .overlay(
-                                    Image(systemName: item.risk.icon)
-                                        .font(.system(size: 9, weight: .bold))
-                                        .foregroundColor(.white)
-                                )
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(item.risk.localizedName(l10n))
-                                    .font(.system(size: 13, weight: .medium))
-                                Text(item.risk.localizedDesc(l10n))
-                                    .font(.system(size: 11))
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    }
-
-                    // Related Projects GroupBox (only for caches with project indicators)
-                    if scanner.selectedItemHasProjectIndicators {
-                        groupBox(label: l10n.t("detail.relatedProjects")) {
-                            if scanner.isLoadingRelatedApps {
-                                HStack(spacing: 6) {
-                                    ProgressView().scaleEffect(0.7)
-                                    Text(l10n.t("detail.searchingProjects"))
-                                        .font(.system(size: 12))
-                                        .foregroundColor(.secondary)
-                                }
-                            } else if scanner.relatedApps.isEmpty {
-                                // Empty state — may be permission denied
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(l10n.t("detail.noProjectsFound"))
-                                        .font(.system(size: 12))
-                                        .foregroundColor(.secondary)
-                                    Button {
-                                        NSWorkspace.shared.open(
-                                            URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders")!
-                                        )
-                                    } label: {
-                                        HStack(spacing: 4) {
-                                            Image(systemName: "lock.shield")
+                        .padding(.vertical, 4)
+                    } else {
+                        ScrollView {
+                            LazyVStack(spacing: 0) {
+                                ForEach(scanner.relatedApps) { app in
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "folder.fill")
+                                            .font(.system(size: 11))
+                                            .foregroundColor(.accentColor)
+                                        VStack(alignment: .leading, spacing: 1) {
+                                            Text(app.name)
+                                                .font(.system(size: 12, weight: .medium))
+                                            Text(app.path.replacingOccurrences(of: NSHomeDirectory(), with: "~"))
                                                 .font(.system(size: 11))
-                                            Text(l10n.t("detail.openPrivacySettings"))
-                                                .font(.system(size: 12))
+                                                .foregroundColor(.secondary)
+                                                .lineLimit(1)
+                                                .truncationMode(.middle)
                                         }
-                                        .foregroundColor(.accentColor)
+                                        Spacer()
+                                        Button {
+                                            scanner.openInFinder(app.path)
+                                        } label: {
+                                            Image(systemName: "arrow.up.right.square")
+                                                .font(.system(size: 11))
+                                                .foregroundColor(.secondary)
+                                        }
+                                        .buttonStyle(.plain)
                                     }
-                                    .buttonStyle(.plain)
-                                }
-                            } else {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    ForEach(scanner.relatedApps) { app in
-                                        HStack(spacing: 6) {
-                                            Image(systemName: "folder.fill")
-                                                .font(.system(size: 11))
-                                                .foregroundColor(.accentColor)
-                                            VStack(alignment: .leading, spacing: 1) {
-                                                Text(app.name)
-                                                    .font(.system(size: 12, weight: .medium))
-                                                Text(app.path.replacingOccurrences(of: NSHomeDirectory(), with: "~"))
-                                                    .font(.system(size: 11))
-                                                    .foregroundColor(.secondary)
-                                                    .lineLimit(1)
-                                                    .truncationMode(.middle)
-                                            }
-                                            Spacer()
-                                            Button {
-                                                scanner.openInFinder(app.path)
-                                            } label: {
-                                                Image(systemName: "arrow.up.right.square")
-                                                    .font(.system(size: 11))
-                                                    .foregroundColor(.secondary)
-                                            }
-                                            .buttonStyle(.plain)
-                                        }
+                                    .padding(.vertical, 6)
+                                    .contentShape(Rectangle())
+                                    if app.id != scanner.relatedApps.last?.id {
+                                        Divider().padding(.leading, 23)
                                     }
                                 }
                             }
                         }
                     }
                 }
-                .padding(16)
+                .padding(12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(nsColor: .controlBackgroundColor))
+                .cornerRadius(10)
+                .padding(.horizontal, 16)
             }
 
-            Spacer()
+            Spacer(minLength: 0)
 
             // Clean button
             Button {

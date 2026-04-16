@@ -67,6 +67,22 @@ struct SubItemsDetailView: View {
             .cornerRadius(10)
             .padding(.horizontal, 16)
 
+            // Description
+            VStack(alignment: .leading, spacing: 8) {
+                Text(l10n.t("detail.description"))
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.secondary)
+                Text(l10n.t(item.detailKey))
+                    .font(.system(size: 13))
+                    .foregroundColor(.primary)
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(nsColor: .controlBackgroundColor))
+            .cornerRadius(10)
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+
             // Items section
             VStack(alignment: .leading, spacing: 8) {
                 // Section header
