@@ -28,14 +28,11 @@ Create a new release for Purgify: bump version, build, create DMG, push, and pub
    - Increment `CURRENT_PROJECT_VERSION` by 1 from current value (all occurrences)
 
 3. **Build**
-   - Archive: `xcodebuild -project Purgify/Purgify.xcodeproj -scheme Purgify -configuration Release -archivePath /tmp/Purgify.xcarchive archive`
+   - `make archive`
    - Verify `** ARCHIVE SUCCEEDED **` in output
 
 4. **Create DMG**
-   - Clean previous: `rm -rf /tmp/purgify-dmg /tmp/Purgify-{version}.dmg`
-   - Copy app: `cp -R /tmp/Purgify.xcarchive/Products/Applications/Purgify.app /tmp/purgify-dmg/`
-   - Add Applications symlink: `ln -sf /Applications /tmp/purgify-dmg/Applications`
-   - Create DMG: `hdiutil create -volname "Purgify" -srcfolder /tmp/purgify-dmg -ov -format UDZO /tmp/Purgify-{version}.dmg`
+   - `make dmg VERSION={version}`
    - Verify version in built app matches expected
 
 5. **Commit & Tag**
