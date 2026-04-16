@@ -1,0 +1,172 @@
+import SwiftUI
+
+/// Right column (460px): shows detail of the selected cache item.
+struct DetailPanelView: View {
+    @EnvironmentObject var scanner: CacheScannerViewModel
+    @EnvironmentObject var l10n: LocalizationManager
+
+    var body: some View {
+        Group {
+            if let item = scanner.selectedItem {
+                if item.hasSubItems {
+                    SubItemsDetailView(item: item)
+                } else {
+                    itemDetail(item)
+                }
+            } else {
+                // Nothing selected
+                VStack {
+                    Spacer()
+                    Text(l10n.t("detail.selectItem"))
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(nsColor: .textBackgroundColor))
+    }
+
+    // MARK: - Normal item detail
+
+    @ViewBuilder
+    private func itemDetail(_ item: CacheItem) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Header: name + size + badge
+            VStack(alignment: .leading, spacing: 4) {
+                Text(l10n.t(item.nameKey))
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(item.sizeFormatted)
+                            .font(.system(size: 34, weight: .bold).monospacedDigit())
+                        Text(l10n.t("detail.totalSize"))
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    riskBadge(item.risk)
+                }
+            }
+            .padding(20)
+
+            Divider()
+
+            ScrollView {
+                VStack(spacing: 16) {
+                    // Description GroupBox
+                    groupBox(label: l10n.t("detail.description")) {
+                        Text(l10n.t(item.detailKey))
+                            .font(.system(size: 13))
+                            .foregroundColor(.primary)
+                    }
+
+                    // Location GroupBox
+                    groupBox(label: l10n.t("detail.location")) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "folder.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(.accentColor)
+                            Text(item.path)
+                                .font(.system(size: 13))
+                                .foregroundColor(.accentColor)
+                            Spacer()
+                            Button {
+                                scanner.openInFinder(item.path)
+                            } label: {
+                                Image(systemName: "arrow.up.right.square")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+
+                    // Risk Level GroupBox
+                    groupBox(label: l10n.t("detail.riskLevel")) {
+                        HStack(spacing: 8) {
+                            RoundedRectangle(cornerRadius: 5)
+                                .fill(item.risk.color)
+                                .frame(width: 20, height: 20)
+                                .overlay(
+                                    Image(systemName: item.risk.icon)
+                                        .font(.system(size: 9, weight: .bold))
+                                        .foregroundColor(.white)
+                                )
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(item.risk.localizedName(l10n))
+                                    .font(.system(size: 13, weight: .medium))
+                                Text(item.risk.localizedDesc(l10n))
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                }
+                .padding(16)
+            }
+
+            Spacer()
+
+            // Clean button
+            Button {
+                scanner.cleanItem(item.id)
+            } label: {
+                Text(l10n.t("detail.clean").replacingOccurrences(of: "%@", with: l10n.t(item.nameKey)))
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 36)
+                    .background(Color.accentColor)
+                    .cornerRadius(9)
+            }
+            .buttonStyle(.plain)
+            .disabled(scanner.isCleaning)
+            .padding(16)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func riskBadge(_ risk: RiskLevel) -> some View {
+        Text(risk.localizedName(l10n))
+            .font(.system(size: 11, weight: .medium))
+            .foregroundColor(badgeTextColor(risk))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
+            .background(badgeBgColor(risk))
+            .cornerRadius(12)
+    }
+
+    private func badgeTextColor(_ risk: RiskLevel) -> Color {
+        switch risk {
+        case .safe:     return Color(nsColor: .systemGreen)
+        case .moderate: return Color(nsColor: .systemOrange)
+        case .caution:  return Color(nsColor: .systemRed)
+        }
+    }
+
+    private func badgeBgColor(_ risk: RiskLevel) -> Color {
+        switch risk {
+        case .safe:     return Color(nsColor: .systemGreen).opacity(0.15)
+        case .moderate: return Color(nsColor: .systemOrange).opacity(0.15)
+        case .caution:  return Color(nsColor: .systemRed).opacity(0.15)
+        }
+    }
+
+    private func groupBox<Content: View>(label: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(label)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundColor(.secondary)
+            content()
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(nsColor: .controlBackgroundColor))
+        .cornerRadius(10)
+    }
+}

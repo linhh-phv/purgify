@@ -13,4 +13,12 @@ protocol CacheScanService: Sendable {
 
     /// Xóa item tại path.
     nonisolated func removeItem(at path: String) throws
+
+    /// Liệt kê các thư mục con trực tiếp (depth 1) tại path.
+    /// Dùng cho Xcode DerivedData sub-project scanning.
+    nonisolated func subDirectories(at path: String) -> [(name: String, path: String, modifiedDate: Date?)]
+
+    /// Liệt kê các file trực tiếp (depth 1) tại path, bao gồm cả trong subdirectories.
+    /// Dùng cho Homebrew cache (downloads/).
+    nonisolated func subFiles(at path: String) -> [(name: String, path: String, sizeBytes: Int64, modifiedDate: Date?)]
 }

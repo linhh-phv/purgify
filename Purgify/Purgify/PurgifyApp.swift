@@ -12,7 +12,7 @@ struct PurgifyApp: App {
     @StateObject private var l10n = LocalizationManager()
 
     var body: some Scene {
-        MenuBarExtra("Purgify", systemImage: "trash.slash.fill") {
+        MenuBarExtra("Purgify", systemImage: "sparkles") {
             MenuBarView()
                 .environmentObject(scanner)
                 .environmentObject(l10n)

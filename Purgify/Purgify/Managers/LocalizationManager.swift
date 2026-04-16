@@ -75,29 +75,56 @@ class LocalizationManager: ObservableObject {
             "clean.confirm.cancel": "Cancel",
 
             "cache.npm": "npm Cache",
-            "cache.npm.detail": "Downloaded package tarballs. Rebuilds automatically on next install.",
+            "cache.npm.detail": "Created when you run npm install. Stores downloaded package tarballs so future installs are faster. Deleting is safe — npm will re-download packages as needed. No impact on existing node_modules or running projects.",
             "cache.yarn": "Yarn Cache",
-            "cache.yarn.detail": "Yarn v1 offline mirror. Rebuilds on next install.",
+            "cache.yarn.detail": "Created by Yarn v1 when installing packages. Acts as an offline mirror to speed up installs. Deleting is safe — Yarn will re-download on next install. Existing node_modules in your projects are untouched.",
             "cache.yarnBerry": "Yarn Berry Cache",
-            "cache.yarnBerry.detail": "Yarn v2+ package cache. Rebuilds automatically.",
+            "cache.yarnBerry.detail": "Created by Yarn v2+ (Berry) during package installs. Stores compressed package archives. Deleting is safe — Yarn will re-fetch packages when needed. Existing .yarn/cache in projects is separate.",
             "cache.corepack": "Corepack Cache",
-            "cache.corepack.detail": "Cached package manager binaries (yarn, pnpm). Re-downloads when needed.",
+            "cache.corepack.detail": "Created by Node.js Corepack to cache package manager binaries (Yarn, pnpm). Deleting is safe — Corepack will re-download the correct version when you run yarn or pnpm. No impact on your projects.",
             "cache.bun": "Bun Cache",
-            "cache.bun.detail": "Bun package cache. Rebuilds on next install.",
+            "cache.bun.detail": "Created by Bun when installing packages. Stores downloaded modules for faster future installs. Deleting is safe — Bun will re-download on next bun install. Existing node_modules in your projects are untouched.",
             "cache.homebrew": "Homebrew Cache",
-            "cache.homebrew.detail": "Downloaded brew formula files. Safe to remove.",
+            "cache.homebrew.detail": "Created when you run brew install or brew upgrade. Stores downloaded formula bottles (.tar.gz). Deleting is safe — Homebrew will re-download when needed. Already-installed apps are not affected.",
             "cache.cocoapods": "CocoaPods Cache",
-            "cache.cocoapods.detail": "Cached pod specs and downloads. Rebuilds on next pod install.",
+            "cache.cocoapods.detail": "Created by pod install. Stores downloaded pod specs and source files. Deleting is safe — CocoaPods will re-download on next pod install. Your Pods/ folder in projects is separate.",
             "cache.xcode": "Xcode DerivedData",
-            "cache.xcode.detail": "Build artifacts and indexes. Projects will rebuild on next open — may take a while.",
+            "cache.xcode.detail": "Created by Xcode when building projects. Stores compiled objects, indexes, and logs. Deleting forces a full rebuild next time you open a project, which may take several minutes for large projects. Does NOT delete source code.",
             "cache.gradle": "Gradle Cache",
-            "cache.gradle.detail": "Gradle build cache and downloaded dependencies. Rebuilds on next build.",
+            "cache.gradle.detail": "Created during Android/Java builds. Stores downloaded dependencies and build outputs. Deleting is safe but the next build will be slower as Gradle re-downloads all dependencies. Your project source code and local build.gradle files are untouched.",
             "cache.metro": "Metro Bundler Cache",
-            "cache.metro.detail": "React Native Metro bundler cache. Rebuilds on next start.",
+            "cache.metro.detail": "Created by React Native's Metro bundler when running your app. Stores transformed JavaScript bundles. Deleting is safe — Metro will rebuild the bundle on next npx react-native start. Useful when you see stale code.",
             "cache.pnpm": "pnpm Store",
-            "cache.pnpm.detail": "Content-addressable store. All pnpm projects need reinstall after cleaning.",
+            "cache.pnpm.detail": "Created by pnpm as a global content-addressable store. All pnpm projects share this store via hard links. Deleting BREAKS existing node_modules — ALL pnpm projects will need pnpm install again. Consider carefully if you have many projects.",
             "cache.docker": "Docker Images",
-            "cache.docker.detail": "Docker VM disk images. Use 'docker system prune' instead for safer cleanup.",
+            "cache.docker.detail": "Docker Desktop VM disk images containing all your containers, images, and volumes. Deleting removes ALL Docker data including running containers and databases. Recommended: use 'docker system prune' from Terminal instead for selective cleanup.",
+
+            // Sidebar
+            "sidebar.scanAgain": "Scan Again",
+
+            // Detail panel
+            "detail.totalSize": "TOTAL SIZE",
+            "detail.description": "DESCRIPTION",
+            "detail.location": "LOCATION",
+            "detail.riskLevel": "RISK LEVEL",
+            "detail.openInFinder": "Open in Finder",
+            "detail.clean": "Clean %@",
+            "detail.selectItem": "Select an item to view details",
+
+            // Sub-items
+            "subitem.totalSize": "TOTAL SIZE",
+            "subitem.projects": "PROJECTS",
+            "subitem.files": "FILES",
+            "subitem.selected": "SELECTED",
+            "subitem.cleanProjects": "Clean %1 Selected Projects · %2",
+            "subitem.cleanFiles": "Clean %1 Selected Files · %2",
+            "subitem.nSelected": "%1 / %2 selected",
+
+            // Scan progress
+            "scan.itemCount": "%1 of %2 items",
+
+            // Menu bar
+            "menubar.cleanSelected": "Clean Selected · %@",
         ],
         .vi: [
             "app.title": "Purgify",
@@ -131,29 +158,56 @@ class LocalizationManager: ObservableObject {
             "clean.confirm.cancel": "Hủy",
 
             "cache.npm": "npm Cache",
-            "cache.npm.detail": "Gói tải về. Tự tạo lại khi cài đặt.",
+            "cache.npm.detail": "Được tạo khi chạy npm install. Lưu các gói đã tải để cài đặt lần sau nhanh hơn. Xóa an toàn — npm sẽ tải lại khi cần. Không ảnh hưởng đến node_modules hay dự án đang chạy.",
             "cache.yarn": "Yarn Cache",
-            "cache.yarn.detail": "Bộ nhớ đệm Yarn v1. Tự tạo lại khi cài đặt.",
+            "cache.yarn.detail": "Được tạo bởi Yarn v1 khi cài đặt gói. Dùng làm bản sao offline để tăng tốc cài đặt. Xóa an toàn — Yarn sẽ tải lại khi cần. node_modules trong dự án không bị ảnh hưởng.",
             "cache.yarnBerry": "Yarn Berry Cache",
-            "cache.yarnBerry.detail": "Bộ nhớ đệm Yarn v2+. Tự tạo lại.",
+            "cache.yarnBerry.detail": "Được tạo bởi Yarn v2+ (Berry) khi cài gói. Lưu trữ gói nén. Xóa an toàn — Yarn sẽ tải lại khi cần. Thư mục .yarn/cache trong dự án là riêng biệt.",
             "cache.corepack": "Corepack Cache",
-            "cache.corepack.detail": "Package manager binaries (yarn, pnpm). Tự tải lại khi cần.",
+            "cache.corepack.detail": "Được tạo bởi Node.js Corepack để lưu trữ binaries của Yarn và pnpm. Xóa an toàn — Corepack sẽ tải lại phiên bản đúng khi bạn chạy yarn hoặc pnpm. Dự án hiện có không bị ảnh hưởng.",
             "cache.bun": "Bun Cache",
-            "cache.bun.detail": "Bộ nhớ đệm Bun. Tự tạo lại khi cài đặt.",
+            "cache.bun.detail": "Được tạo bởi Bun khi cài đặt gói. Lưu module đã tải để cài nhanh hơn. Xóa an toàn — Bun sẽ tải lại khi chạy bun install lần sau. node_modules trong dự án không bị ảnh hưởng.",
             "cache.homebrew": "Homebrew Cache",
-            "cache.homebrew.detail": "Tệp formula đã tải. An toàn để xóa.",
+            "cache.homebrew.detail": "Được tạo khi chạy brew install hoặc brew upgrade. Lưu các file bottle (.tar.gz). Xóa an toàn — Homebrew sẽ tải lại khi cần. Ứng dụng đã cài không bị ảnh hưởng.",
             "cache.cocoapods": "CocoaPods Cache",
-            "cache.cocoapods.detail": "Pod specs và downloads. Tự tạo lại khi pod install.",
+            "cache.cocoapods.detail": "Được tạo khi chạy pod install. Lưu pod specs và source files. Xóa an toàn — CocoaPods sẽ tải lại khi pod install. Thư mục Pods/ trong dự án là riêng biệt.",
             "cache.xcode": "Xcode DerivedData",
-            "cache.xcode.detail": "Dữ liệu build và chỉ mục. Dự án sẽ build lại khi mở — có thể mất thời gian.",
+            "cache.xcode.detail": "Được Xcode tạo khi build dự án. Lưu file biên dịch, chỉ mục và logs. Xóa sẽ buộc build lại toàn bộ khi mở dự án — có thể mất vài phút với dự án lớn. KHÔNG xóa mã nguồn.",
             "cache.gradle": "Gradle Cache",
-            "cache.gradle.detail": "Build cache và dependencies. Tự tạo lại khi build.",
+            "cache.gradle.detail": "Được tạo khi build Android/Java. Lưu dependencies và kết quả build. Xóa an toàn nhưng lần build tiếp theo sẽ chậm hơn vì Gradle cần tải lại dependencies. Mã nguồn và file build.gradle trong dự án không bị ảnh hưởng.",
             "cache.metro": "Metro Bundler Cache",
-            "cache.metro.detail": "Cache Metro của React Native. Tự tạo lại khi chạy.",
+            "cache.metro.detail": "Được tạo bởi Metro bundler của React Native khi chạy app. Lưu các bundle JavaScript đã chuyển đổi. Xóa an toàn — Metro sẽ build lại khi chạy lần sau. Mã nguồn dự án không bị ảnh hưởng. Hữu ích khi thấy code cũ.",
             "cache.pnpm": "pnpm Store",
-            "cache.pnpm.detail": "Kho lưu trữ pnpm. Tất cả dự án pnpm cần cài lại sau khi xóa.",
+            "cache.pnpm.detail": "Kho lưu trữ chung của pnpm, tất cả dự án chia sẻ qua hard links. Xóa sẽ LÀM HỎNG node_modules của tất cả dự án pnpm — cần chạy pnpm install lại cho từng dự án. Cân nhắc kỹ nếu bạn có nhiều dự án.",
             "cache.docker": "Docker Images",
-            "cache.docker.detail": "Ảnh đĩa Docker VM. Nên dùng 'docker system prune' để dọn an toàn hơn.",
+            "cache.docker.detail": "Ảnh đĩa VM của Docker Desktop chứa tất cả containers, images và volumes. Xóa sẽ mất TOÀN BỘ dữ liệu Docker bao gồm containers đang chạy và databases. Khuyến nghị: dùng 'docker system prune' trong Terminal để dọn chọn lọc hơn.",
+
+            // Sidebar
+            "sidebar.scanAgain": "Quét lại",
+
+            // Detail panel
+            "detail.totalSize": "TỔNG KÍCH THƯỚC",
+            "detail.description": "MÔ TẢ",
+            "detail.location": "VỊ TRÍ",
+            "detail.riskLevel": "MỨC ĐỘ RỦI RO",
+            "detail.openInFinder": "Mở trong Finder",
+            "detail.clean": "Dọn %@",
+            "detail.selectItem": "Chọn một mục để xem chi tiết",
+
+            // Sub-items (Xcode)
+            "subitem.totalSize": "TỔNG KÍCH THƯỚC",
+            "subitem.projects": "DỰ ÁN",
+            "subitem.files": "TỆP TIN",
+            "subitem.selected": "ĐÃ CHỌN",
+            "subitem.cleanProjects": "Dọn %1 dự án đã chọn · %2",
+            "subitem.cleanFiles": "Dọn %1 tệp đã chọn · %2",
+            "subitem.nSelected": "%1 / %2 đã chọn",
+
+            // Scan progress
+            "scan.itemCount": "%1 / %2 mục",
+
+            // Menu bar
+            "menubar.cleanSelected": "Dọn dẹp · %@",
         ]
     ]
 }

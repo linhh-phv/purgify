@@ -27,4 +27,45 @@ struct LocalCacheScanService: CacheScanService {
     nonisolated func removeItem(at path: String) throws {
         try FileManager.default.removeItem(atPath: path)
     }
+
+    nonisolated func subDirectories(at path: String) -> [(name: String, path: String, modifiedDate: Date?)] {
+        let url = URL(fileURLWithPath: path)
+        guard let contents = try? FileManager.default.contentsOfDirectory(
+            at: url,
+            includingPropertiesForKeys: [.isDirectoryKey, .contentModificationDateKey],
+            options: [.skipsHiddenFiles]
+        ) else { return [] }
+
+        return contents.compactMap { childURL in
+            guard let values = try? childURL.resourceValues(forKeys: [.isDirectoryKey, .contentModificationDateKey]),
+                  values.isDirectory == true else { return nil }
+            return (
+                name: childURL.lastPathComponent,
+                path: childURL.path,
+                modifiedDate: values.contentModificationDate
+            )
+        }
+    }
+
+    nonisolated func subFiles(at path: String) -> [(name: String, path: String, sizeBytes: Int64, modifiedDate: Date?)] {
+        let url = URL(fileURLWithPath: path)
+        guard let contents = try? FileManager.default.contentsOfDirectory(
+            at: url,
+            includingPropertiesForKeys: [.fileSizeKey, .isRegularFileKey, .contentModificationDateKey],
+            options: [.skipsHiddenFiles]
+        ) else { return [] }
+
+        return contents.compactMap { fileURL in
+            guard let values = try? fileURL.resourceValues(
+                forKeys: [.fileSizeKey, .isRegularFileKey, .contentModificationDateKey]
+            ), values.isRegularFile == true else { return nil }
+
+            return (
+                name: fileURL.lastPathComponent,
+                path: fileURL.path,
+                sizeBytes: Int64(values.fileSize ?? 0),
+                modifiedDate: values.contentModificationDate
+            )
+        }
+    }
 }
