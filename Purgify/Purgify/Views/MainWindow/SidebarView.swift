@@ -5,6 +5,8 @@ struct SidebarView: View {
     @EnvironmentObject var scanner: CacheScannerViewModel
     @EnvironmentObject var l10n: LocalizationManager
 
+    @State private var showSettings = false
+
     var body: some View {
         VStack(spacing: 0) {
             // Header — app icon + title
@@ -82,6 +84,21 @@ struct SidebarView: View {
                     .disabled(scanner.isScanning)
 
                     LanguageToggle()
+
+                    // Settings gear button
+                    Button { showSettings = true } label: {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                            .frame(width: 28, height: 28)
+                            .background(Color(nsColor: .separatorColor).opacity(0.5))
+                            .cornerRadius(7)
+                    }
+                    .buttonStyle(.plain)
+                    .sheet(isPresented: $showSettings) {
+                        SettingsView()
+                            .environmentObject(l10n)
+                    }
                 }
             }
             .padding(16)

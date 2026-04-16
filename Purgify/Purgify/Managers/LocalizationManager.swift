@@ -125,6 +125,23 @@ class LocalizationManager: ObservableObject {
 
             // Menu bar
             "menubar.cleanSelected": "Clean Selected · %@",
+
+            // Settings sheet
+            "settings.title": "Settings",
+            "settings.general": "GENERAL",
+            "settings.language": "Language",
+            "settings.launchAtLogin": "Launch at Login",
+            "settings.about": "ABOUT",
+            "settings.versionShort": "v1.0.0 · Open Source",
+            "settings.githubRepo": "GitHub Repository",
+            "settings.sendFeedback": "Send Feedback",
+
+            // About sheet
+            "about.description": "Clean developer caches and free up disk space.\nA lightweight macOS menu bar app for developers.",
+            "about.madeBy": "Made with ♥ by",
+            "about.author": "Pham Linh",
+            "about.viewOnGitHub": "View on GitHub",
+            "about.copyright": "© 2025 Purgify. Open source under MIT License.",
         ],
         .vi: [
             "app.title": "Purgify",
@@ -208,6 +225,23 @@ class LocalizationManager: ObservableObject {
 
             // Menu bar
             "menubar.cleanSelected": "Dọn dẹp · %@",
+
+            // Settings sheet
+            "settings.title": "Cài đặt",
+            "settings.general": "CHUNG",
+            "settings.language": "Ngôn ngữ",
+            "settings.launchAtLogin": "Khởi động cùng hệ thống",
+            "settings.about": "THÔNG TIN",
+            "settings.versionShort": "v1.0.0 · Mã nguồn mở",
+            "settings.githubRepo": "GitHub Repository",
+            "settings.sendFeedback": "Gửi phản hồi",
+
+            // About sheet
+            "about.description": "Dọn dẹp bộ nhớ đệm lập trình và giải phóng dung lượng.\nỨng dụng nhẹ trên menu bar macOS dành cho lập trình viên.",
+            "about.madeBy": "Được làm với ♥ bởi",
+            "about.author": "Pham Linh",
+            "about.viewOnGitHub": "Xem trên GitHub",
+            "about.copyright": "© 2025 Purgify. Mã nguồn mở theo giấy phép MIT.",
         ]
     ]
 }
