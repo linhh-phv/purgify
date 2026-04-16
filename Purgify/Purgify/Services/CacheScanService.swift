@@ -24,5 +24,6 @@ protocol CacheScanService: Sendable {
 
     /// Tìm các thư mục project có chứa ít nhất một trong các indicator files.
     /// Tìm kiếm trong các thư mục dev thường gặp với độ sâu tối đa 3.
-    nonisolated func findRelatedProjects(indicators: [String]) -> [RelatedApp]
+    /// Returns (projects, scannedRoots) — scannedRoots == 0 means no directories were accessible.
+    nonisolated func findRelatedProjects(indicators: [String]) -> (projects: [RelatedApp], scannedRoots: Int)
 }

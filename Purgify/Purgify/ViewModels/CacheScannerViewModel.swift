@@ -25,6 +25,7 @@ class CacheScannerViewModel: ObservableObject {
     // Related projects for the selected item (lazy-loaded)
     @Published var relatedApps: [RelatedApp] = []
     @Published var isLoadingRelatedApps = false
+    @Published var hasProjectDirAccess = true
 
     var selectedItemHasProjectIndicators: Bool {
         guard let item = selectedItem else { return false }
@@ -132,6 +133,7 @@ class CacheScannerViewModel: ObservableObject {
                     detailKey: def.detailKey,
                     path: def.path,
                     icon: def.icon,
+                    iconColor: def.iconColor,
                     risk: def.risk,
                     sizeBytes: size
                 )
@@ -331,13 +333,14 @@ class CacheScannerViewModel: ObservableObject {
         let svc = service
 
         relatedAppsTask = Task.detached(priority: .background) { [weak self] in
-            let found = svc.findRelatedProjects(indicators: indicators)
+            let result = svc.findRelatedProjects(indicators: indicators)
             await MainActor.run { [weak self] in
                 guard let self else { return }
-                self.relatedAppsCache[item.nameKey] = found
+                self.relatedAppsCache[item.nameKey] = result.projects
                 // Only apply if user still has same item selected
                 if self.selectedItem?.nameKey == item.nameKey {
-                    self.relatedApps = found
+                    self.relatedApps = result.projects
+                    self.hasProjectDirAccess = result.scannedRoots > 0
                 }
                 self.isLoadingRelatedApps = false
             }

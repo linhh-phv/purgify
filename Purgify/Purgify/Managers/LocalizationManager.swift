@@ -205,9 +205,9 @@ class LocalizationManager: ObservableObject {
 
             "cache.bundler": "Bundler Cache",
             "cache.bundler.detail":
-                "A global download cache built up each time you run bundle install.\n\n" +
-                "Your project gems and Gemfile.lock are completely untouched — everything runs normally after cleaning.\n\n" +
-                "The only effect: the next bundle install re-downloads gems from RubyGems.org instead of local cache.",
+                "A metadata index cache Bundler uses to look up gem versions and dependencies from RubyGems.org.\n\n" +
+                "Your installed gems, Gemfile.lock, and projects are completely untouched — everything runs normally after cleaning.\n\n" +
+                "The only effect: the next bundle install re-fetches the compact index from RubyGems.org, adding a few seconds.",
 
             "cache.cypress": "Cypress Cache",
             "cache.cypress.detail":
@@ -259,8 +259,8 @@ class LocalizationManager: ObservableObject {
             "detail.relatedProjects":        "RELATED PROJECTS",
             "detail.relatedProjectsCaption": "Source code size only · excludes dependencies (node_modules, Pods…)",
             "detail.searchingProjects":      "Searching for projects...",
-            "detail.noProjectsFound":        "No projects found. If you denied file access, tap below to re-enable.",
-            "detail.openPrivacySettings":    "Open Privacy & Security",
+            "detail.noProjectsFound":        "No projects found in common folders.",
+            "detail.openPrivacySettings":    "Grant file access in Privacy & Security",
 
             // Sub-items
             "subitem.totalSize":      "TOTAL SIZE",
@@ -283,12 +283,10 @@ class LocalizationManager: ObservableObject {
             "settings.language":      "Language",
             "settings.launchAtLogin": "Launch at Login",
             "settings.about":         "ABOUT",
-            "settings.versionShort":  "v1.0.0 · Open Source",
-            "settings.githubRepo":    "GitHub Repository",
             "settings.sendFeedback":  "Send Feedback",
 
             // About sheet
-            "about.description":  "Clean developer caches and free up disk space.\nA lightweight macOS menu bar app for developers.",
+            "about.description":  "Clean your Mac's developer caches.",
             "about.madeBy":       "Made with ♥ by",
             "about.author":       "Pham Linh",
             "about.viewOnGitHub": "View on GitHub",
@@ -456,9 +454,9 @@ class LocalizationManager: ObservableObject {
 
             "cache.bundler": "Bundler Cache",
             "cache.bundler.detail":
-                "Cache tải gem toàn cục, tích lũy mỗi khi bạn chạy bundle install.\n\n" +
-                "Gemfile.lock và các gem trong dự án hoàn toàn không bị ảnh hưởng — mọi thứ vẫn chạy bình thường.\n\n" +
-                "Tác động duy nhất: lần bundle install tiếp theo tải lại từ RubyGems.org thay vì cache local.",
+                "Cache metadata index mà Bundler dùng để tra cứu phiên bản và dependencies của gem từ RubyGems.org.\n\n" +
+                "Gem đã cài, Gemfile.lock và các dự án hoàn toàn không bị ảnh hưởng — mọi thứ vẫn chạy bình thường.\n\n" +
+                "Tác động duy nhất: lần bundle install tiếp theo fetch lại compact index từ RubyGems.org, chậm hơn vài giây.",
 
             "cache.cypress": "Cypress Cache",
             "cache.cypress.detail":
@@ -510,8 +508,8 @@ class LocalizationManager: ObservableObject {
             "detail.relatedProjects":        "DỰ ÁN LIÊN QUAN",
             "detail.relatedProjectsCaption": "Chỉ tính source code · không bao gồm dependencies (node_modules, Pods…)",
             "detail.searchingProjects":      "Đang tìm dự án...",
-            "detail.noProjectsFound":        "Không tìm thấy dự án. Nếu bạn đã từ chối quyền truy cập file, nhấn bên dưới để bật lại.",
-            "detail.openPrivacySettings":    "Mở Privacy & Security",
+            "detail.noProjectsFound":        "Không tìm thấy dự án trong các thư mục thông dụng.",
+            "detail.openPrivacySettings":    "Cấp quyền truy cập file trong Privacy & Security",
 
             // Sub-items
             "subitem.totalSize":     "TỔNG KÍCH THƯỚC",
@@ -534,12 +532,10 @@ class LocalizationManager: ObservableObject {
             "settings.language":      "Ngôn ngữ",
             "settings.launchAtLogin": "Khởi động cùng hệ thống",
             "settings.about":         "THÔNG TIN",
-            "settings.versionShort":  "v1.0.0 · Mã nguồn mở",
-            "settings.githubRepo":    "GitHub Repository",
             "settings.sendFeedback":  "Gửi phản hồi",
 
             // About sheet
-            "about.description":  "Dọn dẹp bộ nhớ đệm lập trình và giải phóng dung lượng.\nỨng dụng nhẹ trên menu bar macOS dành cho lập trình viên.",
+            "about.description":  "Dọn dẹp bộ nhớ đệm lập trình trên Mac.",
             "about.madeBy":       "Được làm với ♥ bởi",
             "about.author":       "Pham Linh",
             "about.viewOnGitHub": "Xem trên GitHub",

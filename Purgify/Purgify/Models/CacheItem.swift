@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 enum SubItemMode {
     case none           // No sub-items
@@ -11,6 +12,7 @@ struct CacheDefinition {
     let detailKey: String
     let path: String
     let icon: String
+    let iconColor: Color
     let risk: RiskLevel
     let subItemMode: SubItemMode
     /// Subfolder to scan for sub-items. Defaults to path itself.
@@ -21,24 +23,27 @@ struct CacheDefinition {
 
     var supportsSubItems: Bool { subItemMode != .none }
 
-    init(nameKey: String, detailKey: String, path: String, icon: String, risk: RiskLevel,
-         supportsSubItems: Bool = false, projectIndicators: [String] = []) {
+    init(nameKey: String, detailKey: String, path: String, icon: String, iconColor: Color,
+         risk: RiskLevel, supportsSubItems: Bool = false, projectIndicators: [String] = []) {
         self.nameKey = nameKey
         self.detailKey = detailKey
         self.path = path
         self.icon = icon
+        self.iconColor = iconColor
         self.risk = risk
         self.subItemMode = supportsSubItems ? .directories : .none
         self.subItemsPath = nil
         self.projectIndicators = projectIndicators
     }
 
-    init(nameKey: String, detailKey: String, path: String, icon: String, risk: RiskLevel,
-         subItemMode: SubItemMode, subItemsPath: String? = nil, projectIndicators: [String] = []) {
+    init(nameKey: String, detailKey: String, path: String, icon: String, iconColor: Color,
+         risk: RiskLevel, subItemMode: SubItemMode, subItemsPath: String? = nil,
+         projectIndicators: [String] = []) {
         self.nameKey = nameKey
         self.detailKey = detailKey
         self.path = path
         self.icon = icon
+        self.iconColor = iconColor
         self.risk = risk
         self.subItemMode = subItemMode
         self.subItemsPath = subItemsPath
@@ -78,6 +83,7 @@ struct CacheItem: Identifiable {
     let detailKey: String
     let path: String
     let icon: String
+    let iconColor: Color
     let risk: RiskLevel
     var sizeBytes: Int64 = 0
     var isSelected: Bool = false

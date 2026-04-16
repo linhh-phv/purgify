@@ -75,6 +75,7 @@ struct SubItemsDetailView: View {
                 Text(l10n.t(item.detailKey))
                     .font(.system(size: 13))
                     .foregroundColor(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)

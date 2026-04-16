@@ -14,15 +14,11 @@ struct ContentRowView: View {
                 .toggleStyle(.checkbox)
                 .labelsHidden()
 
-            // Colored icon background
-            RoundedRectangle(cornerRadius: 7)
-                .fill(item.risk.color)
+            // Brand-colored icon
+            Image(systemName: item.icon)
+                .font(.system(size: 18, weight: .medium))
+                .foregroundColor(item.iconColor)
                 .frame(width: 28, height: 28)
-                .overlay(
-                    Image(systemName: item.icon)
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.white)
-                )
 
             // Name + path
             VStack(alignment: .leading, spacing: 2) {

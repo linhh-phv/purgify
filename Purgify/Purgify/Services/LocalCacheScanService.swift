@@ -47,14 +47,17 @@ struct LocalCacheScanService: CacheScanService {
         }
     }
 
-    nonisolated func findRelatedProjects(indicators: [String]) -> [RelatedApp] {
-        guard !indicators.isEmpty else { return [] }
+    nonisolated func findRelatedProjects(indicators: [String]) -> (projects: [RelatedApp], scannedRoots: Int) {
+        guard !indicators.isEmpty else { return ([], 0) }
 
         let fm = FileManager.default
         let home = NSHomeDirectory()
         let roots = ["Developer", "Desktop", "Documents", "Projects", "code", "repos", "work", "Sites"]
             .map { home + "/" + $0 }
             .filter { fm.fileExists(atPath: $0) }
+
+        // Count how many roots are actually readable
+        let scannedRoots = roots.filter { (try? fm.contentsOfDirectory(atPath: $0)) != nil }.count
 
         let indicatorSet = Set(indicators)
         let skipDirs: Set<String> = ["node_modules", ".git", ".build", "Pods", "DerivedData",
@@ -66,7 +69,7 @@ struct LocalCacheScanService: CacheScanService {
                            fm: fm, skip: skipDirs, results: &results)
             if results.count >= 20 { break }
         }
-        return results
+        return (results, scannedRoots)
     }
 
     private nonisolated func searchProjects(
