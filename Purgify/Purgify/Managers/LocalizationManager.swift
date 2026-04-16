@@ -110,6 +110,11 @@ class LocalizationManager: ObservableObject {
             "detail.openInFinder": "Open in Finder",
             "detail.clean": "Clean %@",
             "detail.selectItem": "Select an item to view details",
+            "detail.relatedProjects": "RELATED PROJECTS",
+            "detail.relatedProjectsCaption": "Source code size only · excludes dependencies (node_modules, Pods…)",
+            "detail.searchingProjects": "Searching for projects...",
+            "detail.noProjectsFound": "No projects found. If you denied file access, tap below to re-enable.",
+            "detail.openPrivacySettings": "Open Privacy & Security",
 
             // Sub-items
             "subitem.totalSize": "TOTAL SIZE",
@@ -210,6 +215,11 @@ class LocalizationManager: ObservableObject {
             "detail.openInFinder": "Mở trong Finder",
             "detail.clean": "Dọn %@",
             "detail.selectItem": "Chọn một mục để xem chi tiết",
+            "detail.relatedProjects": "DỰ ÁN LIÊN QUAN",
+            "detail.relatedProjectsCaption": "Chỉ tính source code · không bao gồm dependencies (node_modules, Pods…)",
+            "detail.searchingProjects": "Đang tìm dự án...",
+            "detail.noProjectsFound": "Không tìm thấy dự án. Nếu bạn đã từ chối quyền truy cập file, nhấn bên dưới để bật lại.",
+            "detail.openPrivacySettings": "Mở Privacy & Security",
 
             // Sub-items (Xcode)
             "subitem.totalSize": "TỔNG KÍCH THƯỚC",

@@ -15,10 +15,14 @@ struct CacheDefinition {
     let subItemMode: SubItemMode
     /// Subfolder to scan for sub-items. Defaults to path itself.
     let subItemsPath: String?
+    /// Filenames that indicate a project uses this cache (e.g. "package-lock.json").
+    /// Used for related-project discovery in the detail panel.
+    let projectIndicators: [String]
 
     var supportsSubItems: Bool { subItemMode != .none }
 
-    init(nameKey: String, detailKey: String, path: String, icon: String, risk: RiskLevel, supportsSubItems: Bool = false) {
+    init(nameKey: String, detailKey: String, path: String, icon: String, risk: RiskLevel,
+         supportsSubItems: Bool = false, projectIndicators: [String] = []) {
         self.nameKey = nameKey
         self.detailKey = detailKey
         self.path = path
@@ -26,9 +30,11 @@ struct CacheDefinition {
         self.risk = risk
         self.subItemMode = supportsSubItems ? .directories : .none
         self.subItemsPath = nil
+        self.projectIndicators = projectIndicators
     }
 
-    init(nameKey: String, detailKey: String, path: String, icon: String, risk: RiskLevel, subItemMode: SubItemMode, subItemsPath: String? = nil) {
+    init(nameKey: String, detailKey: String, path: String, icon: String, risk: RiskLevel,
+         subItemMode: SubItemMode, subItemsPath: String? = nil, projectIndicators: [String] = []) {
         self.nameKey = nameKey
         self.detailKey = detailKey
         self.path = path
@@ -36,7 +42,14 @@ struct CacheDefinition {
         self.risk = risk
         self.subItemMode = subItemMode
         self.subItemsPath = subItemsPath
+        self.projectIndicators = projectIndicators
     }
+}
+
+struct RelatedApp: Identifiable {
+    let id = UUID()
+    let name: String
+    let path: String
 }
 
 struct SubItem: Identifiable {

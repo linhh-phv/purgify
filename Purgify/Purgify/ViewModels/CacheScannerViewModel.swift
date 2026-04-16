@@ -18,13 +18,26 @@ class CacheScannerViewModel: ObservableObject {
 
     // Selection state for 3-column layout
     @Published var selectedRisk: RiskLevel = .safe
-    @Published var selectedItemID: UUID? = nil
+    @Published var selectedItemID: UUID? = nil {
+        didSet { loadRelatedAppsIfNeeded() }
+    }
+
+    // Related projects for the selected item (lazy-loaded)
+    @Published var relatedApps: [RelatedApp] = []
+    @Published var isLoadingRelatedApps = false
+
+    var selectedItemHasProjectIndicators: Bool {
+        guard let item = selectedItem else { return false }
+        return !(definitions.first { $0.nameKey == item.nameKey }?.projectIndicators ?? []).isEmpty
+    }
 
     // MARK: - Private
 
     private var hasScanned = false
     private let service: any CacheScanService
     private let definitions: [CacheDefinition]
+    private var relatedAppsTask: Task<Void, Never>?
+    private var relatedAppsCache: [String: [RelatedApp]] = [:]
 
     // MARK: - Init
 
@@ -295,6 +308,39 @@ class CacheScannerViewModel: ObservableObject {
         guard let idx = items.firstIndex(where: { $0.id == itemID }) else { return }
         for i in (items[idx].subItems?.indices ?? 0..<0) {
             items[idx].subItems?[i].isSelected = false
+        }
+    }
+
+    // MARK: - Related Projects
+
+    private func loadRelatedAppsIfNeeded() {
+        relatedAppsTask?.cancel()
+        relatedApps = []
+
+        guard let item = selectedItem else { return }
+        let indicators = definitions.first { $0.nameKey == item.nameKey }?.projectIndicators ?? []
+        guard !indicators.isEmpty else { return }
+
+        // Return cached result instantly
+        if let cached = relatedAppsCache[item.nameKey] {
+            relatedApps = cached
+            return
+        }
+
+        isLoadingRelatedApps = true
+        let svc = service
+
+        relatedAppsTask = Task.detached(priority: .background) { [weak self] in
+            let found = svc.findRelatedProjects(indicators: indicators)
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                self.relatedAppsCache[item.nameKey] = found
+                // Only apply if user still has same item selected
+                if self.selectedItem?.nameKey == item.nameKey {
+                    self.relatedApps = found
+                }
+                self.isLoadingRelatedApps = false
+            }
         }
     }
 

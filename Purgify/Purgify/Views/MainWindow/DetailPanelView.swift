@@ -105,6 +105,69 @@ struct DetailPanelView: View {
                             }
                         }
                     }
+
+                    // Related Projects GroupBox (only for caches with project indicators)
+                    if scanner.selectedItemHasProjectIndicators {
+                        groupBox(label: l10n.t("detail.relatedProjects")) {
+                            if scanner.isLoadingRelatedApps {
+                                HStack(spacing: 6) {
+                                    ProgressView().scaleEffect(0.7)
+                                    Text(l10n.t("detail.searchingProjects"))
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                }
+                            } else if scanner.relatedApps.isEmpty {
+                                // Empty state — may be permission denied
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(l10n.t("detail.noProjectsFound"))
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                    Button {
+                                        NSWorkspace.shared.open(
+                                            URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders")!
+                                        )
+                                    } label: {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "lock.shield")
+                                                .font(.system(size: 11))
+                                            Text(l10n.t("detail.openPrivacySettings"))
+                                                .font(.system(size: 12))
+                                        }
+                                        .foregroundColor(.accentColor)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            } else {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    ForEach(scanner.relatedApps) { app in
+                                        HStack(spacing: 6) {
+                                            Image(systemName: "folder.fill")
+                                                .font(.system(size: 11))
+                                                .foregroundColor(.accentColor)
+                                            VStack(alignment: .leading, spacing: 1) {
+                                                Text(app.name)
+                                                    .font(.system(size: 12, weight: .medium))
+                                                Text(app.path.replacingOccurrences(of: NSHomeDirectory(), with: "~"))
+                                                    .font(.system(size: 11))
+                                                    .foregroundColor(.secondary)
+                                                    .lineLimit(1)
+                                                    .truncationMode(.middle)
+                                            }
+                                            Spacer()
+                                            Button {
+                                                scanner.openInFinder(app.path)
+                                            } label: {
+                                                Image(systemName: "arrow.up.right.square")
+                                                    .font(.system(size: 11))
+                                                    .foregroundColor(.secondary)
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 .padding(16)
             }
@@ -157,11 +220,19 @@ struct DetailPanelView: View {
         }
     }
 
-    private func groupBox<Content: View>(label: String, @ViewBuilder content: () -> Content) -> some View {
+    private func groupBox<Content: View>(label: String, caption: String? = nil, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(label)
-                .font(.system(size: 10, weight: .medium))
-                .foregroundColor(.secondary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.secondary)
+                if let caption {
+                    Text(caption)
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                        .opacity(0.7)
+                }
+            }
             content()
         }
         .padding(12)
