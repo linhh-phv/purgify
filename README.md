@@ -2,20 +2,24 @@
 
 A lightweight macOS menu bar app that scans and cleans developer caches to free up disk space.
 
+<p align="center">
+  <img src=".figma/figma-main-normal.png" width="800" alt="Purgify Main Window" />
+</p>
+
 ## Features
 
+- Scans **22 cache types** (npm, Yarn, pnpm, Bun, CocoaPods, Xcode DerivedData, Gradle, Docker, Cargo, pip, Flutter, Go, and more)
+- Risk-based categorization: **Safe**, **Moderate**, **Caution**
+- Selective cleaning — choose exactly what to delete
 - Menu bar quick view + full window app
-- Scans 12 cache types categorized by risk level
 - Vietnamese & English language support
-- Scan once, clean selectively
+- Dark Mode support
 
-## What it cleans
-
-| Risk | Caches | Note |
-|------|--------|------|
-| **Safe** | npm, Yarn, Yarn Berry, Corepack, Bun, Homebrew, CocoaPods | No impact on projects |
-| **Moderate** | Xcode DerivedData, Gradle, Metro | May need rebuild |
-| **Caution** | pnpm Store, Docker Images | Review before deleting |
+<p align="center">
+  <img src=".figma/figma-main-popover.png" width="300" alt="Menu Bar" />
+  &nbsp;&nbsp;
+  <img src=".figma/figma-settings.png" width="300" alt="Settings" />
+</p>
 
 ## Install
 
@@ -24,7 +28,6 @@ A lightweight macOS menu bar app that scans and cleans developer caches to free 
 1. Download `Purgify-1.0.dmg` from [Releases](https://github.com/linhh-phv/purgify/releases)
 2. Open the DMG and drag **Purgify** to Applications
 3. First launch: right-click the app → **Open** (to bypass Gatekeeper)
-4. Purgify appears in the menu bar
 
 ### Build from source
 
@@ -36,17 +39,15 @@ cd purgify
 open Purgify/Purgify.xcodeproj
 ```
 
-1. Select **My Mac** as the build target
-2. Press **Cmd+R** to build and run
+Select **My Mac** as the build target → **Cmd+R** to build and run.
 
 > **Note:** Disable **App Sandbox** in Signing & Capabilities for full file system access.
 
 ## Usage
 
-1. Click the Purgify icon in the menu bar to see a summary of detected caches
-2. Click **Open Full App** for the detailed view
-3. Select the caches you want to clean (safe items are pre-selected)
-4. Click **Clean Selected** and confirm
+1. Click the **Purgify** icon in the menu bar to see detected caches
+2. Click **Open Full App** for the detailed 3-column view
+3. Select caches by risk level, review details, and clean selectively
 
 ## License
 
