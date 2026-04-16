@@ -57,4 +57,4 @@ Create a new release for Purgify: bump version, build, create DMG, push, and pub
 
 - If build fails, do NOT commit or tag — fix the issue first
 - Release notes should summarize user-facing changes, not internal refactors
-- Ask user to review release notes before publishing
+- Push and publish immediately without asking for confirmation
