@@ -20,9 +20,10 @@ enum AppLanguage: String, CaseIterable {
     }
 }
 
+/// Quản lý ngôn ngữ hiển thị của app.
+/// Được tạo một lần duy nhất ở PurgifyApp và inject xuống View qua @EnvironmentObject.
 @MainActor
 class LocalizationManager: ObservableObject {
-    static let shared = LocalizationManager()
 
     @Published var language: AppLanguage {
         didSet {
@@ -36,12 +37,13 @@ class LocalizationManager: ObservableObject {
     }
 
     func t(_ key: String) -> String {
-        return strings[language]?[key] ?? key
+        strings[language]?[key] ?? key
     }
+
+    // MARK: - Localization strings
 
     private let strings: [AppLanguage: [String: String]] = [
         .en: [
-            // App
             "app.title": "Purgify",
             "app.subtitle": "Clean developer caches and free up disk space",
             "app.totalCache": "total cache found",
@@ -58,7 +60,6 @@ class LocalizationManager: ObservableObject {
             "app.items": "items",
             "app.scan": "Scan",
 
-            // Risk
             "risk.safe": "Safe to Clean",
             "risk.safe.desc": "Safe to delete, no impact on projects",
             "risk.moderate": "Moderate",
@@ -68,13 +69,11 @@ class LocalizationManager: ObservableObject {
             "risk.selectAll": "Select All",
             "risk.deselectAll": "Deselect All",
 
-            // Clean confirm
             "clean.confirm.title": "Clean %@ of cache?",
             "clean.confirm.message": "This action cannot be undone. Caches will be rebuilt automatically when needed.",
             "clean.confirm.clean": "Clean",
             "clean.confirm.cancel": "Cancel",
 
-            // Cache items
             "cache.npm": "npm Cache",
             "cache.npm.detail": "Downloaded package tarballs. Rebuilds automatically on next install.",
             "cache.yarn": "Yarn Cache",
@@ -101,7 +100,6 @@ class LocalizationManager: ObservableObject {
             "cache.docker.detail": "Docker VM disk images. Use 'docker system prune' instead for safer cleanup.",
         ],
         .vi: [
-            // App
             "app.title": "Purgify",
             "app.subtitle": "Dọn dẹp bộ nhớ đệm lập trình và giải phóng dung lượng",
             "app.totalCache": "tổng bộ nhớ đệm",
@@ -118,7 +116,6 @@ class LocalizationManager: ObservableObject {
             "app.items": "mục",
             "app.scan": "Quét",
 
-            // Risk
             "risk.safe": "An toàn",
             "risk.safe.desc": "Xóa thoải mái, không ảnh hưởng dự án",
             "risk.moderate": "Trung bình",
@@ -128,13 +125,11 @@ class LocalizationManager: ObservableObject {
             "risk.selectAll": "Chọn tất cả",
             "risk.deselectAll": "Bỏ chọn tất cả",
 
-            // Clean confirm
             "clean.confirm.title": "Dọn %@ bộ nhớ đệm?",
             "clean.confirm.message": "Thao tác này không thể hoàn tác. Bộ nhớ đệm sẽ tự tạo lại khi cần.",
             "clean.confirm.clean": "Dọn dẹp",
             "clean.confirm.cancel": "Hủy",
 
-            // Cache items
             "cache.npm": "npm Cache",
             "cache.npm.detail": "Gói tải về. Tự tạo lại khi cài đặt.",
             "cache.yarn": "Yarn Cache",
