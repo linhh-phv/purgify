@@ -1,3 +1,23 @@
+<!-- project:start -->
+# Purgify
+
+macOS menu bar app for cleaning developer caches. Built with SwiftUI, MVVM pattern.
+<!-- project:end -->
+
+<!-- design:start -->
+## Design
+
+- **Figma**: https://www.figma.com/design/LOvOV9tN9Llc6DWTrGgCHA/purgify
+- **Screenshots**: All Figma reference screenshots are saved to `.figma/` folder — always use this path when calling `save_screenshots`
+<!-- design:end -->
+
+<!-- architecture:start -->
+## Architecture
+
+- **Pattern**: MVVM (Model-ViewModel-View)
+- **Layout**: 3-column (Sidebar 220px | Content List 400px | Detail Panel 460px)
+<!-- architecture:end -->
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 

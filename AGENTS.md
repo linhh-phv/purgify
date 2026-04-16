@@ -1,3 +1,16 @@
+<!-- shared:start -->
+# Project Instructions
+
+All AI coding assistants (Claude Code, Cursor, Copilot, Windsurf) should read `CLAUDE.md` for the full project instructions including:
+- Project overview
+- Design (Figma link)
+- Architecture (MVVM, project structure)
+- Workflow rules
+- GitNexus code intelligence
+
+**Read `CLAUDE.md` in the project root for all instructions.**
+<!-- shared:end -->
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 

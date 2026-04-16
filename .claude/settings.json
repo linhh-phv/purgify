@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcodebuild *)",
+      "Bash(open *.xcodeproj)",
+      "Bash(npx gitnexus *)",
+      "Bash(rm *.swift)",
+      "Bash(find * -name *.swift *)",
+      "Bash(ls *)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~/*)",
+      "Read(.env*)"
+    ]
+  }
+}

@@ -3,6 +3,10 @@
     "gitnexus": {
       "command": "npx",
       "args": ["-y", "gitnexus", "mcp"]
+    },
+    "figma-mcp-go": {
+      "command": "npx",
+      "args": ["-y", "@vkhanhqui/figma-mcp-go@latest"]
     }
   }
 }
