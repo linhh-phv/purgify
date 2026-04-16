@@ -155,6 +155,96 @@ class LocalizationManager: ObservableObject {
                 "⚠️ Deleting removes ALL Docker data — running containers will be destroyed and databases lost.\n\n" +
                 "Use 'docker system prune' in Terminal for selective cleanup instead.",
 
+            "cache.cargo":  "Cargo Cache",
+            "cache.cargo.detail":
+                "A global registry cache built up each time you run cargo build or cargo install.\n\n" +
+                "Your source code and compiled binaries are completely untouched — everything runs normally after cleaning.\n\n" +
+                "The only effect: the next cargo build re-downloads crates from crates.io, making it slightly slower.",
+
+            "cache.pip":    "pip Cache",
+            "cache.pip.detail":
+                "A global download cache built up each time you install Python packages via pip.\n\n" +
+                "Your virtual environments and installed packages are completely untouched — projects run normally after cleaning.\n\n" +
+                "The only effect: the next pip install re-downloads packages from PyPI instead of local cache.",
+
+            "cache.flutter": "Flutter Pub Cache",
+            "cache.flutter.detail":
+                "A global package cache built up each time you run flutter pub get or dart pub get.\n\n" +
+                "Your projects are completely untouched — everything runs normally after cleaning.\n\n" +
+                "The only effect: the next flutter pub get re-downloads packages from pub.dev instead of local cache.",
+
+            "cache.simulator": "iOS Simulator Cache",
+            "cache.simulator.detail":
+                "Temporary caches created by Xcode's iOS Simulator — runtime assets, translation caches, and disk images.\n\n" +
+                "Your source code, app data, and simulator devices are completely untouched.\n\n" +
+                "The only effect: simulators may take slightly longer to launch the first time after cleaning.",
+
+            "cache.maven":  "Maven Cache",
+            "cache.maven.detail":
+                "Local repository storing all downloaded JARs, POMs, and plugins from Maven builds.\n\n" +
+                "Your source code is untouched.\n\n" +
+                "The only effect: the next Maven build re-downloads all dependencies from Maven Central — expect a slower first build.",
+
+            "cache.spm":    "Swift Package Manager Cache",
+            "cache.spm.detail":
+                "A global download cache built up each time Xcode or swift build resolves Swift packages.\n\n" +
+                "Your source code and resolved packages are completely untouched — projects build normally after cleaning.\n\n" +
+                "The only effect: the next build re-downloads package sources from their Git repositories.",
+
+            "cache.go":     "Go Modules Cache",
+            "cache.go.detail":
+                "A global download cache built up each time you run go build, go get, or go mod download.\n\n" +
+                "Your source code is completely untouched — projects run normally after cleaning.\n\n" +
+                "The only effect: the next go build re-downloads modules from their source repositories.",
+
+            "cache.composer": "Composer Cache",
+            "cache.composer.detail":
+                "A global download cache built up each time you run composer install or composer update.\n\n" +
+                "Your vendor/ folders and projects are completely untouched — everything runs normally after cleaning.\n\n" +
+                "The only effect: the next composer install re-downloads packages from Packagist instead of local cache.",
+
+            "cache.bundler": "Bundler Cache",
+            "cache.bundler.detail":
+                "A global download cache built up each time you run bundle install.\n\n" +
+                "Your project gems and Gemfile.lock are completely untouched — everything runs normally after cleaning.\n\n" +
+                "The only effect: the next bundle install re-downloads gems from RubyGems.org instead of local cache.",
+
+            "cache.cypress": "Cypress Cache",
+            "cache.cypress.detail":
+                "Stores Cypress browser binaries downloaded for each version of the testing framework.\n\n" +
+                "Your test files and project code are completely untouched — this only affects the test runner itself.\n\n" +
+                "The only effect: the next cypress run re-downloads the binary, which can be 500 MB–2 GB per version.",
+
+            "cache.playwright": "Playwright Cache",
+            "cache.playwright.detail":
+                "Stores browser binaries (Chromium, Firefox, WebKit) downloaded by Playwright for testing.\n\n" +
+                "Your test files and project code are completely untouched.\n\n" +
+                "The only effect: the next npx playwright install re-downloads all browser binaries, which can be 1–3 GB total.",
+
+            "cache.poetry": "Poetry Cache",
+            "cache.poetry.detail":
+                "A global download cache built up each time you run poetry install or poetry add.\n\n" +
+                "Your virtual environments and installed packages are completely untouched — projects run normally after cleaning.\n\n" +
+                "The only effect: the next poetry install re-downloads packages from PyPI instead of local cache.",
+
+            "cache.cocoapodsSpecs": "CocoaPods Specs",
+            "cache.cocoapodsSpecs.detail":
+                "The local clone of the CocoaPods specs repository — a database of all published pod versions and their metadata.\n\n" +
+                "Your Pods/ folders and project builds are completely untouched.\n\n" +
+                "The only effect: the next pod install re-clones the specs repo from GitHub, which can take a minute or two.",
+
+            "cache.terraform": "Terraform Plugin Cache",
+            "cache.terraform.detail":
+                "A global cache of Terraform provider plugins downloaded during terraform init.\n\n" +
+                "Your infrastructure code and state files are completely untouched.\n\n" +
+                "The only effect: the next terraform init re-downloads provider plugins from the Terraform Registry.",
+
+            "cache.android": "Android SDK Cache",
+            "cache.android.detail":
+                "Temporary caches created by the Android SDK tools — build tool metadata, ADB data, and SDK manager cache.\n\n" +
+                "Your Android projects, installed SDKs, and AVD emulators are completely untouched.\n\n" +
+                "The only effect: some SDK tools may take slightly longer on their next run.",
+
             // Sidebar
             "sidebar.scanAgain": "Scan Again",
 
@@ -315,6 +405,96 @@ class LocalizationManager: ObservableObject {
                 "Ảnh đĩa VM của Docker Desktop chứa toàn bộ containers, images, volumes và databases.\n\n" +
                 "⚠️ Xóa sẽ mất TOÀN BỘ dữ liệu Docker — containers đang chạy bị hủy, database bị mất.\n\n" +
                 "Nên dùng 'docker system prune' trong Terminal để dọn chọn lọc thay thế.",
+
+            "cache.cargo":  "Cargo Cache",
+            "cache.cargo.detail":
+                "Cache registry toàn cục, tích lũy mỗi khi bạn chạy cargo build hoặc cargo install.\n\n" +
+                "Mã nguồn và các binary đã build hoàn toàn không bị ảnh hưởng — mọi thứ vẫn chạy bình thường sau khi xóa.\n\n" +
+                "Tác động duy nhất: lần cargo build tiếp theo tải lại các crate từ crates.io thay vì cache local, chậm hơn một chút.",
+
+            "cache.pip":    "pip Cache",
+            "cache.pip.detail":
+                "Cache tải gói toàn cục, tích lũy mỗi khi bạn cài Python package qua pip.\n\n" +
+                "Virtual environment và các package đã cài hoàn toàn không bị ảnh hưởng — dự án vẫn chạy bình thường sau khi xóa.\n\n" +
+                "Tác động duy nhất: lần pip install tiếp theo tải lại từ PyPI thay vì cache local.",
+
+            "cache.flutter": "Flutter Pub Cache",
+            "cache.flutter.detail":
+                "Cache package toàn cục, tích lũy mỗi khi bạn chạy flutter pub get hoặc dart pub get.\n\n" +
+                "Các dự án của bạn hoàn toàn không bị ảnh hưởng — mọi thứ vẫn chạy bình thường sau khi xóa.\n\n" +
+                "Tác động duy nhất: lần flutter pub get tiếp theo tải lại từ pub.dev thay vì cache local.",
+
+            "cache.simulator": "iOS Simulator Cache",
+            "cache.simulator.detail":
+                "Cache tạm thời của iOS Simulator trong Xcode — runtime assets, translation cache và disk images.\n\n" +
+                "Mã nguồn, dữ liệu app và thiết bị simulator hoàn toàn không bị ảnh hưởng.\n\n" +
+                "Tác động duy nhất: simulator có thể khởi động chậm hơn một chút ở lần đầu sau khi xóa.",
+
+            "cache.maven":  "Maven Cache",
+            "cache.maven.detail":
+                "Repository local lưu tất cả JAR, POM và plugin đã tải từ các lần Maven build.\n\n" +
+                "Mã nguồn của bạn không bị ảnh hưởng.\n\n" +
+                "Tác động duy nhất: lần Maven build tiếp theo tải lại toàn bộ dependencies từ Maven Central — lần đầu sẽ chậm hơn.",
+
+            "cache.spm":    "Swift Package Manager Cache",
+            "cache.spm.detail":
+                "Cache tải toàn cục, tích lũy mỗi khi Xcode hoặc swift build phân giải Swift packages.\n\n" +
+                "Mã nguồn và các package đã resolved hoàn toàn không bị ảnh hưởng — dự án build bình thường sau khi xóa.\n\n" +
+                "Tác động duy nhất: lần build tiếp theo tải lại package sources từ các Git repository.",
+
+            "cache.go":     "Go Modules Cache",
+            "cache.go.detail":
+                "Cache tải module toàn cục, tích lũy mỗi khi bạn chạy go build, go get hoặc go mod download.\n\n" +
+                "Mã nguồn hoàn toàn không bị ảnh hưởng — dự án vẫn chạy bình thường sau khi xóa.\n\n" +
+                "Tác động duy nhất: lần go build tiếp theo tải lại module từ source repository.",
+
+            "cache.composer": "Composer Cache",
+            "cache.composer.detail":
+                "Cache tải gói toàn cục, tích lũy mỗi khi bạn chạy composer install hoặc composer update.\n\n" +
+                "Thư mục vendor/ và các dự án hoàn toàn không bị ảnh hưởng — mọi thứ vẫn chạy bình thường.\n\n" +
+                "Tác động duy nhất: lần composer install tiếp theo tải lại từ Packagist thay vì cache local.",
+
+            "cache.bundler": "Bundler Cache",
+            "cache.bundler.detail":
+                "Cache tải gem toàn cục, tích lũy mỗi khi bạn chạy bundle install.\n\n" +
+                "Gemfile.lock và các gem trong dự án hoàn toàn không bị ảnh hưởng — mọi thứ vẫn chạy bình thường.\n\n" +
+                "Tác động duy nhất: lần bundle install tiếp theo tải lại từ RubyGems.org thay vì cache local.",
+
+            "cache.cypress": "Cypress Cache",
+            "cache.cypress.detail":
+                "Lưu các browser binary được tải về cho từng phiên bản Cypress testing framework.\n\n" +
+                "File test và mã nguồn hoàn toàn không bị ảnh hưởng — chỉ ảnh hưởng đến test runner.\n\n" +
+                "Tác động duy nhất: lần cypress run tiếp theo tải lại binary, có thể 500 MB–2 GB mỗi phiên bản.",
+
+            "cache.playwright": "Playwright Cache",
+            "cache.playwright.detail":
+                "Lưu các browser binary (Chromium, Firefox, WebKit) được Playwright tải về để chạy test.\n\n" +
+                "File test và mã nguồn hoàn toàn không bị ảnh hưởng.\n\n" +
+                "Tác động duy nhất: lần npx playwright install tiếp theo tải lại toàn bộ browser binary, có thể 1–3 GB.",
+
+            "cache.poetry": "Poetry Cache",
+            "cache.poetry.detail":
+                "Cache tải gói toàn cục, tích lũy mỗi khi bạn chạy poetry install hoặc poetry add.\n\n" +
+                "Virtual environment và các package đã cài hoàn toàn không bị ảnh hưởng — dự án vẫn chạy bình thường.\n\n" +
+                "Tác động duy nhất: lần poetry install tiếp theo tải lại từ PyPI thay vì cache local.",
+
+            "cache.cocoapodsSpecs": "CocoaPods Specs",
+            "cache.cocoapodsSpecs.detail":
+                "Bản sao local của CocoaPods specs repository — cơ sở dữ liệu chứa metadata của tất cả pod đã xuất bản.\n\n" +
+                "Thư mục Pods/ và các project build hoàn toàn không bị ảnh hưởng.\n\n" +
+                "Tác động duy nhất: lần pod install tiếp theo clone lại specs repo từ GitHub, có thể mất 1–2 phút.",
+
+            "cache.terraform": "Terraform Plugin Cache",
+            "cache.terraform.detail":
+                "Cache toàn cục lưu các Terraform provider plugin được tải về khi chạy terraform init.\n\n" +
+                "Mã nguồn infrastructure và state file hoàn toàn không bị ảnh hưởng.\n\n" +
+                "Tác động duy nhất: lần terraform init tiếp theo tải lại provider plugin từ Terraform Registry.",
+
+            "cache.android": "Android SDK Cache",
+            "cache.android.detail":
+                "Cache tạm thời của Android SDK tools — build tool metadata, ADB data và SDK manager cache.\n\n" +
+                "Dự án Android, SDK đã cài và AVD emulator hoàn toàn không bị ảnh hưởng.\n\n" +
+                "Tác động duy nhất: một số SDK tool có thể chạy chậm hơn một chút ở lần đầu sau khi xóa.",
 
             // Sidebar
             "sidebar.scanAgain": "Quét lại",
