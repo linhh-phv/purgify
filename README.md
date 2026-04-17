@@ -23,7 +23,7 @@ A lightweight macOS menu bar app that scans and cleans developer caches to free 
 
 ## Install
 
-1. Download the latest DMG from [Releases](https://github.com/linhh-phv/purgify/releases/latest)
+1. Purchase and download from [decx.lemonsqueezy.com](https://decx.lemonsqueezy.com/checkout/buy/20811a60-a99f-42de-b650-42aa74447a6f)
 2. Open the DMG and drag **Purgify** to Applications
 3. First launch: right-click the app → **Open** (to bypass Gatekeeper)
 
