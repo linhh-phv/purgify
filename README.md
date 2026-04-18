@@ -1,6 +1,6 @@
 # Purgify
 
-A lightweight macOS menu bar app that scans and cleans developer caches to free up disk space.
+A lightweight macOS menu bar app that scans and cleans caches across your Mac — developer tools, browsers, apps, and system — to free up disk space.
 
 <p align="center">
   <img src=".figma/figma-main-normal.png" width="800" alt="Purgify Main Window" />
@@ -8,7 +8,14 @@ A lightweight macOS menu bar app that scans and cleans developer caches to free 
 
 ## Features
 
-- Scans **22 cache types** (npm, Yarn, pnpm, Bun, CocoaPods, Xcode DerivedData, Gradle, Docker, Cargo, pip, Flutter, Go, and more)
+- Scans **50 cache types** across categories:
+  - **Developer tools** — npm, Yarn, pnpm, Bun, CocoaPods, Xcode DerivedData, Gradle, Maven, Docker, Cargo, pip, Poetry, Flutter, Go, Terraform, and more
+  - **Browsers** — Chrome, Safari, Arc, Firefox, Brave, Edge
+  - **Media apps** — Spotify, Apple Music
+  - **Communication** — Slack, MS Teams, Discord, Zoom, Telegram
+  - **Creative** — Adobe Media Cache
+  - **IDEs & editors** — JetBrains, VS Code
+  - **System** — QuickLook, App Store, User Logs, Mail Downloads, iOS Device Support
 - Risk-based categorization: **Safe**, **Moderate**, **Caution**
 - Selective cleaning — choose exactly what to delete
 - Menu bar quick view + full window app

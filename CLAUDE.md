@@ -1,7 +1,7 @@
 <!-- project:start -->
 # Purgify
 
-macOS menu bar app for cleaning developer caches. Built with SwiftUI, MVVM pattern.
+macOS menu bar app for cleaning caches across the Mac — developer tools, browsers, media apps, communication apps, creative apps, and system. Built with SwiftUI, MVVM pattern.
 <!-- project:end -->
 
 <!-- design:start -->
@@ -21,7 +21,7 @@ macOS menu bar app for cleaning developer caches. Built with SwiftUI, MVVM patte
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **purgify** (27 symbols, 25 relationships, 0 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **purgify** (79 symbols, 73 relationships, 0 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 

@@ -50,10 +50,10 @@ class LocalizationManager: ObservableObject {
 
             // App
             "app.title":          "Purgify",
-            "app.subtitle":       "Clean developer caches and free up disk space",
+            "app.subtitle":       "Clean caches across your Mac and free up disk space",
             "app.totalCache":     "total cache found",
             "app.allClean":       "All clean!",
-            "app.allCleanDesc":   "No developer caches found on this system",
+            "app.allCleanDesc":   "No caches found on this Mac",
             "app.scanning":       "Scanning caches...",
             "app.selected":       "Selected",
             "app.cleanSelected":  "Clean Selected",
@@ -245,6 +245,158 @@ class LocalizationManager: ObservableObject {
                 "Your Android projects, installed SDKs, and AVD emulators are completely untouched.\n\n" +
                 "The only effect: some SDK tools may take slightly longer on their next run.",
 
+            // Browsers
+
+            "cache.chrome": "Google Chrome Cache",
+            "cache.chrome.detail":
+                "Stores web page data (HTML, images, scripts) so Chrome can load sites faster on revisit.\n\n" +
+                "Your bookmarks, history, passwords, extensions, and logged-in sessions are NOT touched — only the disk cache.\n\n" +
+                "The only effect: websites load slightly slower on their next visit while Chrome rebuilds the cache.",
+
+            "cache.safari": "Safari Cache",
+            "cache.safari.detail":
+                "Stores web page data so Safari can load sites faster on revisit.\n\n" +
+                "Your bookmarks, Reading List, history, and iCloud tabs are NOT touched — only the disk cache.\n\n" +
+                "The only effect: websites load slightly slower on their next visit while Safari rebuilds the cache.",
+
+            "cache.arc": "Arc Browser Cache",
+            "cache.arc.detail":
+                "Stores web page data so Arc can load sites faster on revisit.\n\n" +
+                "Your Spaces, pinned tabs, Easels, and logged-in sessions are NOT touched — only the disk cache.\n\n" +
+                "The only effect: websites load slightly slower on their next visit.",
+
+            "cache.firefox": "Firefox Cache",
+            "cache.firefox.detail":
+                "Stores web page data per profile so Firefox can load sites faster on revisit.\n\n" +
+                "Your bookmarks, history, passwords, and extensions are NOT touched — only the disk cache.\n\n" +
+                "The only effect: websites load slightly slower on their next visit.",
+
+            "cache.brave": "Brave Browser Cache",
+            "cache.brave.detail":
+                "Stores web page data so Brave can load sites faster on revisit.\n\n" +
+                "Your bookmarks, history, Brave Rewards, wallet, and logged-in sessions are NOT touched — only the disk cache.\n\n" +
+                "The only effect: websites load slightly slower on their next visit.",
+
+            "cache.edge": "Microsoft Edge Cache",
+            "cache.edge.detail":
+                "Stores web page data so Edge can load sites faster on revisit.\n\n" +
+                "Your favorites, history, passwords, Collections, and logged-in sessions are NOT touched — only the disk cache.\n\n" +
+                "The only effect: websites load slightly slower on their next visit.",
+
+            // Media apps
+
+            "cache.spotify": "Spotify Cache",
+            "cache.spotify.detail":
+                "Stores streamed song data so Spotify can play tracks instantly without re-streaming.\n\n" +
+                "Your downloaded-for-offline songs, playlists, and library are NOT touched — those live in a separate location.\n\n" +
+                "The only effect: frequently played tracks may need to re-buffer the next time you stream them.",
+
+            "cache.appleMusic": "Apple Music Cache",
+            "cache.appleMusic.detail":
+                "Stores artwork and streamed song data so Apple Music loads faster.\n\n" +
+                "Your library, playlists, and downloaded-for-offline songs are NOT touched.\n\n" +
+                "The only effect: artwork and recently streamed songs may need to re-download on next play.",
+
+            // System & utilities
+
+            "cache.quicklook": "QuickLook Thumbnails",
+            "cache.quicklook.detail":
+                "Thumbnail previews generated when you use Space to preview files in Finder.\n\n" +
+                "Your files are never touched.\n\n" +
+                "The only effect: thumbnails regenerate the first time you preview each file again — normally instant.",
+
+            "cache.appstore": "App Store Cache",
+            "cache.appstore.detail":
+                "Temporary data used by the Mac App Store app — icons, banners, and download metadata.\n\n" +
+                "Your installed apps and purchase history are NOT touched.\n\n" +
+                "The only effect: the App Store app may take slightly longer to load on the next launch.",
+
+            "cache.userLogs": "User Logs",
+            "cache.userLogs.detail":
+                "App and system log files written to ~/Library/Logs by macOS and various apps over time.\n\n" +
+                "Log files are informational — deleting them does not affect any running app.\n\n" +
+                "The only effect: you lose historical logs that could help debug a past crash. Apps keep logging normally afterward.",
+
+            // IDEs / Editors
+
+            "cache.jetbrains": "JetBrains IDE Cache",
+            "cache.jetbrains.detail":
+                "Shared cache used by IntelliJ IDEA, WebStorm, PyCharm, Rider, GoLand, and other JetBrains IDEs — indexes, VCS snapshots, and plugin data.\n\n" +
+                "Your projects and settings are NOT touched.\n\n" +
+                "⚠️ Expect a slower first project open after cleaning — the IDE rebuilds indexes, which can take minutes on large projects.",
+
+            "cache.vscode": "VS Code Cache",
+            "cache.vscode.detail":
+                "Workspace cache, extension data, and code completion caches used by Visual Studio Code.\n\n" +
+                "Your projects, settings, and installed extensions are NOT touched.\n\n" +
+                "The only effect: IntelliSense and search may be slightly slower the first time you reopen a workspace.",
+
+            "cache.vscodeData": "VS Code Cached Data",
+            "cache.vscodeData.detail":
+                "Precompiled JavaScript cache VS Code builds up to speed up startup.\n\n" +
+                "Your projects, settings, and extensions are NOT touched.\n\n" +
+                "The only effect: VS Code startup may be slightly slower the first time after cleaning — the cache regenerates automatically.",
+
+            // Communication apps
+
+            "cache.slack": "Slack Cache",
+            "cache.slack.detail":
+                "Cached images, GIFs, and attachments from Slack channels and DMs.\n\n" +
+                "Your messages, channels, and workspaces are NOT touched — they live on Slack's servers and re-sync automatically.\n\n" +
+                "The only effect: images and files will re-download when you scroll back through channels.",
+
+            "cache.teams": "Microsoft Teams Cache",
+            "cache.teams.detail":
+                "Cached images, attachments, and chat assets from Microsoft Teams.\n\n" +
+                "Your messages, teams, and meetings are NOT touched — they re-sync from Microsoft's servers.\n\n" +
+                "The only effect: chat images and files will re-download when viewed again. Often fixes Teams glitches.",
+
+            "cache.discord": "Discord Cache",
+            "cache.discord.detail":
+                "Cached images, GIFs, and attachments from Discord servers and DMs.\n\n" +
+                "Your messages, servers, and friends are NOT touched — they live on Discord's servers.\n\n" +
+                "The only effect: images and files will re-download when you scroll back through channels.",
+
+            "cache.zoom": "Zoom Cache",
+            "cache.zoom.detail":
+                "Temporary data used by the Zoom client — profile pictures, meeting thumbnails, and transient assets.\n\n" +
+                "Your recorded meetings, chat history, and account data are NOT touched.\n\n" +
+                "The only effect: some UI assets may reload on the next Zoom launch.",
+
+            "cache.telegram": "Telegram Cache",
+            "cache.telegram.detail":
+                "Cached images, videos, stickers, and voice messages from your Telegram chats.\n\n" +
+                "Your messages, contacts, and chats are NOT touched — Telegram re-downloads media on demand.\n\n" +
+                "⚠️ Recently-viewed photos/videos in chats will need to re-download when you scroll back to them.",
+
+            // Creative apps
+
+            "cache.adobeMedia": "Adobe Media Cache Files",
+            "cache.adobeMedia.detail":
+                "Media cache files generated by Premiere Pro, After Effects, and Audition when importing videos/audio — often the BIGGEST cache on a creative Mac.\n\n" +
+                "Your project files (.prproj, .aep) and source media are NOT touched.\n\n" +
+                "⚠️ Active projects will need to re-generate previews and waveforms on next open — this can take a long time for large timelines.",
+
+            "cache.adobeMediaDB": "Adobe Media Cache Database",
+            "cache.adobeMediaDB.detail":
+                "Metadata database that tracks the Media Cache Files above.\n\n" +
+                "Your Adobe projects are NOT touched.\n\n" +
+                "Safe to delete alongside Media Cache Files — Adobe apps rebuild the database automatically.",
+
+            // Caution — non-dev
+
+            "cache.mailDownloads": "Mail Downloads",
+            "cache.mailDownloads.detail":
+                "Email attachments that Apple Mail has opened or downloaded over time.\n\n" +
+                "⚠️ These are REAL email attachments — files, PDFs, photos sent to you. If the original email is deleted or on a server without IMAP sync, deleting here can lose them permanently.\n\n" +
+                "Review the folder in Finder before cleaning.",
+
+            "cache.iosDeviceSupport": "iOS/watchOS Device Support",
+            "cache.iosDeviceSupport.detail":
+                "Symbol files Xcode downloads the first time you connect an iOS or watchOS device for debugging — one folder per OS version (can be 500 MB–2 GB each).\n\n" +
+                "Your Xcode projects and devices are NOT touched.\n\n" +
+                "⚠️ The next time you connect a device, Xcode must re-download its support files — this can take several minutes and requires an internet connection.",
+
             // Sidebar
             "sidebar.scanAgain": "Scan Again",
 
@@ -286,7 +438,7 @@ class LocalizationManager: ObservableObject {
             "settings.sendFeedback":  "Send Feedback",
 
             // About sheet
-            "about.description":  "Clean your Mac's developer caches.",
+            "about.description":  "Clean every cache on your Mac — developer tools, browsers, apps, and system.",
             "about.madeBy":       "Made with ♥ by",
             "about.author":       "Pham Linh",
             "about.viewOnGitHub": "View on GitHub",
@@ -299,7 +451,7 @@ class LocalizationManager: ObservableObject {
 
             // App
             "app.title":          "Purgify",
-            "app.subtitle":       "Dọn dẹp bộ nhớ đệm lập trình và giải phóng dung lượng",
+            "app.subtitle":       "Dọn dẹp bộ nhớ đệm trên Mac và giải phóng dung lượng",
             "app.totalCache":     "tổng bộ nhớ đệm",
             "app.allClean":       "Sạch sẽ!",
             "app.allCleanDesc":   "Không tìm thấy bộ nhớ đệm nào trên máy",
@@ -494,6 +646,158 @@ class LocalizationManager: ObservableObject {
                 "Dự án Android, SDK đã cài và AVD emulator hoàn toàn không bị ảnh hưởng.\n\n" +
                 "Tác động duy nhất: một số SDK tool có thể chạy chậm hơn một chút ở lần đầu sau khi xóa.",
 
+            // Trình duyệt
+
+            "cache.chrome": "Google Chrome Cache",
+            "cache.chrome.detail":
+                "Lưu dữ liệu trang web (HTML, ảnh, script) để Chrome tải lại các site nhanh hơn.\n\n" +
+                "Bookmark, history, mật khẩu, extension và các phiên đăng nhập KHÔNG bị đụng — chỉ xóa cache ổ đĩa.\n\n" +
+                "Tác động duy nhất: website tải chậm hơn một chút ở lần truy cập kế tiếp trong khi Chrome build lại cache.",
+
+            "cache.safari": "Safari Cache",
+            "cache.safari.detail":
+                "Lưu dữ liệu trang web để Safari tải lại các site nhanh hơn.\n\n" +
+                "Bookmark, Reading List, history và iCloud tabs KHÔNG bị đụng — chỉ xóa cache ổ đĩa.\n\n" +
+                "Tác động duy nhất: website tải chậm hơn một chút ở lần truy cập kế tiếp.",
+
+            "cache.arc": "Arc Browser Cache",
+            "cache.arc.detail":
+                "Lưu dữ liệu trang web để Arc tải lại các site nhanh hơn.\n\n" +
+                "Spaces, pinned tabs, Easels và các phiên đăng nhập KHÔNG bị đụng — chỉ xóa cache ổ đĩa.\n\n" +
+                "Tác động duy nhất: website tải chậm hơn một chút ở lần truy cập kế tiếp.",
+
+            "cache.firefox": "Firefox Cache",
+            "cache.firefox.detail":
+                "Lưu dữ liệu trang web theo từng profile để Firefox tải lại các site nhanh hơn.\n\n" +
+                "Bookmark, history, mật khẩu và extension KHÔNG bị đụng — chỉ xóa cache ổ đĩa.\n\n" +
+                "Tác động duy nhất: website tải chậm hơn một chút ở lần truy cập kế tiếp.",
+
+            "cache.brave": "Brave Browser Cache",
+            "cache.brave.detail":
+                "Lưu dữ liệu trang web để Brave tải lại các site nhanh hơn.\n\n" +
+                "Bookmark, history, Brave Rewards, ví và các phiên đăng nhập KHÔNG bị đụng — chỉ xóa cache ổ đĩa.\n\n" +
+                "Tác động duy nhất: website tải chậm hơn một chút ở lần truy cập kế tiếp.",
+
+            "cache.edge": "Microsoft Edge Cache",
+            "cache.edge.detail":
+                "Lưu dữ liệu trang web để Edge tải lại các site nhanh hơn.\n\n" +
+                "Favorites, history, mật khẩu, Collections và các phiên đăng nhập KHÔNG bị đụng — chỉ xóa cache ổ đĩa.\n\n" +
+                "Tác động duy nhất: website tải chậm hơn một chút ở lần truy cập kế tiếp.",
+
+            // Ứng dụng media
+
+            "cache.spotify": "Spotify Cache",
+            "cache.spotify.detail":
+                "Lưu dữ liệu bài hát đã stream để Spotify phát ngay lập tức mà không cần stream lại.\n\n" +
+                "Bài hát tải offline, playlist và thư viện KHÔNG bị đụng — chúng nằm ở vị trí khác.\n\n" +
+                "Tác động duy nhất: các bài nghe gần đây có thể phải buffer lại ở lần stream kế tiếp.",
+
+            "cache.appleMusic": "Apple Music Cache",
+            "cache.appleMusic.detail":
+                "Lưu artwork và dữ liệu bài hát stream để Apple Music tải nhanh hơn.\n\n" +
+                "Thư viện, playlist và bài hát tải offline KHÔNG bị đụng.\n\n" +
+                "Tác động duy nhất: artwork và các bài stream gần đây có thể phải tải lại ở lần phát kế tiếp.",
+
+            // Hệ thống & tiện ích
+
+            "cache.quicklook": "QuickLook Thumbnails",
+            "cache.quicklook.detail":
+                "Thumbnail preview được tạo khi bạn bấm Space xem file trong Finder.\n\n" +
+                "Các file của bạn không hề bị đụng.\n\n" +
+                "Tác động duy nhất: thumbnail sẽ được tạo lại ở lần preview đầu tiên sau khi xóa — thường là tức thì.",
+
+            "cache.appstore": "App Store Cache",
+            "cache.appstore.detail":
+                "Dữ liệu tạm của app Mac App Store — icon, banner và metadata tải xuống.\n\n" +
+                "Các app đã cài và lịch sử mua hàng KHÔNG bị đụng.\n\n" +
+                "Tác động duy nhất: App Store có thể mở chậm hơn một chút ở lần khởi động kế tiếp.",
+
+            "cache.userLogs": "User Logs",
+            "cache.userLogs.detail":
+                "File log của app và hệ thống được ghi vào ~/Library/Logs theo thời gian.\n\n" +
+                "Log chỉ mang tính tham khảo — xóa không ảnh hưởng đến app đang chạy.\n\n" +
+                "Tác động duy nhất: bạn mất log cũ có thể dùng để debug crash trong quá khứ. App vẫn ghi log bình thường sau đó.",
+
+            // IDE / Editor
+
+            "cache.jetbrains": "JetBrains IDE Cache",
+            "cache.jetbrains.detail":
+                "Cache dùng chung bởi IntelliJ IDEA, WebStorm, PyCharm, Rider, GoLand và các IDE JetBrains khác — index, VCS snapshot và plugin data.\n\n" +
+                "Dự án và cài đặt của bạn KHÔNG bị đụng.\n\n" +
+                "⚠️ Lần mở dự án đầu tiên sau khi xóa sẽ chậm — IDE phải build lại index, có thể mất vài phút với dự án lớn.",
+
+            "cache.vscode": "VS Code Cache",
+            "cache.vscode.detail":
+                "Workspace cache, extension data và code completion cache của Visual Studio Code.\n\n" +
+                "Dự án, cài đặt và các extension đã cài KHÔNG bị đụng.\n\n" +
+                "Tác động duy nhất: IntelliSense và search có thể chậm hơn một chút ở lần mở lại workspace đầu tiên.",
+
+            "cache.vscodeData": "VS Code Cached Data",
+            "cache.vscodeData.detail":
+                "Cache JavaScript đã biên dịch trước để VS Code khởi động nhanh hơn.\n\n" +
+                "Dự án, cài đặt và extension KHÔNG bị đụng.\n\n" +
+                "Tác động duy nhất: VS Code khởi động chậm hơn một chút ở lần đầu sau khi xóa — cache tự build lại.",
+
+            // Ứng dụng giao tiếp
+
+            "cache.slack": "Slack Cache",
+            "cache.slack.detail":
+                "Cache ảnh, GIF và attachment từ các kênh Slack và DM.\n\n" +
+                "Tin nhắn, kênh và workspace KHÔNG bị đụng — chúng nằm trên server Slack và tự sync lại.\n\n" +
+                "Tác động duy nhất: ảnh và file sẽ tải lại khi bạn cuộn lại các kênh cũ.",
+
+            "cache.teams": "Microsoft Teams Cache",
+            "cache.teams.detail":
+                "Cache ảnh, attachment và asset chat của Microsoft Teams.\n\n" +
+                "Tin nhắn, team và meeting KHÔNG bị đụng — chúng sync lại từ server Microsoft.\n\n" +
+                "Tác động duy nhất: ảnh và file chat sẽ tải lại khi xem lại. Thường giúp fix các lỗi vặt của Teams.",
+
+            "cache.discord": "Discord Cache",
+            "cache.discord.detail":
+                "Cache ảnh, GIF và attachment từ các server Discord và DM.\n\n" +
+                "Tin nhắn, server và bạn bè KHÔNG bị đụng — chúng nằm trên server Discord.\n\n" +
+                "Tác động duy nhất: ảnh và file sẽ tải lại khi bạn cuộn lại các kênh cũ.",
+
+            "cache.zoom": "Zoom Cache",
+            "cache.zoom.detail":
+                "Dữ liệu tạm của client Zoom — ảnh đại diện, thumbnail meeting và asset tạm.\n\n" +
+                "Meeting đã ghi, lịch sử chat và dữ liệu tài khoản KHÔNG bị đụng.\n\n" +
+                "Tác động duy nhất: một số UI asset có thể tải lại ở lần mở Zoom kế tiếp.",
+
+            "cache.telegram": "Telegram Cache",
+            "cache.telegram.detail":
+                "Cache ảnh, video, sticker và tin nhắn thoại từ các chat Telegram.\n\n" +
+                "Tin nhắn, contact và chat KHÔNG bị đụng — Telegram sẽ tải lại media khi cần.\n\n" +
+                "⚠️ Ảnh/video đã xem gần đây trong chat sẽ phải tải lại khi bạn cuộn ngược lên.",
+
+            // Ứng dụng sáng tạo
+
+            "cache.adobeMedia": "Adobe Media Cache Files",
+            "cache.adobeMedia.detail":
+                "File media cache do Premiere Pro, After Effects, Audition tạo khi import video/audio — thường là cache LỚN NHẤT trên Mac của dân sáng tạo.\n\n" +
+                "File dự án (.prproj, .aep) và media gốc KHÔNG bị đụng.\n\n" +
+                "⚠️ Các dự án đang làm sẽ phải tạo lại preview và waveform ở lần mở kế tiếp — có thể mất kha khá thời gian với timeline lớn.",
+
+            "cache.adobeMediaDB": "Adobe Media Cache Database",
+            "cache.adobeMediaDB.detail":
+                "Database metadata quản lý các Media Cache Files ở trên.\n\n" +
+                "Dự án Adobe KHÔNG bị đụng.\n\n" +
+                "An toàn khi xóa cùng với Media Cache Files — Adobe tự build lại database.",
+
+            // Caution — non-dev
+
+            "cache.mailDownloads": "Mail Downloads",
+            "cache.mailDownloads.detail":
+                "File đính kèm email mà Apple Mail đã mở hoặc tải xuống theo thời gian.\n\n" +
+                "⚠️ Đây là attachment THẬT — file, PDF, ảnh gửi cho bạn. Nếu email gốc đã bị xóa hoặc ở server không sync IMAP, xóa ở đây có thể mất vĩnh viễn.\n\n" +
+                "Nên xem qua thư mục trong Finder trước khi dọn.",
+
+            "cache.iosDeviceSupport": "iOS/watchOS Device Support",
+            "cache.iosDeviceSupport.detail":
+                "File symbol mà Xcode tải về lần đầu bạn cắm thiết bị iOS/watchOS để debug — mỗi phiên bản OS một thư mục (có thể 500 MB–2 GB mỗi cái).\n\n" +
+                "Dự án Xcode và thiết bị KHÔNG bị đụng.\n\n" +
+                "⚠️ Lần cắm thiết bị kế tiếp, Xcode sẽ phải tải lại support files — có thể mất vài phút và cần internet.",
+
             // Sidebar
             "sidebar.scanAgain": "Quét lại",
 
@@ -535,7 +839,7 @@ class LocalizationManager: ObservableObject {
             "settings.sendFeedback":  "Gửi phản hồi",
 
             // About sheet
-            "about.description":  "Dọn dẹp bộ nhớ đệm lập trình trên Mac.",
+            "about.description":  "Dọn dẹp mọi bộ nhớ đệm trên Mac — developer tools, trình duyệt, ứng dụng và hệ thống.",
             "about.madeBy":       "Được làm với ♥ bởi",
             "about.author":       "Pham Linh",
             "about.viewOnGitHub": "Xem trên GitHub",
