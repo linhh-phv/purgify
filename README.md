@@ -8,14 +8,16 @@ A lightweight macOS menu bar app that scans and cleans caches across your Mac �
 
 ## Features
 
-- Scans **50 cache types** across categories:
-  - **Developer tools** — npm, Yarn, pnpm, Bun, CocoaPods, Xcode DerivedData, Gradle, Maven, Docker, Cargo, pip, Poetry, Flutter, Go, Terraform, and more
-  - **Browsers** — Chrome, Safari, Arc, Firefox, Brave, Edge
-  - **Media apps** — Spotify, Apple Music
+- Scans **72 cache types** across categories:
+  - **Developer tools** — npm, Yarn, pnpm, Bun, CocoaPods, Xcode DerivedData, SwiftUI Previews, Gradle, Maven, Docker, Cargo, pip, Poetry, Flutter, Go, Terraform, nvm, and more
+  - **Browsers** — Chrome, Safari, Arc, Firefox, Brave, Edge, Vivaldi, Opera, DuckDuckGo
+  - **Media apps** — Spotify, Apple Music, VLC, IINA, Plex
   - **Communication** — Slack, MS Teams, Discord, Zoom, Telegram
-  - **Creative** — Adobe Media Cache
-  - **IDEs & editors** — JetBrains, VS Code
-  - **System** — QuickLook, App Store, User Logs, Mail Downloads, iOS Device Support
+  - **Creative** — Adobe Media Cache, Sketch
+  - **IDEs & editors** — JetBrains, VS Code, Cursor, Zed, Sublime Text
+  - **Productivity** — Raycast, Notion, Obsidian
+  - **Games** — Steam
+  - **System** — QuickLook, App Store, User Logs, Diagnostic Reports, Mail Downloads, iOS/watchOS/tvOS/visionOS Device Support
 - Risk-based categorization: **Safe**, **Moderate**, **Caution**
 - Selective cleaning — choose exactly what to delete
 - Menu bar quick view + full window app

@@ -36,15 +36,24 @@ enum CacheDefinitions {
         CacheDefinition(nameKey: "cache.firefox",     detailKey: "cache.firefox.detail",     path: "~/Library/Caches/Firefox/Profiles",               icon: "flame.fill",            iconColor: Color(red: 1.00, green: 0.44, blue: 0.22), risk: .safe),
         CacheDefinition(nameKey: "cache.brave",       detailKey: "cache.brave.detail",       path: "~/Library/Caches/BraveSoftware/Brave-Browser",    icon: "shield.fill",           iconColor: Color(red: 0.98, green: 0.33, blue: 0.17), risk: .safe),
         CacheDefinition(nameKey: "cache.edge",        detailKey: "cache.edge.detail",        path: "~/Library/Caches/Microsoft Edge",                 icon: "network",               iconColor: Color(red: 0.00, green: 0.47, blue: 0.83), risk: .safe),
+        CacheDefinition(nameKey: "cache.vivaldi",     detailKey: "cache.vivaldi.detail",     path: "~/Library/Caches/com.vivaldi.Vivaldi",            icon: "globe",                 iconColor: Color(red: 0.94, green: 0.22, blue: 0.22), risk: .safe),
+        CacheDefinition(nameKey: "cache.opera",       detailKey: "cache.opera.detail",       path: "~/Library/Caches/com.operasoftware.Opera",        icon: "globe",                 iconColor: Color(red: 1.00, green: 0.11, blue: 0.18), risk: .safe),
+        CacheDefinition(nameKey: "cache.duckduckgo",  detailKey: "cache.duckduckgo.detail",  path: "~/Library/Caches/com.duckduckgo.macos.browser",   icon: "shield.fill",           iconColor: Color(red: 0.87, green: 0.35, blue: 0.20), risk: .safe),
 
         // MARK: Safe — Media apps
         CacheDefinition(nameKey: "cache.spotify",     detailKey: "cache.spotify.detail",     path: "~/Library/Caches/com.spotify.client",             icon: "music.note",            iconColor: Color(red: 0.11, green: 0.72, blue: 0.33), risk: .safe),
         CacheDefinition(nameKey: "cache.appleMusic",  detailKey: "cache.appleMusic.detail",  path: "~/Library/Caches/com.apple.Music",                icon: "music.note.house.fill", iconColor: Color(red: 0.99, green: 0.24, blue: 0.27), risk: .safe),
+        CacheDefinition(nameKey: "cache.vlc",         detailKey: "cache.vlc.detail",         path: "~/Library/Caches/org.videolan.vlc",               icon: "play.rectangle.fill",   iconColor: Color(red: 1.00, green: 0.53, blue: 0.00), risk: .safe),
+        CacheDefinition(nameKey: "cache.iina",        detailKey: "cache.iina.detail",        path: "~/Library/Caches/com.colliderli.iina",            icon: "play.circle.fill",      iconColor: Color(red: 0.00, green: 0.72, blue: 0.87), risk: .safe),
+        CacheDefinition(nameKey: "cache.plex",        detailKey: "cache.plex.detail",        path: "~/Library/Caches/com.plexapp.plex",               icon: "tv.fill",               iconColor: Color(red: 0.90, green: 0.63, blue: 0.05), risk: .safe),
 
         // MARK: Safe — System & utilities
-        CacheDefinition(nameKey: "cache.quicklook",   detailKey: "cache.quicklook.detail",   path: "~/Library/Caches/com.apple.QuickLookDaemon",      icon: "eye.fill",              iconColor: Color(red: 0.45, green: 0.45, blue: 0.50), risk: .safe),
-        CacheDefinition(nameKey: "cache.appstore",    detailKey: "cache.appstore.detail",    path: "~/Library/Caches/com.apple.appstore",             icon: "a.square.fill",         iconColor: Color(red: 0.00, green: 0.48, blue: 1.00), risk: .safe),
-        CacheDefinition(nameKey: "cache.userLogs",    detailKey: "cache.userLogs.detail",    path: "~/Library/Logs",                                  icon: "doc.text.fill",         iconColor: Color(red: 0.56, green: 0.56, blue: 0.58), risk: .safe),
+        CacheDefinition(nameKey: "cache.quicklook",         detailKey: "cache.quicklook.detail",         path: "~/Library/Caches/com.apple.QuickLookDaemon",   icon: "eye.fill",                       iconColor: Color(red: 0.45, green: 0.45, blue: 0.50), risk: .safe),
+        CacheDefinition(nameKey: "cache.appstore",          detailKey: "cache.appstore.detail",          path: "~/Library/Caches/com.apple.appstore",          icon: "a.square.fill",                  iconColor: Color(red: 0.00, green: 0.48, blue: 1.00), risk: .safe),
+        CacheDefinition(nameKey: "cache.userLogs",          detailKey: "cache.userLogs.detail",          path: "~/Library/Logs",                               icon: "doc.text.fill",                  iconColor: Color(red: 0.56, green: 0.56, blue: 0.58), risk: .safe),
+        CacheDefinition(nameKey: "cache.diagnosticReports", detailKey: "cache.diagnosticReports.detail", path: "~/Library/Logs/DiagnosticReports",             icon: "exclamationmark.triangle.fill",  iconColor: Color(red: 0.56, green: 0.56, blue: 0.58), risk: .safe),
+        CacheDefinition(nameKey: "cache.xcodeDeviceLogs",   detailKey: "cache.xcodeDeviceLogs.detail",   path: "~/Library/Developer/Xcode/iOS Device Logs",    icon: "doc.text.fill",                  iconColor: Color(red: 0.08, green: 0.46, blue: 0.98), risk: .safe),
+        CacheDefinition(nameKey: "cache.nvm",               detailKey: "cache.nvm.detail",               path: "~/.nvm/.cache",                                icon: "shippingbox.fill",               iconColor: Color(red: 0.42, green: 0.68, blue: 0.22), risk: .safe),
 
         // MARK: Moderate — có thể cần rebuild project
         CacheDefinition(nameKey: "cache.xcode",  detailKey: "cache.xcode.detail",  path: "~/Library/Developer/Xcode/DerivedData", icon: "hammer.fill",      iconColor: Color(red: 0.08, green: 0.46, blue: 0.98), risk: .moderate, supportsSubItems: true),
@@ -56,6 +65,11 @@ enum CacheDefinitions {
         CacheDefinition(nameKey: "cache.jetbrains",   detailKey: "cache.jetbrains.detail",   path: "~/Library/Caches/JetBrains",                           icon: "chevron.left.forwardslash.chevron.right", iconColor: Color(red: 0.99, green: 0.24, blue: 0.55), risk: .moderate),
         CacheDefinition(nameKey: "cache.vscode",      detailKey: "cache.vscode.detail",      path: "~/Library/Application Support/Code/Cache",             icon: "curlybraces",                             iconColor: Color(red: 0.00, green: 0.48, blue: 0.80), risk: .moderate),
         CacheDefinition(nameKey: "cache.vscodeData",  detailKey: "cache.vscodeData.detail",  path: "~/Library/Application Support/Code/CachedData",        icon: "externaldrive.fill",                      iconColor: Color(red: 0.00, green: 0.48, blue: 0.80), risk: .moderate),
+        CacheDefinition(nameKey: "cache.cursor",      detailKey: "cache.cursor.detail",      path: "~/Library/Application Support/Cursor/Cache",           icon: "cursorarrow.rays",                        iconColor: Color(red: 0.10, green: 0.10, blue: 0.10), risk: .moderate),
+        CacheDefinition(nameKey: "cache.cursorData",  detailKey: "cache.cursorData.detail",  path: "~/Library/Application Support/Cursor/CachedData",      icon: "externaldrive.fill",                      iconColor: Color(red: 0.10, green: 0.10, blue: 0.10), risk: .moderate),
+        CacheDefinition(nameKey: "cache.zed",         detailKey: "cache.zed.detail",         path: "~/Library/Caches/dev.zed.Zed",                         icon: "bolt.fill",                               iconColor: Color(red: 0.34, green: 0.40, blue: 0.97), risk: .moderate),
+        CacheDefinition(nameKey: "cache.sublimeText", detailKey: "cache.sublimeText.detail", path: "~/Library/Caches/com.sublimetext.4",                   icon: "text.alignleft",                          iconColor: Color(red: 1.00, green: 0.60, blue: 0.18), risk: .moderate),
+        CacheDefinition(nameKey: "cache.swiftuiPreviews", detailKey: "cache.swiftuiPreviews.detail", path: "~/Library/Developer/Xcode/UserData/Previews",  icon: "eye.trianglebadge.exclamationmark.fill",  iconColor: Color(red: 0.98, green: 0.45, blue: 0.26), risk: .moderate),
 
         // MARK: Moderate — Communication apps (sẽ re-sync attachments/images)
         CacheDefinition(nameKey: "cache.slack",       detailKey: "cache.slack.detail",       path: "~/Library/Application Support/Slack/Cache",            icon: "bubble.left.and.bubble.right.fill",       iconColor: Color(red: 0.29, green: 0.08, blue: 0.29), risk: .moderate),
@@ -67,6 +81,15 @@ enum CacheDefinitions {
         // MARK: Moderate — Creative apps
         CacheDefinition(nameKey: "cache.adobeMedia",   detailKey: "cache.adobeMedia.detail",   path: "~/Library/Application Support/Adobe/Common/Media Cache Files", icon: "film.fill",     iconColor: Color(red: 0.85, green: 0.12, blue: 0.15), risk: .moderate),
         CacheDefinition(nameKey: "cache.adobeMediaDB", detailKey: "cache.adobeMediaDB.detail", path: "~/Library/Application Support/Adobe/Common/Media Cache",       icon: "cylinder.fill", iconColor: Color(red: 0.85, green: 0.12, blue: 0.15), risk: .moderate),
+        CacheDefinition(nameKey: "cache.sketch",       detailKey: "cache.sketch.detail",       path: "~/Library/Caches/com.bohemiancoding.sketch3",                  icon: "paintpalette.fill", iconColor: Color(red: 0.96, green: 0.71, blue: 0.16), risk: .moderate),
+
+        // MARK: Moderate — Productivity apps
+        CacheDefinition(nameKey: "cache.raycast",   detailKey: "cache.raycast.detail",   path: "~/Library/Caches/com.raycast.macos",       icon: "wand.and.rays",        iconColor: Color(red: 0.99, green: 0.28, blue: 0.28), risk: .moderate),
+        CacheDefinition(nameKey: "cache.notion",    detailKey: "cache.notion.detail",    path: "~/Library/Application Support/Notion/Cache",    icon: "doc.text.fill",   iconColor: Color(red: 0.10, green: 0.10, blue: 0.10), risk: .moderate),
+        CacheDefinition(nameKey: "cache.obsidian",  detailKey: "cache.obsidian.detail",  path: "~/Library/Application Support/obsidian/Cache",  icon: "circle.hexagongrid.fill", iconColor: Color(red: 0.56, green: 0.33, blue: 0.85), risk: .moderate),
+
+        // MARK: Moderate — Games
+        CacheDefinition(nameKey: "cache.steam",     detailKey: "cache.steam.detail",     path: "~/Library/Application Support/Steam/appcache", icon: "gamecontroller.fill", iconColor: Color(red: 0.10, green: 0.22, blue: 0.40), risk: .moderate),
 
         // MARK: Caution — nên cân nhắc trước khi xóa
         CacheDefinition(nameKey: "cache.pnpm",   detailKey: "cache.pnpm.detail",   path: "~/Library/pnpm/store",                            icon: "shippingbox.fill", iconColor: Color(red: 0.97, green: 0.57, blue: 0.13), risk: .caution, projectIndicators: ["pnpm-lock.yaml"]),
@@ -74,6 +97,9 @@ enum CacheDefinitions {
 
         // MARK: Caution — non-dev caches chứa data có thể mất
         CacheDefinition(nameKey: "cache.mailDownloads",    detailKey: "cache.mailDownloads.detail",    path: "~/Library/Containers/com.apple.mail/Data/Library/Mail Downloads", icon: "envelope.fill", iconColor: Color(red: 0.00, green: 0.48, blue: 1.00), risk: .caution),
-        CacheDefinition(nameKey: "cache.iosDeviceSupport", detailKey: "cache.iosDeviceSupport.detail", path: "~/Library/Developer/Xcode/iOS DeviceSupport",                     icon: "iphone",        iconColor: Color(red: 0.45, green: 0.45, blue: 0.50), risk: .caution),
+        CacheDefinition(nameKey: "cache.iosDeviceSupport",     detailKey: "cache.iosDeviceSupport.detail",     path: "~/Library/Developer/Xcode/iOS DeviceSupport",                     icon: "iphone",        iconColor: Color(red: 0.45, green: 0.45, blue: 0.50), risk: .caution),
+        CacheDefinition(nameKey: "cache.watchosDeviceSupport", detailKey: "cache.watchosDeviceSupport.detail", path: "~/Library/Developer/Xcode/watchOS DeviceSupport",                 icon: "applewatch",    iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
+        CacheDefinition(nameKey: "cache.tvosDeviceSupport",    detailKey: "cache.tvosDeviceSupport.detail",    path: "~/Library/Developer/Xcode/tvOS DeviceSupport",                    icon: "appletv",       iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
+        CacheDefinition(nameKey: "cache.visionosDeviceSupport", detailKey: "cache.visionosDeviceSupport.detail", path: "~/Library/Developer/Xcode/visionOS DeviceSupport",              icon: "visionpro",     iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
     ]
 }
