@@ -98,14 +98,10 @@ enum CacheDefinitions {
         CacheDefinition(nameKey: "cache.tvosDeviceSupport",    detailKey: "cache.tvosDeviceSupport.detail",    path: "~/Library/Developer/Xcode/tvOS DeviceSupport",                    icon: "appletv",       iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
         CacheDefinition(nameKey: "cache.visionosDeviceSupport", detailKey: "cache.visionosDeviceSupport.detail", path: "~/Library/Developer/Xcode/visionOS DeviceSupport",              icon: "visionpro",     iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
 
-        // MARK: Deferred — yêu cầu Full Disk Access / TCC permission
-        // Các cache dưới đây nằm trong TCC-protected directories. Scan/xoá
-        // sẽ khiến macOS hiện prompt cấp quyền, làm xấu UX lần đầu mở app.
-        // Sẽ enable lại khi có privileged helper + UI guide user cấp FDA:
-        //
-        //   - Safari:             ~/Library/Caches/com.apple.Safari
-        //   - Apple Music:        ~/Library/Caches/com.apple.Music
-        //   - Diagnostic Reports: ~/Library/Logs/DiagnosticReports
-        //   - Mail Downloads:     ~/Library/Containers/com.apple.mail/Data/Library/Mail Downloads
+        // MARK: Advanced — yêu cầu Full Disk Access (chỉ scan khi user bật toggle)
+        CacheDefinition(nameKey: "cache.safari",            detailKey: "cache.safari.detail",            path: "~/Library/Caches/com.apple.Safari",                               icon: "safari.fill",                   iconColor: Color(red: 0.06, green: 0.71, blue: 0.93), risk: .safe,    requiresFDA: true),
+        CacheDefinition(nameKey: "cache.appleMusic",        detailKey: "cache.appleMusic.detail",        path: "~/Library/Caches/com.apple.Music",                                icon: "music.note.house.fill",         iconColor: Color(red: 0.99, green: 0.24, blue: 0.27), risk: .safe,    requiresFDA: true),
+        CacheDefinition(nameKey: "cache.diagnosticReports", detailKey: "cache.diagnosticReports.detail", path: "~/Library/Logs/DiagnosticReports",                                icon: "exclamationmark.triangle.fill", iconColor: Color(red: 0.56, green: 0.56, blue: 0.58), risk: .safe,    requiresFDA: true),
+        CacheDefinition(nameKey: "cache.mailDownloads",     detailKey: "cache.mailDownloads.detail",     path: "~/Library/Containers/com.apple.mail/Data/Library/Mail Downloads", icon: "envelope.fill",                 iconColor: Color(red: 0.00, green: 0.48, blue: 1.00), risk: .caution, requiresFDA: true),
     ]
 }

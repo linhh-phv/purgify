@@ -16,6 +16,10 @@ class CacheScannerViewModel: ObservableObject {
     @Published var scanItemIndex: Int = 0
     @Published var scanItemTotal: Int = 0
 
+    /// True when the most recent scan followed a successful clean — drives
+    /// "You freed X GB" text in the empty state and post-clean upsell banner.
+    @Published var justCleaned: Bool = false
+
     // Selection state for 3-column layout
     @Published var selectedRisk: RiskLevel = .safe
     @Published var selectedItemID: UUID? = nil {
@@ -98,14 +102,20 @@ class CacheScannerViewModel: ObservableObject {
         scan()
     }
 
-    func scan() {
+    func scan(keepCleanedFlag: Bool = false) {
         hasScanned = true
         isScanning = true
         scanProgress = 0
         currentScanItem = ""
         selectedItemID = nil
 
-        let defs = definitions
+        if !keepCleanedFlag {
+            justCleaned = false
+            lastCleanedBytes = 0
+        }
+
+        let advancedEnabled = UserDefaults.standard.bool(forKey: "advancedScanningEnabled")
+        let defs = definitions.filter { !$0.requiresFDA || advancedEnabled }
         let svc = service
 
         scanItemTotal = defs.count
@@ -233,7 +243,8 @@ class CacheScannerViewModel: ObservableObject {
             await MainActor.run { [weak self] in
                 self?.lastCleanedBytes = freed
                 self?.isCleaning = false
-                self?.scan()
+                self?.justCleaned = freed > 0
+                self?.scan(keepCleanedFlag: true)
             }
         }
     }
@@ -263,7 +274,8 @@ class CacheScannerViewModel: ObservableObject {
             await MainActor.run { [weak self] in
                 self?.lastCleanedBytes = freed
                 self?.isCleaning = false
-                self?.scan()
+                self?.justCleaned = freed > 0
+                self?.scan(keepCleanedFlag: true)
             }
         }
     }

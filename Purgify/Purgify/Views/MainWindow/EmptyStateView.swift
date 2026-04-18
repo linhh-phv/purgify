@@ -22,7 +22,7 @@ struct EmptyStateView: View {
             Text(l10n.t("app.allClean"))
                 .font(.system(size: 22, weight: .bold))
 
-            Text(l10n.t("app.allCleanDesc"))
+            Text(subheadingText)
                 .font(.system(size: 14))
                 .foregroundColor(.secondary)
 
@@ -48,5 +48,13 @@ struct EmptyStateView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(nsColor: .windowBackgroundColor))
+    }
+
+    private var subheadingText: String {
+        if scanner.justCleaned {
+            let freed = ByteFormatter.format(scanner.lastCleanedBytes)
+            return l10n.t("app.allCleanFreed").replacingOccurrences(of: "%@", with: freed)
+        }
+        return l10n.t("app.allCleanDesc")
     }
 }

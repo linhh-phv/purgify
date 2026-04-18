@@ -20,11 +20,15 @@ struct CacheDefinition {
     /// Filenames that indicate a project uses this cache (e.g. "package-lock.json").
     /// Used for related-project discovery in the detail panel.
     let projectIndicators: [String]
+    /// True for caches in TCC-protected directories (Safari, Mail, etc.) — scanning
+    /// triggers a Full Disk Access prompt. Only scanned when Advanced mode is ON.
+    let requiresFDA: Bool
 
     var supportsSubItems: Bool { subItemMode != .none }
 
     init(nameKey: String, detailKey: String, path: String, icon: String, iconColor: Color,
-         risk: RiskLevel, supportsSubItems: Bool = false, projectIndicators: [String] = []) {
+         risk: RiskLevel, supportsSubItems: Bool = false, projectIndicators: [String] = [],
+         requiresFDA: Bool = false) {
         self.nameKey = nameKey
         self.detailKey = detailKey
         self.path = path
@@ -34,11 +38,12 @@ struct CacheDefinition {
         self.subItemMode = supportsSubItems ? .directories : .none
         self.subItemsPath = nil
         self.projectIndicators = projectIndicators
+        self.requiresFDA = requiresFDA
     }
 
     init(nameKey: String, detailKey: String, path: String, icon: String, iconColor: Color,
          risk: RiskLevel, subItemMode: SubItemMode, subItemsPath: String? = nil,
-         projectIndicators: [String] = []) {
+         projectIndicators: [String] = [], requiresFDA: Bool = false) {
         self.nameKey = nameKey
         self.detailKey = detailKey
         self.path = path
@@ -48,6 +53,7 @@ struct CacheDefinition {
         self.subItemMode = subItemMode
         self.subItemsPath = subItemsPath
         self.projectIndicators = projectIndicators
+        self.requiresFDA = requiresFDA
     }
 }
 

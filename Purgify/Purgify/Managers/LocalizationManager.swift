@@ -52,8 +52,9 @@ class LocalizationManager: ObservableObject {
             "app.title":          "Purgify",
             "app.subtitle":       "Clean caches across your Mac and free up disk space",
             "app.totalCache":     "total cache found",
-            "app.allClean":       "All clean!",
+            "app.allClean":       "All Clean!",
             "app.allCleanDesc":   "No caches found on this Mac",
+            "app.allCleanFreed":  "You freed %@ of cache",
             "app.scanning":       "Scanning caches...",
             "app.selected":       "Selected",
             "app.cleanSelected":  "Clean Selected",
@@ -554,12 +555,34 @@ class LocalizationManager: ObservableObject {
             "menubar.cleanSelected": "Clean Selected · %@",
 
             // Settings sheet
-            "settings.title":         "Settings",
-            "settings.general":       "GENERAL",
-            "settings.language":      "Language",
-            "settings.launchAtLogin": "Launch at Login",
-            "settings.about":         "ABOUT",
-            "settings.sendFeedback":  "Send Feedback",
+            "settings.title":              "Settings",
+            "settings.general":            "GENERAL",
+            "settings.language":           "Language",
+            "settings.launchAtLogin":      "Launch at Login",
+            "settings.advanced":           "ADVANCED SCANNING",
+            "settings.advanced.toggle":    "Advanced scanning",
+            "settings.advanced.subtitle":  "Requires Full Disk Access permission",
+            "settings.advanced.grantButton": "Grant Full Disk Access",
+            "settings.about":              "ABOUT",
+            "settings.sendFeedback":       "Send Feedback",
+
+            // FDA Guide sheet
+            "fda.title":           "Grant Full Disk Access",
+            "fda.heading":         "Unlock 4 protected caches",
+            "fda.subheading":      "Grant Full Disk Access to scan Safari, Mail, Apple Music, and Diagnostic Reports caches.",
+            "fda.step1.title":     "Open System Settings",
+            "fda.step1.desc":      "Click the button below to open Privacy & Security.",
+            "fda.step2.title":     "Find Purgify in the list",
+            "fda.step2.desc":      "Scroll to Full Disk Access, toggle Purgify ON.",
+            "fda.step3.title":     "Return to Purgify",
+            "fda.step3.desc":      "4 additional caches will unlock automatically.",
+            "fda.primaryButton":   "Open System Settings",
+            "fda.secondaryLink":   "Maybe later",
+
+            // Post-clean upsell banner
+            "banner.heading":  "Unlock 4 more caches",
+            "banner.subtext":  "Enable Advanced to scan Safari, Mail, Apple Music, and Diagnostic Reports.",
+            "banner.button":   "Enable Advanced",
 
             // About sheet
             "about.description":  "Clean every cache on your Mac — developer tools, browsers, apps, and system.",
@@ -579,6 +602,7 @@ class LocalizationManager: ObservableObject {
             "app.totalCache":     "tổng bộ nhớ đệm",
             "app.allClean":       "Sạch sẽ!",
             "app.allCleanDesc":   "Không tìm thấy bộ nhớ đệm nào trên máy",
+            "app.allCleanFreed":  "Đã giải phóng %@ bộ nhớ đệm",
             "app.scanning":       "Đang quét...",
             "app.selected":       "Đã chọn",
             "app.cleanSelected":  "Dọn dẹp",
@@ -1079,12 +1103,34 @@ class LocalizationManager: ObservableObject {
             "menubar.cleanSelected": "Dọn dẹp · %@",
 
             // Settings sheet
-            "settings.title":         "Cài đặt",
-            "settings.general":       "CHUNG",
-            "settings.language":      "Ngôn ngữ",
-            "settings.launchAtLogin": "Khởi động cùng hệ thống",
-            "settings.about":         "THÔNG TIN",
-            "settings.sendFeedback":  "Gửi phản hồi",
+            "settings.title":              "Cài đặt",
+            "settings.general":            "CHUNG",
+            "settings.language":           "Ngôn ngữ",
+            "settings.launchAtLogin":      "Khởi động cùng hệ thống",
+            "settings.advanced":           "QUÉT NÂNG CAO",
+            "settings.advanced.toggle":    "Quét nâng cao",
+            "settings.advanced.subtitle":  "Cần cấp quyền Full Disk Access",
+            "settings.advanced.grantButton": "Cấp Full Disk Access",
+            "settings.about":              "THÔNG TIN",
+            "settings.sendFeedback":       "Gửi phản hồi",
+
+            // FDA Guide sheet
+            "fda.title":           "Cấp Full Disk Access",
+            "fda.heading":         "Mở khóa 4 cache được bảo vệ",
+            "fda.subheading":      "Cấp Full Disk Access để quét cache Safari, Mail, Apple Music và Diagnostic Reports.",
+            "fda.step1.title":     "Mở System Settings",
+            "fda.step1.desc":      "Bấm nút bên dưới để mở Privacy & Security.",
+            "fda.step2.title":     "Tìm Purgify trong danh sách",
+            "fda.step2.desc":      "Cuộn đến Full Disk Access, bật toggle Purgify.",
+            "fda.step3.title":     "Quay lại Purgify",
+            "fda.step3.desc":      "4 cache sẽ tự động được mở khóa.",
+            "fda.primaryButton":   "Mở System Settings",
+            "fda.secondaryLink":   "Để sau",
+
+            // Banner nhắc bật Advanced sau khi clean
+            "banner.heading":  "Mở khóa thêm 4 cache",
+            "banner.subtext":  "Bật Advanced để quét Safari, Mail, Apple Music và Diagnostic Reports.",
+            "banner.button":   "Bật Advanced",
 
             // About sheet
             "about.description":  "Dọn dẹp mọi bộ nhớ đệm trên Mac — developer tools, trình duyệt, ứng dụng và hệ thống.",

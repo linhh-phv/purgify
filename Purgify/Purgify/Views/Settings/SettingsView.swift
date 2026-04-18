@@ -8,6 +8,16 @@ struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
 
     @State private var launchAtLogin = false
+    @AppStorage("advancedScanningEnabled") private var advancedEnabled = false
+    @State private var showFDAGuide = false
+
+    /// Name + SF Symbol + color for each FDA-gated cache shown when Advanced is ON.
+    private let advancedCaches: [(name: String, icon: String, color: Color)] = [
+        ("cache.safari",            "safari.fill",                   Color(red: 0.06, green: 0.71, blue: 0.93)),
+        ("cache.mailDownloads",     "envelope.fill",                 Color(red: 0.00, green: 0.48, blue: 1.00)),
+        ("cache.appleMusic",        "music.note.house.fill",         Color(red: 0.99, green: 0.24, blue: 0.27)),
+        ("cache.diagnosticReports", "exclamationmark.triangle.fill", Color(red: 0.56, green: 0.56, blue: 0.58))
+    ]
 
     private var versionString: String {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
@@ -66,6 +76,62 @@ struct SettingsView: View {
                                 }
                             }
                     }
+                }
+
+                // MARK: Advanced Scanning
+                sectionLabel(l10n.t("settings.advanced"))
+                    .padding(.top, 8)
+
+                groupBox {
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(l10n.t("settings.advanced.toggle"))
+                                .font(.system(size: 13))
+                            Text(l10n.t("settings.advanced.subtitle"))
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                        Toggle("", isOn: $advancedEnabled)
+                            .toggleStyle(.switch)
+                            .labelsHidden()
+                    }
+                }
+
+                if advancedEnabled {
+                    groupBox {
+                        ForEach(Array(advancedCaches.enumerated()), id: \.offset) { index, cache in
+                            HStack(spacing: 10) {
+                                Image(systemName: cache.icon)
+                                    .font(.system(size: 12))
+                                    .foregroundColor(cache.color)
+                                    .frame(width: 16)
+                                Text(l10n.t(cache.name))
+                                    .font(.system(size: 12))
+                                Spacer()
+                                Image(systemName: "lock.fill")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.secondary)
+                            }
+                            if index < advancedCaches.count - 1 {
+                                Divider()
+                            }
+                        }
+                    }
+
+                    Button {
+                        showFDAGuide = true
+                    } label: {
+                        Text(l10n.t("settings.advanced.grantButton"))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 36)
+                            .background(Color.accentColor)
+                            .cornerRadius(8)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 4)
                 }
 
                 // MARK: About
@@ -128,6 +194,10 @@ struct SettingsView: View {
             if #available(macOS 13.0, *) {
                 launchAtLogin = SMAppService.mainApp.status == .enabled
             }
+        }
+        .sheet(isPresented: $showFDAGuide) {
+            FDAGuideView()
+                .environmentObject(l10n)
         }
     }
 
