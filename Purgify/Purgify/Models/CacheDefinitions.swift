@@ -31,7 +31,6 @@ enum CacheDefinitions {
 
         // MARK: Safe — Browsers (tự rebuild, chỉ mất history cache)
         CacheDefinition(nameKey: "cache.chrome",      detailKey: "cache.chrome.detail",      path: "~/Library/Caches/Google/Chrome",                  icon: "globe",                 iconColor: Color(red: 0.20, green: 0.66, blue: 0.33), risk: .safe),
-        CacheDefinition(nameKey: "cache.safari",      detailKey: "cache.safari.detail",      path: "~/Library/Caches/com.apple.Safari",               icon: "safari.fill",           iconColor: Color(red: 0.06, green: 0.71, blue: 0.93), risk: .safe),
         CacheDefinition(nameKey: "cache.arc",         detailKey: "cache.arc.detail",         path: "~/Library/Caches/Company.ThBrowser",              icon: "globe",                 iconColor: Color(red: 0.99, green: 0.42, blue: 0.42), risk: .safe),
         CacheDefinition(nameKey: "cache.firefox",     detailKey: "cache.firefox.detail",     path: "~/Library/Caches/Firefox/Profiles",               icon: "flame.fill",            iconColor: Color(red: 1.00, green: 0.44, blue: 0.22), risk: .safe),
         CacheDefinition(nameKey: "cache.brave",       detailKey: "cache.brave.detail",       path: "~/Library/Caches/BraveSoftware/Brave-Browser",    icon: "shield.fill",           iconColor: Color(red: 0.98, green: 0.33, blue: 0.17), risk: .safe),
@@ -42,7 +41,6 @@ enum CacheDefinitions {
 
         // MARK: Safe — Media apps
         CacheDefinition(nameKey: "cache.spotify",     detailKey: "cache.spotify.detail",     path: "~/Library/Caches/com.spotify.client",             icon: "music.note",            iconColor: Color(red: 0.11, green: 0.72, blue: 0.33), risk: .safe),
-        CacheDefinition(nameKey: "cache.appleMusic",  detailKey: "cache.appleMusic.detail",  path: "~/Library/Caches/com.apple.Music",                icon: "music.note.house.fill", iconColor: Color(red: 0.99, green: 0.24, blue: 0.27), risk: .safe),
         CacheDefinition(nameKey: "cache.vlc",         detailKey: "cache.vlc.detail",         path: "~/Library/Caches/org.videolan.vlc",               icon: "play.rectangle.fill",   iconColor: Color(red: 1.00, green: 0.53, blue: 0.00), risk: .safe),
         CacheDefinition(nameKey: "cache.iina",        detailKey: "cache.iina.detail",        path: "~/Library/Caches/com.colliderli.iina",            icon: "play.circle.fill",      iconColor: Color(red: 0.00, green: 0.72, blue: 0.87), risk: .safe),
         CacheDefinition(nameKey: "cache.plex",        detailKey: "cache.plex.detail",        path: "~/Library/Caches/com.plexapp.plex",               icon: "tv.fill",               iconColor: Color(red: 0.90, green: 0.63, blue: 0.05), risk: .safe),
@@ -51,7 +49,6 @@ enum CacheDefinitions {
         CacheDefinition(nameKey: "cache.quicklook",         detailKey: "cache.quicklook.detail",         path: "~/Library/Caches/com.apple.QuickLookDaemon",   icon: "eye.fill",                       iconColor: Color(red: 0.45, green: 0.45, blue: 0.50), risk: .safe),
         CacheDefinition(nameKey: "cache.appstore",          detailKey: "cache.appstore.detail",          path: "~/Library/Caches/com.apple.appstore",          icon: "a.square.fill",                  iconColor: Color(red: 0.00, green: 0.48, blue: 1.00), risk: .safe),
         CacheDefinition(nameKey: "cache.userLogs",          detailKey: "cache.userLogs.detail",          path: "~/Library/Logs",                               icon: "doc.text.fill",                  iconColor: Color(red: 0.56, green: 0.56, blue: 0.58), risk: .safe),
-        CacheDefinition(nameKey: "cache.diagnosticReports", detailKey: "cache.diagnosticReports.detail", path: "~/Library/Logs/DiagnosticReports",             icon: "exclamationmark.triangle.fill",  iconColor: Color(red: 0.56, green: 0.56, blue: 0.58), risk: .safe),
         CacheDefinition(nameKey: "cache.xcodeDeviceLogs",   detailKey: "cache.xcodeDeviceLogs.detail",   path: "~/Library/Developer/Xcode/iOS Device Logs",    icon: "doc.text.fill",                  iconColor: Color(red: 0.08, green: 0.46, blue: 0.98), risk: .safe),
         CacheDefinition(nameKey: "cache.nvm",               detailKey: "cache.nvm.detail",               path: "~/.nvm/.cache",                                icon: "shippingbox.fill",               iconColor: Color(red: 0.42, green: 0.68, blue: 0.22), risk: .safe),
 
@@ -95,11 +92,20 @@ enum CacheDefinitions {
         CacheDefinition(nameKey: "cache.pnpm",   detailKey: "cache.pnpm.detail",   path: "~/Library/pnpm/store",                            icon: "shippingbox.fill", iconColor: Color(red: 0.97, green: 0.57, blue: 0.13), risk: .caution, projectIndicators: ["pnpm-lock.yaml"]),
         CacheDefinition(nameKey: "cache.docker", detailKey: "cache.docker.detail", path: "~/Library/Containers/com.docker.docker/Data/vms", icon: "cube.fill",        iconColor: Color(red: 0.14, green: 0.59, blue: 0.93), risk: .caution),
 
-        // MARK: Caution — non-dev caches chứa data có thể mất
-        CacheDefinition(nameKey: "cache.mailDownloads",    detailKey: "cache.mailDownloads.detail",    path: "~/Library/Containers/com.apple.mail/Data/Library/Mail Downloads", icon: "envelope.fill", iconColor: Color(red: 0.00, green: 0.48, blue: 1.00), risk: .caution),
+        // MARK: Caution — device support (re-download khi cắm lại thiết bị)
         CacheDefinition(nameKey: "cache.iosDeviceSupport",     detailKey: "cache.iosDeviceSupport.detail",     path: "~/Library/Developer/Xcode/iOS DeviceSupport",                     icon: "iphone",        iconColor: Color(red: 0.45, green: 0.45, blue: 0.50), risk: .caution),
         CacheDefinition(nameKey: "cache.watchosDeviceSupport", detailKey: "cache.watchosDeviceSupport.detail", path: "~/Library/Developer/Xcode/watchOS DeviceSupport",                 icon: "applewatch",    iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
         CacheDefinition(nameKey: "cache.tvosDeviceSupport",    detailKey: "cache.tvosDeviceSupport.detail",    path: "~/Library/Developer/Xcode/tvOS DeviceSupport",                    icon: "appletv",       iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
         CacheDefinition(nameKey: "cache.visionosDeviceSupport", detailKey: "cache.visionosDeviceSupport.detail", path: "~/Library/Developer/Xcode/visionOS DeviceSupport",              icon: "visionpro",     iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
+
+        // MARK: Deferred — yêu cầu Full Disk Access / TCC permission
+        // Các cache dưới đây nằm trong TCC-protected directories. Scan/xoá
+        // sẽ khiến macOS hiện prompt cấp quyền, làm xấu UX lần đầu mở app.
+        // Sẽ enable lại khi có privileged helper + UI guide user cấp FDA:
+        //
+        //   - Safari:             ~/Library/Caches/com.apple.Safari
+        //   - Apple Music:        ~/Library/Caches/com.apple.Music
+        //   - Diagnostic Reports: ~/Library/Logs/DiagnosticReports
+        //   - Mail Downloads:     ~/Library/Containers/com.apple.mail/Data/Library/Mail Downloads
     ]
 }
