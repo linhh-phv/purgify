@@ -21,6 +21,11 @@ A lightweight macOS menu bar app that scans and cleans developer caches to free 
   <img src=".figma/figma-settings.png" width="300" alt="Settings" />
 </p>
 
+## Available on
+
+- **Lemon Squeezy Store** — [decx.lemonsqueezy.com](https://decx.lemonsqueezy.com/checkout/buy/20811a60-a99f-42de-b650-42aa74447a6f)
+- **Product Hunt** — launching soon
+
 ## Install
 
 1. Purchase and download from [decx.lemonsqueezy.com](https://decx.lemonsqueezy.com/checkout/buy/20811a60-a99f-42de-b650-42aa74447a6f)
