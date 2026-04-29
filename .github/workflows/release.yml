@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g. 1.0.5)'
+        required: true
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build, sign, notarize & package
+        env:
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+        run: |
+          chmod +x scripts/release.sh
+          ./scripts/release.sh
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(xcodebuild -project Purgify/Purgify.xcodeproj -scheme Purgify \
+            -showBuildSettings 2>/dev/null | grep MARKETING_VERSION | awk '{print $3}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          PREV_TAG=$(git tag --sort=-creatordate | grep -v "^${{ github.ref_name }}$" | head -1)
+          if [[ -n "$PREV_TAG" ]]; then
+            NOTES=$(git log ${PREV_TAG}..HEAD --oneline --no-merges)
+          else
+            NOTES=$(git log --oneline --no-merges | head -20)
+          fi
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Purgify v${{ steps.version.outputs.version }}
+          body: ${{ steps.notes.outputs.notes }}
+          files: /tmp/Purgify-${{ steps.version.outputs.version }}.dmg

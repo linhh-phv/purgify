@@ -1,9 +1,8 @@
-.PHONY: run run-release build archive dmg
+.PHONY: run run-release build release publish
 
 PROJECT = Purgify/Purgify.xcodeproj
 SCHEME = Purgify
 DERIVED = /tmp/PurgifyBuild
-ARCHIVE = /tmp/Purgify.xcarchive
 
 run:
 	@./scripts/run.sh
@@ -14,12 +13,8 @@ run-release:
 build:
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED) build
 
-archive:
-	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Release -archivePath $(ARCHIVE) archive
+release:
+	@chmod +x scripts/release.sh && ./scripts/release.sh
 
-dmg:
-	rm -rf /tmp/purgify-dmg /tmp/Purgify-$(VERSION).dmg
-	mkdir -p /tmp/purgify-dmg
-	cp -R $(ARCHIVE)/Products/Applications/Purgify.app /tmp/purgify-dmg/
-	ln -sf /Applications /tmp/purgify-dmg/Applications
-	hdiutil create -volname "Purgify" -srcfolder /tmp/purgify-dmg -ov -format UDZO /tmp/Purgify-$(VERSION).dmg
+publish:
+	@chmod +x scripts/publish.sh && ./scripts/publish.sh $(v)
