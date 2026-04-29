@@ -3,6 +3,12 @@
 A lightweight macOS menu bar app that scans and cleans caches across your Mac — developer tools, browsers, apps, and system — to free up disk space.
 
 <p align="center">
+  <a href="https://buymeacoffee.com/decx">
+    <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=decx&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff" width="220" alt="Buy Me A Coffee" />
+  </a>
+</p>
+
+<p align="center">
   <img src=".figma/figma-main-normal.png" width="800" alt="Purgify Main Window" />
 </p>
 
