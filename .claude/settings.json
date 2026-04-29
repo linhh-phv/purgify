@@ -6,7 +6,15 @@
       "Bash(npx gitnexus *)",
       "Bash(rm *.swift)",
       "Bash(find * -name *.swift *)",
-      "Bash(ls *)"
+      "Bash(ls *)",
+      "Bash(make *)",
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(sed *)",
+      "Bash(grep *)",
+      "Bash(defaults read *)",
+      "Bash(hdiutil *)",
+      "Bash(sips *)"
     ],
     "deny": [
       "Bash(rm -rf /)",
