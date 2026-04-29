@@ -41,7 +41,7 @@ jobs:
           xcode-select -p
           xcodebuild -version
           chmod +x scripts/release.sh
-          ./scripts/release.sh
+          ./scripts/release.sh 2>&1 | tee /tmp/build.log || (grep -E "error:|❌" /tmp/build.log | head -30 && exit 1)
 
       - name: Get version
         id: version
