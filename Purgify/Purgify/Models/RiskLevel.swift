@@ -49,7 +49,7 @@ enum RiskLevel: String, CaseIterable {
         }
     }
 
-    func localizedName(_ l10n: LocalizationManager) -> String {
+    @MainActor func localizedName(_ l10n: LocalizationManager) -> String {
         switch self {
         case .safe:     return l10n.t("risk.safe")
         case .moderate: return l10n.t("risk.moderate")
@@ -57,7 +57,7 @@ enum RiskLevel: String, CaseIterable {
         }
     }
 
-    func localizedDesc(_ l10n: LocalizationManager) -> String {
+    @MainActor func localizedDesc(_ l10n: LocalizationManager) -> String {
         switch self {
         case .safe:     return l10n.t("risk.safe.desc")
         case .moderate: return l10n.t("risk.moderate.desc")
