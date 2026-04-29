@@ -4,7 +4,7 @@ A lightweight macOS menu bar app that scans and cleans caches across your Mac �
 
 <p align="center">
   <a href="https://buymeacoffee.com/decx">
-    <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=decx&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff" width="220" alt="Buy Me A Coffee" />
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" width="200" alt="Buy Me A Coffee" />
   </a>
 </p>
 
@@ -101,9 +101,3 @@ Pull requests are welcome. For major changes, open an issue first to discuss wha
 MIT License — see [LICENSE](LICENSE) for details.
 
 Made with ♥ by [Pham Linh](https://github.com/linhh-phv)
-
----
-
-If Purgify saved you some disk space, consider buying me a coffee ☕
-
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-yellow?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/decx)
