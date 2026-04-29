@@ -62,6 +62,7 @@ echo "==> Purgify v${VERSION} (build ${BUILD})"
 echo "==> Archiving..."
 xcodebuild -project "$PROJECT" -scheme "$SCHEME" \
   -configuration Release -archivePath "$ARCHIVE" \
+  MACOSX_DEPLOYMENT_TARGET=13.0 \
   clean archive
 
 # 2. Export with Developer ID signing
