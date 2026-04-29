@@ -95,3 +95,9 @@ Pull requests are welcome. For major changes, open an issue first to discuss wha
 MIT License — see [LICENSE](LICENSE) for details.
 
 Made with ♥ by [Pham Linh](https://github.com/linhh-phv)
+
+---
+
+If Purgify saved you some disk space, consider buying me a coffee ☕
+
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-yellow?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/decx)
