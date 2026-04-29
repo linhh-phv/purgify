@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -eo pipefail
 
 # ---------------------------------------------------------------------------
 # Usage:
@@ -62,7 +62,7 @@ echo "==> Purgify v${VERSION} (build ${BUILD})"
 echo "==> Archiving..."
 xcodebuild -project "$PROJECT" -scheme "$SCHEME" \
   -configuration Release -archivePath "$ARCHIVE" \
-  clean archive 2>&1 | tail -3
+  clean archive
 
 # 2. Export with Developer ID signing
 echo "==> Exporting..."
@@ -70,7 +70,7 @@ rm -rf "$EXPORT_DIR"
 xcodebuild -exportArchive \
   -archivePath "$ARCHIVE" \
   -exportPath "$EXPORT_DIR" \
-  -exportOptionsPlist "$EXPORT_OPTIONS" 2>&1 | tail -3
+  -exportOptionsPlist "$EXPORT_OPTIONS"
 
 APP_PATH="$EXPORT_DIR/Purgify.app"
 
