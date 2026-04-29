@@ -8,14 +8,22 @@ import SwiftUI
 /// View không tự tạo ViewModel — chỉ nhận qua @EnvironmentObject.
 @main
 struct PurgifyApp: App {
-    @StateObject private var scanner = CacheScannerViewModel()
     @StateObject private var l10n = LocalizationManager()
+    @StateObject private var fdaStatus: FDAStatus
+    @StateObject private var scanner: CacheScannerViewModel
+
+    init() {
+        let fda = FDAStatus()
+        _fdaStatus = StateObject(wrappedValue: fda)
+        _scanner = StateObject(wrappedValue: CacheScannerViewModel(fdaStatus: fda))
+    }
 
     var body: some Scene {
         MenuBarExtra("Purgify", systemImage: "sparkles") {
             MenuBarView()
                 .environmentObject(scanner)
                 .environmentObject(l10n)
+                .environmentObject(fdaStatus)
                 .tint(.brand)
         }
         .menuBarExtraStyle(.window)
@@ -24,6 +32,7 @@ struct PurgifyApp: App {
             MainWindowView()
                 .environmentObject(scanner)
                 .environmentObject(l10n)
+                .environmentObject(fdaStatus)
                 .tint(.brand)
         }
         .windowStyle(.titleBar)

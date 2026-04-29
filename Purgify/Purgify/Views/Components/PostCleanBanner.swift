@@ -72,12 +72,14 @@ struct PostCleanBanner: View {
     }
 
     /// Global helper — whether the banner should be shown right now.
-    /// Reads AppStorage keys directly so both MainWindow + EmptyState can check.
-    static func shouldShow(justCleaned: Bool) -> Bool {
+    /// Hide once the user has both the toggle ON *and* FDA granted; otherwise
+    /// the upsell is still relevant (toggle off → enable; toggle on but FDA
+    /// missing → finish setup).
+    static func shouldShow(justCleaned: Bool, fdaGranted: Bool) -> Bool {
         guard justCleaned else { return false }
 
         let advancedEnabled = UserDefaults.standard.bool(forKey: "advancedScanningEnabled")
-        guard !advancedEnabled else { return false }
+        guard !(advancedEnabled && fdaGranted) else { return false }
 
         let dismissCount = UserDefaults.standard.integer(forKey: "postCleanBannerDismissCount")
         guard dismissCount < 3 else { return false }

@@ -1,11 +1,13 @@
 import SwiftUI
 import ServiceManagement
+import AppKit
 
 /// Compact Settings sheet (320pt wide). Three sections: General, Advanced, About.
 /// About is deliberately minimal — just version + author + links — so the sheet
 /// stays short enough to not scroll on typical screens.
 struct SettingsView: View {
     @EnvironmentObject var l10n: LocalizationManager
+    @EnvironmentObject var fdaStatus: FDAStatus
 
     @Environment(\.dismiss) var dismiss
 
@@ -101,6 +103,8 @@ struct SettingsView: View {
                 }
 
                 if advancedEnabled {
+                    let granted = fdaStatus.isGranted
+
                     groupBox {
                         ForEach(Array(advancedCaches.enumerated()), id: \.offset) { index, cache in
                             HStack(spacing: 10) {
@@ -111,9 +115,9 @@ struct SettingsView: View {
                                 Text(l10n.t(cache.name))
                                     .font(.system(size: 12))
                                 Spacer()
-                                Image(systemName: "lock.fill")
+                                Image(systemName: granted ? "checkmark.circle.fill" : "lock.fill")
                                     .font(.system(size: 10))
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(granted ? Color(nsColor: .systemGreen) : .secondary)
                             }
                             if index < advancedCaches.count - 1 {
                                 Divider()
@@ -121,19 +125,41 @@ struct SettingsView: View {
                         }
                     }
 
-                    Button {
-                        showFDAGuide = true
-                    } label: {
-                        Text(l10n.t("settings.advanced.grantButton"))
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 34)
-                            .background(Color.brand)
-                            .cornerRadius(8)
+                    if granted {
+                        // FDA already granted — show confirmation + a way to revoke.
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 13))
+                                .foregroundColor(Color(nsColor: .systemGreen))
+                            Text(l10n.t("settings.advanced.granted"))
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Button {
+                                openFDASettings()
+                            } label: {
+                                Text(l10n.t("settings.advanced.manage"))
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.brand)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.top, 6)
+                    } else {
+                        Button {
+                            showFDAGuide = true
+                        } label: {
+                            Text(l10n.t("settings.advanced.grantButton"))
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 34)
+                                .background(Color.brand)
+                                .cornerRadius(8)
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.top, 6)
                     }
-                    .buttonStyle(.plain)
-                    .padding(.top, 6)
                 }
 
                 // MARK: About (compact)
@@ -220,5 +246,10 @@ struct SettingsView: View {
         }
         .buttonStyle(.plain)
         .disabled(disabled)
+    }
+
+    private func openFDASettings() {
+        let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")!
+        NSWorkspace.shared.open(url)
     }
 }

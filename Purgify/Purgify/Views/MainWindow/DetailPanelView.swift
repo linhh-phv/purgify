@@ -107,70 +107,7 @@ struct DetailPanelView: View {
 
                     if scanner.selectedItemHasProjectIndicators {
                         groupBox(label: l10n.t("detail.relatedProjects")) {
-                            if scanner.isLoadingRelatedApps {
-                                HStack(spacing: 6) {
-                                    ProgressView().scaleEffect(0.7)
-                                    Text(l10n.t("detail.searchingProjects"))
-                                        .font(.system(size: 12))
-                                        .foregroundColor(.secondary)
-                                }
-                            } else if scanner.relatedApps.isEmpty {
-                                if scanner.hasProjectDirAccess {
-                                    Text(l10n.t("detail.noProjectsFound"))
-                                        .font(.system(size: 12))
-                                        .foregroundColor(.secondary)
-                                } else {
-                                    VStack(alignment: .leading, spacing: 6) {
-                                        Text(l10n.t("detail.noProjectsFound"))
-                                            .font(.system(size: 12))
-                                            .foregroundColor(.secondary)
-                                        Button {
-                                            NSWorkspace.shared.open(
-                                                URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders")!
-                                            )
-                                        } label: {
-                                            Text(l10n.t("detail.openPrivacySettings"))
-                                                .font(.system(size: 11))
-                                                .foregroundColor(.secondary)
-                                                .underline()
-                                        }
-                                        .buttonStyle(.plain)
-                                    }
-                                }
-                            } else {
-                                VStack(spacing: 0) {
-                                    ForEach(scanner.relatedApps) { app in
-                                        HStack(spacing: 6) {
-                                            Image(systemName: "folder.fill")
-                                                .font(.system(size: 11))
-                                                .foregroundColor(.brand)
-                                            VStack(alignment: .leading, spacing: 1) {
-                                                Text(app.name)
-                                                    .font(.system(size: 12, weight: .medium))
-                                                Text(app.path.replacingOccurrences(of: NSHomeDirectory(), with: "~"))
-                                                    .font(.system(size: 11))
-                                                    .foregroundColor(.secondary)
-                                                    .lineLimit(1)
-                                                    .truncationMode(.middle)
-                                            }
-                                            Spacer()
-                                            Button {
-                                                scanner.openInFinder(app.path)
-                                            } label: {
-                                                Image(systemName: "arrow.up.right.square")
-                                                    .font(.system(size: 11))
-                                                    .foregroundColor(.secondary)
-                                            }
-                                            .buttonStyle(.plain)
-                                        }
-                                        .padding(.vertical, 6)
-                                        .contentShape(Rectangle())
-                                        if app.id != scanner.relatedApps.last?.id {
-                                            Divider().padding(.leading, 23)
-                                        }
-                                    }
-                                }
-                            }
+                            relatedProjectsContent
                         }
                     }
                 }
@@ -192,6 +129,111 @@ struct DetailPanelView: View {
             .buttonStyle(.plain)
             .disabled(scanner.isCleaning)
             .padding(16)
+        }
+    }
+
+    // MARK: - Related projects subview
+
+    /// Four states:
+    /// 1. Searching → spinner
+    /// 2. Searched + has results → list
+    /// 3. Searched + empty + access OK → "No projects found"
+    /// 4. Searched + empty + no folder access → grant-access link
+    /// 5. Not yet searched → opt-in button (default — avoids triggering the
+    ///    Documents/Desktop TCC prompt before the user asks for the result).
+    @ViewBuilder
+    private var relatedProjectsContent: some View {
+        if scanner.isLoadingRelatedApps {
+            HStack(spacing: 6) {
+                ProgressView().scaleEffect(0.7)
+                Text(l10n.t("detail.searchingProjects"))
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+            }
+        } else if scanner.hasSearchedRelatedAppsForSelected {
+            if scanner.relatedApps.isEmpty {
+                if scanner.hasProjectDirAccess {
+                    Text(l10n.t("detail.noProjectsFound"))
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                } else {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(l10n.t("detail.noProjectsFound"))
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                        Button {
+                            NSWorkspace.shared.open(
+                                URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders")!
+                            )
+                        } label: {
+                            Text(l10n.t("detail.openPrivacySettings"))
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                                .underline()
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(scanner.relatedApps) { app in
+                        HStack(spacing: 6) {
+                            Image(systemName: "folder.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(.brand)
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(app.name)
+                                    .font(.system(size: 12, weight: .medium))
+                                Text(app.path.replacingOccurrences(of: NSHomeDirectory(), with: "~"))
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                            }
+                            Spacer()
+                            Button {
+                                scanner.openInFinder(app.path)
+                            } label: {
+                                Image(systemName: "arrow.up.right.square")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.vertical, 6)
+                        .contentShape(Rectangle())
+                        if app.id != scanner.relatedApps.last?.id {
+                            Divider().padding(.leading, 23)
+                        }
+                    }
+                }
+            }
+        } else {
+            // Default: opt-in button. Hint explains the TCC prompt up front
+            // so the user knows clicking will ask for folder access.
+            VStack(alignment: .leading, spacing: 8) {
+                Text(l10n.t("detail.relatedProjectsHint"))
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Button {
+                    scanner.searchRelatedProjects()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 11, weight: .medium))
+                        Text(l10n.t("detail.findRelatedProjects"))
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .foregroundColor(.brand)
+                    .padding(.horizontal, 12)
+                    .frame(height: 28)
+                    .background(Color.brand.opacity(0.12))
+                    .cornerRadius(7)
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
 

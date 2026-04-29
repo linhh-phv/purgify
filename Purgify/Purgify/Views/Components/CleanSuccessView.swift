@@ -5,6 +5,7 @@ import SwiftUI
 /// Advanced scanning if the user hasn't enabled it yet.
 struct CleanSuccessView: View {
     @EnvironmentObject var l10n: LocalizationManager
+    @EnvironmentObject var fdaStatus: FDAStatus
     @Environment(\.dismiss) var dismiss
 
     let freedBytes: Int64
@@ -17,7 +18,9 @@ struct CleanSuccessView: View {
 
     @AppStorage("advancedScanningEnabled") private var advancedEnabled = false
 
-    private var showUpsell: Bool { !advancedEnabled }
+    /// Hide the upsell once the user already has the toggle ON *and* FDA
+    /// granted — at that point there's nothing left to unlock.
+    private var showUpsell: Bool { !(advancedEnabled && fdaStatus.isGranted) }
 
     var body: some View {
         VStack(spacing: 0) {

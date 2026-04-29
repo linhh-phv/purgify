@@ -32,10 +32,15 @@ class CacheScannerViewModel: ObservableObject {
     // Selection state for 3-column layout
     @Published var selectedRisk: RiskLevel = .safe
     @Published var selectedItemID: UUID? = nil {
-        didSet { loadRelatedAppsIfNeeded() }
+        didSet { applyCachedRelatedApps() }
     }
 
-    // Related projects for the selected item (lazy-loaded)
+    // Related projects for the selected item.
+    // Search is user-initiated via `searchRelatedProjects()` — selecting an
+    // item does NOT auto-trigger the scan, because that scan reads the user's
+    // Documents/Desktop/Downloads folders and macOS shows a TCC permission
+    // prompt. Auto-firing it right after the cache scan ambushes the user
+    // with a permission dialog they didn't ask for.
     @Published var relatedApps: [RelatedApp] = []
     @Published var isLoadingRelatedApps = false
     @Published var hasProjectDirAccess = true
@@ -45,6 +50,14 @@ class CacheScannerViewModel: ObservableObject {
         return !(definitions.first { $0.nameKey == item.nameKey }?.projectIndicators ?? []).isEmpty
     }
 
+    /// True once the user has triggered a related-projects search for the
+    /// currently selected item in this session. Drives whether the detail
+    /// panel shows the "Find related projects" button or the result list.
+    var hasSearchedRelatedAppsForSelected: Bool {
+        guard let item = selectedItem else { return false }
+        return relatedAppsCache[item.nameKey] != nil
+    }
+
     // MARK: - Private
 
     private var hasScanned = false
@@ -52,15 +65,33 @@ class CacheScannerViewModel: ObservableObject {
     private let definitions: [CacheDefinition]
     private var relatedAppsTask: Task<Void, Never>?
     private var relatedAppsCache: [String: [RelatedApp]] = [:]
+    private let fdaStatus: FDAStatus?
+    private var fdaGrantSubscription: AnyCancellable?
 
     // MARK: - Init
 
     init(
         service: any CacheScanService = LocalCacheScanService(),
-        definitions: [CacheDefinition] = CacheDefinitions.all
+        definitions: [CacheDefinition] = CacheDefinitions.all,
+        fdaStatus: FDAStatus? = nil
     ) {
         self.service = service
         self.definitions = definitions
+        self.fdaStatus = fdaStatus
+
+        // Auto re-scan when the user grants FDA in System Settings and the
+        // app returns to the foreground — surfaces the newly-readable caches
+        // without requiring the user to re-trigger a scan manually.
+        if let fdaStatus {
+            fdaGrantSubscription = fdaStatus.didGrantPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] in
+                    guard let self else { return }
+                    let advancedEnabled = UserDefaults.standard.bool(forKey: "advancedScanningEnabled")
+                    guard advancedEnabled, self.hasScanned, !self.isScanning else { return }
+                    self.scan()
+                }
+        }
     }
 
     // MARK: - Computed Properties
@@ -123,8 +154,12 @@ class CacheScannerViewModel: ObservableObject {
             lastCleanedBytes = 0
         }
 
+        // Only include FDA-gated caches when both the toggle is ON *and* the
+        // permission is actually granted. Without the FDA check, scans would
+        // silently return 0 bytes for those paths — confusing the user.
         let advancedEnabled = UserDefaults.standard.bool(forKey: "advancedScanningEnabled")
-        let defs = definitions.filter { !$0.requiresFDA || advancedEnabled }
+        let fdaGranted = fdaStatus?.isGranted ?? false
+        let defs = definitions.filter { !$0.requiresFDA || (advancedEnabled && fdaGranted) }
         let svc = service
 
         scanItemTotal = defs.count
@@ -378,19 +413,38 @@ class CacheScannerViewModel: ObservableObject {
 
     // MARK: - Related Projects
 
-    private func loadRelatedAppsIfNeeded() {
+    /// Called from `selectedItemID.didSet`. Surfaces a previously-searched
+    /// result if there is one, otherwise leaves `relatedApps` empty so the
+    /// detail panel renders the "Find related projects" button. Never spawns
+    /// a new search — that's `searchRelatedProjects()`'s job.
+    private func applyCachedRelatedApps() {
         relatedAppsTask?.cancel()
-        relatedApps = []
+        isLoadingRelatedApps = false
 
+        guard let item = selectedItem else {
+            relatedApps = []
+            return
+        }
+        relatedApps = relatedAppsCache[item.nameKey] ?? []
+    }
+
+    /// Trigger the related-projects search for the currently selected item.
+    /// User-initiated: a button in the detail panel calls this so the TCC
+    /// folder-access prompt (Documents/Desktop) only fires when the user is
+    /// actively asking for the result.
+    func searchRelatedProjects() {
         guard let item = selectedItem else { return }
         let indicators = definitions.first { $0.nameKey == item.nameKey }?.projectIndicators ?? []
         guard !indicators.isEmpty else { return }
 
-        // Return cached result instantly
+        // Cache hit — show immediately, no need to re-scan.
         if let cached = relatedAppsCache[item.nameKey] {
             relatedApps = cached
             return
         }
+
+        // Don't start a second search if one is already running for the same item.
+        guard !isLoadingRelatedApps else { return }
 
         isLoadingRelatedApps = true
         let svc = service

@@ -50,12 +50,15 @@ struct MainWindowView: View {
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 // Selection UI — always mounted (opacity hides when nothing
-                // selected) so the toolbar chrome height stays stable.
+                // selected) so the toolbar chrome height stays stable. Also
+                // hidden during a scan: items aren't cleared while a re-scan
+                // runs, so selectedBytes can still be > 0 and would otherwise
+                // render the Clean button on top of ScanningView.
                 Text("\(ByteFormatter.format(scanner.selectedBytes)) \(l10n.t("app.selected").lowercased())")
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 10)
-                    .opacity(scanner.selectedBytes > 0 ? 1 : 0)
+                    .opacity(toolbarVisible ? 1 : 0)
 
                 Button {
                     scanner.clean()
@@ -75,12 +78,19 @@ struct MainWindowView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(scanner.isCleaning || scanner.selectedBytes == 0)
-                .opacity(scanner.selectedBytes > 0 ? 1 : 0)
-                .allowsHitTesting(scanner.selectedBytes > 0)
+                .opacity(toolbarVisible ? 1 : 0)
+                .allowsHitTesting(toolbarVisible)
                 .keyboardShortcut(.return, modifiers: [.command])
                 .padding(.trailing, 12)
             }
         }
+    }
+
+    /// Toolbar selection UI is only relevant on the 3-column layout. Hide it
+    /// while scanning (items can be non-empty during a re-scan) and on the
+    /// empty state.
+    private var toolbarVisible: Bool {
+        !scanner.isScanning && !scanner.isEmptyState && scanner.selectedBytes > 0
     }
 
     private var threeColumnLayout: some View {
