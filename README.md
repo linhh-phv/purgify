@@ -36,6 +36,12 @@ A lightweight macOS menu bar app that scans and cleans caches across your Mac â€
 - macOS 13 Ventura or later
 - Apple Silicon or Intel Mac
 
+## Install
+
+1. Download the latest `.dmg` from [GitHub Releases](https://github.com/linhh-phv/purgify/releases/latest)
+2. Open the DMG and drag **Purgify** to Applications
+3. First launch: right-click the app â†’ **Open** (to bypass Gatekeeper)
+
 ## Build from Source
 
 ```bash
