@@ -42,7 +42,16 @@ jobs:
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
         run: |
           chmod +x scripts/release.sh
-          ./scripts/release.sh
+          ./scripts/release.sh 2>&1 | tee /tmp/build.log
+          echo "=== BUILD ERRORS ==="
+          grep -B1 -A3 "error:" /tmp/build.log | head -100 || true
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: /tmp/build.log
 
       - name: Get version
         id: version
