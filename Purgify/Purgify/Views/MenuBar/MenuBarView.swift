@@ -174,7 +174,7 @@ struct MenuBarView: View {
             Button {
                 dismiss()
                 openWindow(id: "main")
-                NSApplication.shared.activate()
+                NSApplication.shared.activate(ignoringOtherApps: true)
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.up.left.and.arrow.down.right")
