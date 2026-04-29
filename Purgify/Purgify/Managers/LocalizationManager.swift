@@ -523,7 +523,7 @@ class LocalizationManager: ObservableObject {
                 "⚠️ The next time you connect a Vision Pro, Xcode must re-download its support files — this can take several minutes.",
 
             // Sidebar
-            "sidebar.scanAgain": "Scan Again",
+            "sidebar.scanAgain": "Rescan",
 
             // Detail panel
             "detail.totalSize":              "TOTAL SIZE",
@@ -579,17 +579,33 @@ class LocalizationManager: ObservableObject {
             "fda.primaryButton":   "Open System Settings",
             "fda.secondaryLink":   "Maybe later",
 
-            // Post-clean upsell banner
+            // FDA-gated cache display names (used in Settings Advanced list)
+            "cache.safari":            "Safari Cache",
+            "cache.mailDownloads":     "Mail Downloads",
+            "cache.appleMusic":        "Apple Music Cache",
+            "cache.diagnosticReports": "Diagnostic Reports",
+
+            // Post-clean upsell banner (legacy — superseded by cleanSuccess.* modal)
             "banner.heading":  "Unlock 4 more caches",
             "banner.subtext":  "Enable Advanced to scan Safari, Mail, Apple Music, and Diagnostic Reports.",
             "banner.button":   "Enable Advanced",
+
+            // Clean Success modal (shown after a successful clean)
+            "cleanSuccess.title":           "Cleanup Complete",
+            "cleanSuccess.youFreed":        "You freed",
+            "cleanSuccess.itemsCleaned":    "%1 items cleaned across %2 categories",
+            "cleanSuccess.oneItemCleaned":  "1 item cleaned",
+            "cleanSuccess.upsellTitle":     "Unlock 4 more caches",
+            "cleanSuccess.upsellSubtitle":  "Safari, Mail Downloads, Apple Music, Reports",
+            "cleanSuccess.enable":          "Enable",
+            "cleanSuccess.done":            "Done",
 
             // About sheet
             "about.description":  "Clean every cache on your Mac — developer tools, browsers, apps, and system.",
             "about.madeBy":       "Made with ♥ by",
             "about.author":       "Pham Linh",
             "about.viewOnGitHub": "View on GitHub",
-            "about.copyright":    "© 2025 Purgify. Open source under MIT License.",
+            "about.copyright":    "© 2025 Purgify. All rights reserved.",
         ],
 
         // MARK: Vietnamese
@@ -1127,17 +1143,33 @@ class LocalizationManager: ObservableObject {
             "fda.primaryButton":   "Mở System Settings",
             "fda.secondaryLink":   "Để sau",
 
-            // Banner nhắc bật Advanced sau khi clean
+            // Tên hiển thị cho 4 cache cần FDA (dùng trong Advanced list)
+            "cache.safari":            "Safari Cache",
+            "cache.mailDownloads":     "Mail Downloads",
+            "cache.appleMusic":        "Apple Music Cache",
+            "cache.diagnosticReports": "Báo cáo chẩn đoán",
+
+            // Banner nhắc bật Advanced sau khi clean (legacy — modal cleanSuccess thay thế)
             "banner.heading":  "Mở khóa thêm 4 cache",
             "banner.subtext":  "Bật Advanced để quét Safari, Mail, Apple Music và Diagnostic Reports.",
             "banner.button":   "Bật Advanced",
+
+            // Modal hiển thị sau khi dọn xong
+            "cleanSuccess.title":           "Đã dọn xong",
+            "cleanSuccess.youFreed":        "Đã giải phóng",
+            "cleanSuccess.itemsCleaned":    "Đã dọn %1 mục từ %2 danh mục",
+            "cleanSuccess.oneItemCleaned":  "Đã dọn 1 mục",
+            "cleanSuccess.upsellTitle":     "Mở khóa thêm 4 cache",
+            "cleanSuccess.upsellSubtitle":  "Safari, Mail Downloads, Apple Music, Reports",
+            "cleanSuccess.enable":          "Bật",
+            "cleanSuccess.done":            "Xong",
 
             // About sheet
             "about.description":  "Dọn dẹp mọi bộ nhớ đệm trên Mac — developer tools, trình duyệt, ứng dụng và hệ thống.",
             "about.madeBy":       "Được làm với ♥ bởi",
             "about.author":       "Pham Linh",
             "about.viewOnGitHub": "Xem trên GitHub",
-            "about.copyright":    "© 2025 Purgify. Mã nguồn mở theo giấy phép MIT.",
+            "about.copyright":    "© 2025 Purgify. Bảo lưu mọi quyền.",
         ]
     ]
 }

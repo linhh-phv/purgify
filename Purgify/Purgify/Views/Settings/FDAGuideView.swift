@@ -30,12 +30,12 @@ struct FDAGuideView: View {
             VStack(spacing: 20) {
                 // Hero icon
                 Circle()
-                    .fill(Color.accentColor.opacity(0.12))
+                    .fill(Color.brand.opacity(0.12))
                     .frame(width: 80, height: 80)
                     .overlay(
                         Image(systemName: "lock.fill")
                             .font(.system(size: 34, weight: .medium))
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(.brand)
                     )
                     .padding(.top, 20)
 
@@ -74,7 +74,7 @@ struct FDAGuideView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
-                        .background(Color.accentColor)
+                        .background(Color.brand)
                         .cornerRadius(8)
                 }
                 .buttonStyle(.plain)
@@ -100,7 +100,7 @@ struct FDAGuideView: View {
     private func stepRow(number: Int, title: String, desc: String) -> some View {
         HStack(alignment: .top, spacing: 14) {
             Circle()
-                .fill(Color.accentColor)
+                .fill(Color.brand)
                 .frame(width: 28, height: 28)
                 .overlay(
                     Text("\(number)")

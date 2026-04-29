@@ -13,12 +13,12 @@ struct LanguageToggle: View {
     private var pillRadius: CGFloat { compact ? 4 : 5 }
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 2) {
             languageButton(.en)
             languageButton(.vi)
         }
-        .frame(height: height)
-        .background(Color(nsColor: .separatorColor).opacity(0.5))
+        .padding(2)
+        .background(Color.bgPill)
         .cornerRadius(cornerRadius)
     }
 
@@ -33,7 +33,7 @@ struct LanguageToggle: View {
                 .foregroundColor(isActive ? .primary : .secondary)
                 .frame(height: pillHeight)
                 .padding(.horizontal, compact ? 6 : 8)
-                .background(isActive ? Color(nsColor: .controlBackgroundColor) : Color.clear)
+                .background(isActive ? Color.bgPillActive : Color.clear)
                 .cornerRadius(pillRadius)
         }
         .buttonStyle(.plain)

@@ -1,7 +1,9 @@
 import SwiftUI
 import ServiceManagement
 
-/// Settings sheet (320pt wide, height auto-sized to content).
+/// Compact Settings sheet (320pt wide). Three sections: General, Advanced, About.
+/// About is deliberately minimal — just version + author + links — so the sheet
+/// stays short enough to not scroll on typical screens.
 struct SettingsView: View {
     @EnvironmentObject var l10n: LocalizationManager
 
@@ -22,7 +24,7 @@ struct SettingsView: View {
     private var versionString: String {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
         let b = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
-        return "Version \(v) (Build \(b))"
+        return "v\(v) (\(b))"
     }
 
     var body: some View {
@@ -39,12 +41,12 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 20)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
 
             Divider()
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
 
                 // MARK: General
                 sectionLabel(l10n.t("settings.general"))
@@ -80,10 +82,10 @@ struct SettingsView: View {
 
                 // MARK: Advanced Scanning
                 sectionLabel(l10n.t("settings.advanced"))
-                    .padding(.top, 8)
+                    .padding(.top, 10)
 
                 groupBox {
-                    HStack(alignment: .top) {
+                    HStack(alignment: .center) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(l10n.t("settings.advanced.toggle"))
                                 .font(.system(size: 13))
@@ -126,52 +128,29 @@ struct SettingsView: View {
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 36)
-                            .background(Color.accentColor)
+                            .frame(height: 34)
+                            .background(Color.brand)
                             .cornerRadius(8)
                     }
                     .buttonStyle(.plain)
-                    .padding(.top, 4)
+                    .padding(.top, 6)
                 }
 
-                // MARK: About
+                // MARK: About (compact)
                 sectionLabel(l10n.t("settings.about"))
-                    .padding(.top, 8)
+                    .padding(.top, 10)
 
-                // App icon + name + version (centered)
-                VStack(spacing: 8) {
-                    appIcon
-                    Text("Purgify")
-                        .font(.system(size: 18, weight: .bold))
-                    Text(versionString)
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
-                    Text(l10n.t("about.description"))
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 2)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-
-                // Author + links
                 groupBox {
-                    HStack(spacing: 8) {
-                        Text(l10n.t("about.madeBy"))
+                    HStack(spacing: 0) {
+                        Text("Purgify")
+                            .font(.system(size: 13, weight: .semibold))
+                        Text(" · \(versionString)")
                             .font(.system(size: 13))
                             .foregroundColor(.secondary)
-                        Text(l10n.t("about.author"))
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.accentColor)
                         Spacer()
-                    }
-
-                    Divider()
-
-                    linkRow(label: l10n.t("about.viewOnGitHub")) {
-                        NSWorkspace.shared.open(URL(string: "https://github.com/linhh-phv/purgify")!)
+                        Text(l10n.t("about.author"))
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.brand)
                     }
 
                     Divider()
@@ -179,14 +158,14 @@ struct SettingsView: View {
                     linkRow(label: l10n.t("settings.sendFeedback"), disabled: true) {}
                 }
 
-                // Copyright
                 Text(l10n.t("about.copyright"))
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 4)
+                    .padding(.top, 6)
             }
-            .padding(24)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
         }
         .frame(width: 320)
         .background(Color(nsColor: .windowBackgroundColor))
@@ -207,15 +186,17 @@ struct SettingsView: View {
         Text(text)
             .font(.system(size: 10, weight: .medium))
             .foregroundColor(.secondary)
+            .padding(.leading, 4)
+            .padding(.bottom, 4)
     }
 
     private func groupBox<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             content()
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(nsColor: .controlBackgroundColor))
+        .background(Color.bgCard)
         .cornerRadius(10)
     }
 
@@ -224,7 +205,7 @@ struct SettingsView: View {
             HStack {
                 Text(label)
                     .font(.system(size: 13))
-                    .foregroundColor(disabled ? .secondary : .accentColor)
+                    .foregroundColor(disabled ? .secondary : .brand)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 11))
@@ -233,22 +214,5 @@ struct SettingsView: View {
         }
         .buttonStyle(.plain)
         .disabled(disabled)
-    }
-
-    private var appIcon: some View {
-        RoundedRectangle(cornerRadius: 18)
-            .fill(Color(red: 0.071, green: 0.392, blue: 0.918))
-            .frame(width: 72, height: 72)
-            .overlay(
-                HStack(spacing: 0) {
-                    Text("P")
-                        .font(.system(size: 42, weight: .bold))
-                        .foregroundColor(.white)
-                    Text("✦")
-                        .font(.system(size: 14))
-                        .foregroundColor(.white)
-                        .offset(y: -14)
-                }
-            )
     }
 }

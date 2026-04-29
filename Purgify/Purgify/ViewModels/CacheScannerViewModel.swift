@@ -20,6 +20,15 @@ class CacheScannerViewModel: ObservableObject {
     /// "You freed X GB" text in the empty state and post-clean upsell banner.
     @Published var justCleaned: Bool = false
 
+    /// Number of items removed by the most recent clean (used in success modal).
+    @Published var lastCleanedCount: Int = 0
+
+    /// Number of distinct risk categories touched by the most recent clean.
+    @Published var lastCleanedCategoryCount: Int = 0
+
+    /// Drives the Clean Success modal sheet presentation.
+    @Published var showCleanSuccess: Bool = false
+
     // Selection state for 3-column layout
     @Published var selectedRisk: RiskLevel = .safe
     @Published var selectedItemID: UUID? = nil {
@@ -215,6 +224,8 @@ class CacheScannerViewModel: ObservableObject {
 
     func clean() {
         let toClean = items.filter(\.isSelected)
+        let touchedRisks = Set(toClean.map(\.risk))
+        let itemCount = toClean.count
         isCleaning = true
         lastCleanedBytes = 0
         let svc = service
@@ -241,10 +252,14 @@ class CacheScannerViewModel: ObservableObject {
                 }
             }
             await MainActor.run { [weak self] in
-                self?.lastCleanedBytes = freed
-                self?.isCleaning = false
-                self?.justCleaned = freed > 0
-                self?.scan(keepCleanedFlag: true)
+                guard let self else { return }
+                self.lastCleanedBytes = freed
+                self.lastCleanedCount = itemCount
+                self.lastCleanedCategoryCount = touchedRisks.count
+                self.isCleaning = false
+                self.justCleaned = freed > 0
+                self.applyCleanResultLocally(itemIDs: toClean.map(\.id))
+                self.showCleanSuccess = freed > 0
             }
         }
     }
@@ -272,10 +287,46 @@ class CacheScannerViewModel: ObservableObject {
                 try? svc.removeItem(at: item.expandedPath)
             }
             await MainActor.run { [weak self] in
-                self?.lastCleanedBytes = freed
-                self?.isCleaning = false
-                self?.justCleaned = freed > 0
-                self?.scan(keepCleanedFlag: true)
+                guard let self else { return }
+                self.lastCleanedBytes = freed
+                self.lastCleanedCount = 1
+                self.lastCleanedCategoryCount = 1
+                self.isCleaning = false
+                self.justCleaned = freed > 0
+                self.applyCleanResultLocally(itemIDs: [id])
+                self.showCleanSuccess = freed > 0
+            }
+        }
+    }
+
+    /// Update `items` in place after a clean — avoids a full rescan.
+    /// Fully-cleaned items are removed; partially-cleaned items (sub-items with
+    /// only some selected) stay in the list with their selected sub-items removed
+    /// and `sizeBytes` recomputed.
+    private func applyCleanResultLocally(itemIDs: [UUID]) {
+        for id in itemIDs {
+            guard let idx = items.firstIndex(where: { $0.id == id }) else { continue }
+            if let subs = items[idx].subItems {
+                let remaining = subs.filter { !$0.isSelected }
+                if remaining.isEmpty {
+                    items.remove(at: idx)
+                } else {
+                    items[idx].subItems = remaining
+                    items[idx].sizeBytes = remaining.reduce(0) { $0 + $1.sizeBytes }
+                }
+            } else {
+                items.remove(at: idx)
+            }
+        }
+
+        // Re-anchor selection — current selection may have been removed.
+        if selectedItemID != nil && !items.contains(where: { $0.id == selectedItemID }) {
+            selectedItemID = filteredItems.first?.id
+        }
+        if !riskSummary.contains(where: { $0.0 == selectedRisk }) {
+            if let firstRisk = riskSummary.first?.0 {
+                selectedRisk = firstRisk
+                selectedItemID = filteredItems.first?.id
             }
         }
     }

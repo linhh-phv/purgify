@@ -27,7 +27,7 @@ struct MenuBarView: View {
         HStack(spacing: 8) {
             // App icon
             RoundedRectangle(cornerRadius: 7)
-                .fill(Color.accentColor)
+                .fill(Color.brand)
                 .frame(width: 28, height: 28)
                 .overlay(
                     Image(systemName: "sparkles")
@@ -79,7 +79,7 @@ struct MenuBarView: View {
                             .fill(Color(nsColor: .separatorColor))
                             .frame(height: 4)
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(Color.accentColor)
+                            .fill(Color.brand)
                             .frame(width: geo.size.width * scanner.scanProgress, height: 4)
                             .animation(.easeInOut(duration: 0.3), value: scanner.scanProgress)
                     }
@@ -156,7 +156,7 @@ struct MenuBarView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 32)
-                .background(Color.accentColor)
+                .background(Color.brand)
                 .cornerRadius(8)
             }
             .buttonStyle(.plain)
@@ -183,7 +183,7 @@ struct MenuBarView: View {
                 .font(.caption)
             }
             .buttonStyle(.plain)
-            .foregroundColor(.accentColor)
+            .foregroundColor(.brand)
 
             Spacer()
 

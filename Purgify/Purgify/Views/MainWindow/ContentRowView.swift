@@ -9,10 +9,21 @@ struct ContentRowView: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            // Checkbox
-            Toggle("", isOn: $item.isSelected)
-                .toggleStyle(.checkbox)
-                .labelsHidden()
+            // Checkbox — custom draw to enforce brand blue.
+            // SwiftUI's native `.checkbox` toggle style uses the system accent,
+            // which on macOS is overridden by the user's System Settings accent
+            // (green in our case) and ignores the app's Asset Catalog AccentColor.
+            RoundedRectangle(cornerRadius: 4)
+                .fill(item.isSelected ? Color.brand : Color.divider)
+                .frame(width: 16, height: 16)
+                .overlay(
+                    item.isSelected ?
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundColor(.white)
+                        : nil
+                )
+                .onTapGesture { item.isSelected.toggle() }
 
             // Brand-colored icon
             Image(systemName: item.icon)
@@ -38,21 +49,25 @@ struct ContentRowView: View {
                 let selCount = subs.filter(\.isSelected).count
                 Text("\(selCount)/\(subs.count)")
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.brand)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(Color.accentColor.opacity(0.08))
+                    .background(Color.brandSurface)
                     .cornerRadius(9)
             }
 
-            // Size
+            // Size — orange always for >1 GB, else primary/secondary by selection
             Text(item.sizeFormatted)
                 .font(.system(size: 13, weight: .semibold).monospacedDigit())
-                .foregroundColor(item.isSelected ? item.risk.color : .primary)
+                .foregroundColor(
+                    item.sizeBytes > 1_073_741_824 ? .riskModerate
+                        : item.isSelected ? .primary
+                        : .secondary
+                )
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-        .background(isSelected ? Color.accentColor.opacity(0.08) : Color.clear)
+        .background(isSelected ? item.risk.selectionSurface : Color.clear)
         .contentShape(Rectangle())
     }
 }

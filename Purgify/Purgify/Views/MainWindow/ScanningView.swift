@@ -14,33 +14,33 @@ struct ScanningView: View {
 
             // Glow circle + progress ring
             ZStack {
-                // Glow background
+                // Glow background (#ebf5ff in Figma)
                 Circle()
-                    .fill(Color.accentColor.opacity(0.06))
+                    .fill(Color.brand.opacity(0.08))
                     .frame(width: 200, height: 200)
                     .scaleEffect(glowPulse)
 
-                // Track ring
+                // Track ring (#d9eeff in Figma)
                 Circle()
-                    .fill(Color.accentColor.opacity(0.08))
+                    .fill(Color.brand.opacity(0.15))
                     .frame(width: 130, height: 130)
 
-                // Inner solid circle
+                // Inner white disc (#ffffff in Figma — gives the donut effect)
                 Circle()
-                    .fill(Color.accentColor)
+                    .fill(Color.bgScanInner)
                     .frame(width: 104, height: 104)
 
                 // Orbiting dot
                 Circle()
-                    .fill(Color.accentColor.opacity(0.6))
+                    .fill(Color.brand.opacity(0.6))
                     .frame(width: 8, height: 8)
                     .offset(y: -65)
                     .rotationEffect(.degrees(rotation))
 
-                // Center icon
+                // Center icon — blue magnifying glass on white disc
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 28, weight: .light))
-                    .foregroundColor(.white)
+                    .foregroundColor(.brand)
             }
 
             // Text
@@ -49,7 +49,7 @@ struct ScanningView: View {
 
             if !scanner.currentScanItem.isEmpty {
                 Text(l10n.t(scanner.currentScanItem))
-                    .font(.system(size: 14))
+                    .font(.system(size: 13))
                     .foregroundColor(.secondary)
                     .transition(.opacity)
                     .id(scanner.currentScanItem)
@@ -61,10 +61,10 @@ struct ScanningView: View {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(Color(nsColor: .separatorColor))
+                            .fill(Color.divider)
                             .frame(height: 4)
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(Color.accentColor)
+                            .fill(Color.brand)
                             .frame(width: geo.size.width * scanner.scanProgress, height: 4)
                             .animation(.easeInOut(duration: 0.3), value: scanner.scanProgress)
                     }
@@ -81,7 +81,7 @@ struct ScanningView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .background(Color.bgContent)
         .onAppear {
             withAnimation(.linear(duration: 2).repeatForever(autoreverses: false)) {
                 rotation = 360

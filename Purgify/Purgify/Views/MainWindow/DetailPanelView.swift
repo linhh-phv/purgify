@@ -25,7 +25,7 @@ struct DetailPanelView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(nsColor: .textBackgroundColor))
+        .background(Color.bgDetail)
     }
 
     // MARK: - Normal item detail
@@ -43,6 +43,7 @@ struct DetailPanelView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(item.sizeFormatted)
                             .font(.system(size: 34, weight: .bold).monospacedDigit())
+                            .foregroundColor(item.sizeBytes > 1_073_741_824 ? .riskModerate : .primary)
                         Text(l10n.t("detail.totalSize"))
                             .font(.system(size: 10, weight: .medium))
                             .foregroundColor(.secondary)
@@ -68,10 +69,10 @@ struct DetailPanelView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "folder.fill")
                                 .font(.system(size: 12))
-                                .foregroundColor(.accentColor)
+                                .foregroundColor(.brand)
                             Text(item.path)
                                 .font(.system(size: 13))
-                                .foregroundColor(.accentColor)
+                                .foregroundColor(.brand)
                             Spacer()
                             Button {
                                 scanner.openInFinder(item.path)
@@ -142,7 +143,7 @@ struct DetailPanelView: View {
                                         HStack(spacing: 6) {
                                             Image(systemName: "folder.fill")
                                                 .font(.system(size: 11))
-                                                .foregroundColor(.accentColor)
+                                                .foregroundColor(.brand)
                                             VStack(alignment: .leading, spacing: 1) {
                                                 Text(app.name)
                                                     .font(.system(size: 12, weight: .medium))
@@ -185,7 +186,7 @@ struct DetailPanelView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 36)
-                    .background(Color.accentColor)
+                    .background(Color.brand)
                     .cornerRadius(9)
             }
             .buttonStyle(.plain)
@@ -208,17 +209,17 @@ struct DetailPanelView: View {
 
     private func badgeTextColor(_ risk: RiskLevel) -> Color {
         switch risk {
-        case .safe:     return Color(nsColor: .systemGreen)
-        case .moderate: return Color(nsColor: .systemOrange)
-        case .caution:  return Color(nsColor: .systemRed)
+        case .safe:     return .riskSafeBadgeText
+        case .moderate: return .riskModerate
+        case .caution:  return .riskCaution
         }
     }
 
     private func badgeBgColor(_ risk: RiskLevel) -> Color {
         switch risk {
-        case .safe:     return Color(nsColor: .systemGreen).opacity(0.15)
-        case .moderate: return Color(nsColor: .systemOrange).opacity(0.15)
-        case .caution:  return Color(nsColor: .systemRed).opacity(0.15)
+        case .safe:     return .riskSafeBadgeBg
+        case .moderate: return Color.riskModerate.opacity(0.15)
+        case .caution:  return Color.riskCaution.opacity(0.15)
         }
     }
 
@@ -239,7 +240,7 @@ struct DetailPanelView: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(nsColor: .controlBackgroundColor))
+        .background(Color.bgCard)
         .cornerRadius(10)
     }
 }

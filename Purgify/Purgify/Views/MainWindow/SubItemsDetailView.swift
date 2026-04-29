@@ -47,6 +47,7 @@ struct SubItemsDetailView: View {
                     .foregroundColor(.secondary)
                 Text(item.sizeFormatted)
                     .font(.system(size: 34, weight: .bold).monospacedDigit())
+                    .foregroundColor(item.sizeBytes > 1_073_741_824 ? .riskModerate : .primary)
             }
             .padding(20)
 
@@ -63,7 +64,7 @@ struct SubItemsDetailView: View {
                 )
             }
             .padding(.vertical, 8)
-            .background(Color(nsColor: .controlBackgroundColor))
+            .background(Color.bgCard)
             .cornerRadius(10)
             .padding(.horizontal, 16)
 
@@ -79,7 +80,7 @@ struct SubItemsDetailView: View {
             }
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(nsColor: .controlBackgroundColor))
+            .background(Color.bgCard)
             .cornerRadius(10)
             .padding(.horizontal, 16)
             .padding(.top, 16)
@@ -105,14 +106,14 @@ struct SubItemsDetailView: View {
                             }
                             .font(.system(size: 11))
                             .buttonStyle(.plain)
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(.brand)
                         } else if selectedCount == 0 {
                             Button(l10n.t("risk.selectAll")) {
                                 scanner.selectAllSubItems(itemID: item.id)
                             }
                             .font(.system(size: 11))
                             .buttonStyle(.plain)
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(.brand)
                         } else {
                             Button(l10n.t("risk.selectAll")) {
                                 scanner.selectAllSubItems(itemID: item.id)
@@ -125,7 +126,7 @@ struct SubItemsDetailView: View {
                             }
                             .font(.system(size: 11))
                             .buttonStyle(.plain)
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(.brand)
                         }
                     }
                 }
@@ -145,7 +146,7 @@ struct SubItemsDetailView: View {
                 }
             }
             .padding(12)
-            .background(Color(nsColor: .controlBackgroundColor))
+            .background(Color.bgCard)
             .cornerRadius(10)
             .padding(.horizontal, 16)
             .padding(.top, 16)
@@ -163,7 +164,7 @@ struct SubItemsDetailView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 36)
-                    .background(selectedCount > 0 ? Color.accentColor : Color.gray)
+                    .background(selectedCount > 0 ? Color.brand : Color.gray)
                     .cornerRadius(9)
             }
             .buttonStyle(.plain)
@@ -178,10 +179,10 @@ struct SubItemsDetailView: View {
         VStack(spacing: 4) {
             Text(value)
                 .font(.system(size: 16, weight: .semibold).monospacedDigit())
-                .foregroundColor(accent ? .accentColor : .primary)
+                .foregroundColor(accent ? .brand : .primary)
             Text(label)
                 .font(.system(size: 9, weight: .medium))
-                .foregroundColor(accent ? .accentColor : .secondary)
+                .foregroundColor(accent ? .brand : .secondary)
         }
         .frame(maxWidth: .infinity)
     }
@@ -189,7 +190,7 @@ struct SubItemsDetailView: View {
     private func subItemRow(_ sub: SubItem) -> some View {
         HStack(spacing: 8) {
             RoundedRectangle(cornerRadius: 3)
-                .fill(sub.isSelected ? Color.accentColor : Color(nsColor: .separatorColor))
+                .fill(sub.isSelected ? Color.brand : Color.divider)
                 .frame(width: 14, height: 14)
                 .overlay(
                     sub.isSelected ?
@@ -218,7 +219,7 @@ struct SubItemsDetailView: View {
 
             Text(sub.sizeFormatted)
                 .font(.system(size: 13, weight: .medium).monospacedDigit())
-                .foregroundColor(sub.isSelected ? (sub.sizeBytes > 1_073_741_824 ? Color(nsColor: .systemOrange) : .primary) : .secondary)
+                .foregroundColor(sub.isSelected ? (sub.sizeBytes > 1_073_741_824 ? .riskModerate : .primary) : .secondary)
         }
         .padding(.vertical, 6)
         .contentShape(Rectangle())

@@ -16,6 +16,7 @@ struct PurgifyApp: App {
             MenuBarView()
                 .environmentObject(scanner)
                 .environmentObject(l10n)
+                .tint(.brand)
         }
         .menuBarExtraStyle(.window)
 
@@ -23,8 +24,10 @@ struct PurgifyApp: App {
             MainWindowView()
                 .environmentObject(scanner)
                 .environmentObject(l10n)
+                .tint(.brand)
         }
         .windowStyle(.titleBar)
         .defaultSize(width: 1080, height: 760)
+        .defaultPosition(.center)
     }
 }

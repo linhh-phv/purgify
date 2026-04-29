@@ -17,17 +17,17 @@ struct PostCleanBanner: View {
     var body: some View {
         ZStack(alignment: .leading) {
             // BG
-            Color.accentColor.opacity(0.08)
+            Color.brandSurface
 
             // Left accent stripe
             Rectangle()
-                .fill(Color.accentColor)
+                .fill(Color.brand)
                 .frame(width: 4)
 
             HStack(spacing: 12) {
                 Image(systemName: "lock.open.fill")
                     .font(.system(size: 18))
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.brand)
                     .padding(.leading, 28)
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -47,7 +47,7 @@ struct PostCleanBanner: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 14)
                         .frame(height: 28)
-                        .background(Color.accentColor)
+                        .background(Color.brand)
                         .cornerRadius(7)
                 }
                 .buttonStyle(.plain)
@@ -65,7 +65,7 @@ struct PostCleanBanner: View {
         .frame(height: 52)
         .overlay(
             Rectangle()
-                .fill(Color.accentColor.opacity(0.25))
+                .fill(Color.brand.opacity(0.25))
                 .frame(height: 1),
             alignment: .bottom
         )

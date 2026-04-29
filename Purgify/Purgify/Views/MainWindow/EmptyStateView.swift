@@ -11,12 +11,12 @@ struct EmptyStateView: View {
 
             // Green circle with checkmark
             Circle()
-                .fill(Color(nsColor: .systemGreen).opacity(0.15))
+                .fill(Color.riskSafeBadgeBg)
                 .frame(width: 80, height: 80)
                 .overlay(
                     Image(systemName: "checkmark")
                         .font(.system(size: 32, weight: .medium))
-                        .foregroundColor(Color(nsColor: .systemGreen))
+                        .foregroundColor(.riskSafe)
                 )
 
             Text(l10n.t("app.allClean"))
@@ -38,7 +38,7 @@ struct EmptyStateView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 8)
-                .background(Color(nsColor: .controlBackgroundColor))
+                .background(Color.bgPill)
                 .cornerRadius(8)
             }
             .buttonStyle(.plain)
@@ -47,7 +47,7 @@ struct EmptyStateView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .background(Color.bgContent)
     }
 
     private var subheadingText: String {

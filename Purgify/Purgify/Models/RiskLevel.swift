@@ -15,9 +15,37 @@ enum RiskLevel: String, CaseIterable {
 
     var color: Color {
         switch self {
-        case .safe:     return .green
-        case .moderate: return .orange
-        case .caution:  return .red
+        case .safe:     return .riskSafe
+        case .moderate: return .riskModerate
+        case .caution:  return .riskCaution
+        }
+    }
+
+    /// Sidebar-selection bg: Safe uses brand blue (trust), others use risk color.
+    /// Matches Figma Main Window Normal (Safe→blue) + Xcode frame (Moderate→orange).
+    var selectionColor: Color {
+        switch self {
+        case .safe:     return .brand
+        case .moderate: return .riskModerate
+        case .caution:  return .riskCaution
+        }
+    }
+
+    /// Lightened tint for selected content-row bg.
+    var selectionSurface: Color {
+        switch self {
+        case .safe:     return .brandSurface
+        case .moderate: return .moderateSurface
+        case .caution:  return .cautionSurface
+        }
+    }
+
+    /// Subtitle color inside a selected sidebar row (white-with-tint).
+    var selectionSubtitle: Color {
+        switch self {
+        case .safe:     return .brandSubtitle
+        case .moderate: return .moderateSubtitle
+        case .caution:  return .cautionSubtitle
         }
     }
 

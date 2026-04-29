@@ -12,7 +12,7 @@ struct SidebarView: View {
             // Header — app icon + title
             HStack(spacing: 8) {
                 RoundedRectangle(cornerRadius: 7)
-                    .fill(Color.accentColor)
+                    .fill(Color.brand)
                     .frame(width: 26, height: 26)
                     .overlay(
                         Image(systemName: "sparkles")
@@ -77,7 +77,7 @@ struct SidebarView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 28)
-                        .background(Color(nsColor: .separatorColor).opacity(0.5))
+                        .background(Color.bgPill)
                         .cornerRadius(7)
                     }
                     .buttonStyle(.plain)
@@ -91,7 +91,7 @@ struct SidebarView: View {
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)
                             .frame(width: 28, height: 28)
-                            .background(Color(nsColor: .separatorColor).opacity(0.5))
+                            .background(Color.bgPill)
                             .cornerRadius(7)
                     }
                     .buttonStyle(.plain)
@@ -104,7 +104,7 @@ struct SidebarView: View {
             .padding(16)
         }
         .frame(width: 220)
-        .background(Color(nsColor: .controlBackgroundColor))
+        .background(Color.bgSidebar)
     }
 }
 
@@ -136,7 +136,7 @@ private struct SidebarRiskRow: View {
                 if count > 0 {
                     Text("\(ByteFormatter.format(totalBytes)) · \(count) \(l10n.t("app.items"))")
                         .font(.system(size: 11))
-                        .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
+                        .foregroundColor(isSelected ? risk.selectionSubtitle : .secondary)
                 }
             }
             Spacer()
@@ -145,7 +145,7 @@ private struct SidebarRiskRow: View {
         .padding(.vertical, 6)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(isSelected ? risk.color : Color.clear)
+                .fill(isSelected ? risk.selectionColor : Color.clear)
         )
         .contentShape(Rectangle())
     }

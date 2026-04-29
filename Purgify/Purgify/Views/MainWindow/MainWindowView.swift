@@ -7,35 +7,17 @@ struct MainWindowView: View {
     @EnvironmentObject var l10n: LocalizationManager
 
     @State private var showSettings = false
-    @State private var bannerHidden = false
-
-    private var showBanner: Bool {
-        !bannerHidden && PostCleanBanner.shouldShow(justCleaned: scanner.justCleaned)
-    }
+    @State private var showFDAGuide = false
+    @AppStorage("advancedScanningEnabled") private var advancedEnabled = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            if showBanner {
-                PostCleanBanner(
-                    onEnable: {
-                        bannerHidden = true
-                        showSettings = true
-                    },
-                    onDismiss: {
-                        PostCleanBanner.recordDismiss()
-                        bannerHidden = true
-                    }
-                )
-            }
-
-            Group {
-                if scanner.isScanning {
-                    ScanningView()
-                } else if scanner.isEmptyState {
-                    EmptyStateView()
-                } else {
-                    threeColumnLayout
-                }
+        Group {
+            if scanner.isScanning {
+                ScanningView()
+            } else if scanner.isEmptyState {
+                EmptyStateView()
+            } else {
+                threeColumnLayout
             }
         }
         .frame(minWidth: 960, minHeight: 700)
@@ -44,42 +26,59 @@ struct MainWindowView: View {
             SettingsView()
                 .environmentObject(l10n)
         }
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                toolbarActions
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var toolbarActions: some View {
-        HStack(spacing: 12) {
-            if scanner.justCleaned && scanner.lastCleanedBytes > 0 {
-                HStack(spacing: 4) {
-                    Image(systemName: "checkmark")
-                    Text("\(l10n.t("app.freed")) \(ByteFormatter.format(scanner.lastCleanedBytes))")
+        .sheet(isPresented: $scanner.showCleanSuccess) {
+            CleanSuccessView(
+                freedBytes: scanner.lastCleanedBytes,
+                itemCount: scanner.lastCleanedCount,
+                categoryCount: scanner.lastCleanedCategoryCount,
+                onEnableAdvanced: {
+                    advancedEnabled = true
+                    scanner.showCleanSuccess = false
+                    // Defer FDA guide to next runloop so the sheet transition
+                    // completes before the new sheet tries to present.
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                        showFDAGuide = true
+                    }
                 }
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(Color(nsColor: .systemGreen))
-            }
-
-            if scanner.selectedBytes > 0 {
+            )
+            .environmentObject(l10n)
+        }
+        .sheet(isPresented: $showFDAGuide) {
+            FDAGuideView()
+                .environmentObject(l10n)
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .primaryAction) {
+                // Selection UI — always mounted (opacity hides when nothing
+                // selected) so the toolbar chrome height stays stable.
                 Text("\(ByteFormatter.format(scanner.selectedBytes)) \(l10n.t("app.selected").lowercased())")
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
+                    .padding(.horizontal, 10)
+                    .opacity(scanner.selectedBytes > 0 ? 1 : 0)
 
                 Button {
                     scanner.clean()
                 } label: {
-                    HStack(spacing: 4) {
+                    HStack(spacing: 7) {
                         Image(systemName: "trash")
+                            .font(.system(size: 12))
                         Text(l10n.t("app.cleanSelected"))
+                            .font(.system(size: 12, weight: .medium))
                     }
-                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 22)
+                    .frame(height: 28)
+                    .frame(minWidth: 132)
+                    .background(Color.brand)
+                    .cornerRadius(7)
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(scanner.isCleaning)
+                .buttonStyle(.plain)
+                .disabled(scanner.isCleaning || scanner.selectedBytes == 0)
+                .opacity(scanner.selectedBytes > 0 ? 1 : 0)
+                .allowsHitTesting(scanner.selectedBytes > 0)
                 .keyboardShortcut(.return, modifiers: [.command])
+                .padding(.trailing, 12)
             }
         }
     }

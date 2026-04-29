@@ -10,7 +10,7 @@ struct ContentListView: View {
             // Toolbar
             HStack {
                 Text(scanner.selectedRisk.localizedName(l10n))
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 14, weight: .bold))
                 Spacer()
                 if allSelectedInCurrentRisk {
                     Button(l10n.t("risk.deselectAll")) {
@@ -18,19 +18,19 @@ struct ContentListView: View {
                     }
                     .font(.system(size: 13))
                     .buttonStyle(.plain)
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.brand)
                 } else {
                     Button(l10n.t("risk.selectAll")) {
                         scanner.selectAllInCurrentRisk()
                     }
                     .font(.system(size: 13))
                     .buttonStyle(.plain)
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.brand)
                 }
             }
             .padding(.horizontal, 16)
             .frame(height: 44)
-            .background(Color(nsColor: .textBackgroundColor))
+            .background(Color.bgDetail)
 
             Divider()
 
@@ -62,7 +62,7 @@ struct ContentListView: View {
             }
         }
         .frame(width: 400)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .background(Color.bgContent)
     }
 
     private var allSelectedInCurrentRisk: Bool {
