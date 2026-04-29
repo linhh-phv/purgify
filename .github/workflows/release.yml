@@ -42,16 +42,7 @@ jobs:
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
         run: |
           chmod +x scripts/release.sh
-          ./scripts/release.sh 2>&1 | tee /tmp/build.log
-          echo "=== BUILD ERRORS ==="
-          grep -B1 -A3 "error:" /tmp/build.log | head -100 || true
-
-      - name: Upload build log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-log
-          path: /tmp/build.log
+          ./scripts/release.sh
 
       - name: Get version
         id: version
@@ -59,6 +50,7 @@ jobs:
           VERSION=$(xcodebuild -project Purgify/Purgify.xcodeproj -scheme Purgify \
             -showBuildSettings 2>/dev/null | grep MARKETING_VERSION | awk '{print $3}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          ls -lh /tmp/Purgify-${VERSION}.dmg
 
       - name: Generate release notes
         id: notes
