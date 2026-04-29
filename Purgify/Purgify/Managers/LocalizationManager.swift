@@ -605,7 +605,7 @@ class LocalizationManager: ObservableObject {
             "about.madeBy":       "Made with ♥ by",
             "about.author":       "Pham Linh",
             "about.viewOnGitHub": "View on GitHub",
-            "about.copyright":    "© 2025 Purgify. All rights reserved.",
+            "about.copyright":    "© 2025 Purgify. Open source under MIT License.",
         ],
 
         // MARK: Vietnamese
@@ -1169,7 +1169,7 @@ class LocalizationManager: ObservableObject {
             "about.madeBy":       "Được làm với ♥ bởi",
             "about.author":       "Pham Linh",
             "about.viewOnGitHub": "Xem trên GitHub",
-            "about.copyright":    "© 2025 Purgify. Bảo lưu mọi quyền.",
+            "about.copyright":    "© 2025 Purgify. Mã nguồn mở theo giấy phép MIT.",
         ]
     ]
 }

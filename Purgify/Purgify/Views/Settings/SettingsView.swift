@@ -155,6 +155,12 @@ struct SettingsView: View {
 
                     Divider()
 
+                    linkRow(label: l10n.t("about.viewOnGitHub")) {
+                        NSWorkspace.shared.open(URL(string: "https://github.com/linhh-phv/purgify")!)
+                    }
+
+                    Divider()
+
                     linkRow(label: l10n.t("settings.sendFeedback"), disabled: true) {}
                 }
 
