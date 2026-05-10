@@ -148,6 +148,7 @@ class CacheScannerViewModel: ObservableObject {
         scanProgress = 0
         currentScanItem = ""
         selectedItemID = nil
+        items = []
 
         if !keepCleanedFlag {
             justCleaned = false
@@ -166,7 +167,6 @@ class CacheScannerViewModel: ObservableObject {
         scanItemIndex = 0
 
         Task.detached(priority: .userInitiated) { [weak self] in
-            var scanned: [CacheItem] = []
             let total = Double(defs.count)
 
             for (index, def) in defs.enumerated() {
@@ -193,65 +193,93 @@ class CacheScannerViewModel: ObservableObject {
                 )
                 if def.risk == .safe { item.isSelected = true }
                 item.subItemMode = def.subItemMode
+                item.isLoadingSubItems = (def.subItemMode != .none)
 
-                // Scan sub-items based on mode
-                switch def.subItemMode {
-                case .directories:
-                    let scanPath = def.subItemsPath.map { ($0 as NSString).expandingTildeInPath } ?? expanded
-                    let subDirs = svc.subDirectories(at: scanPath)
-                    var subItems: [SubItem] = subDirs.map { dir in
-                        SubItem(
-                            name: dir.name,
-                            path: dir.path,
-                            sizeBytes: svc.sizeOfDirectory(at: dir.path),
-                            modifiedDate: dir.modifiedDate,
-                            isSelected: true
-                        )
-                    }
-                    subItems.sort { $0.sizeBytes > $1.sizeBytes }
-                    item.subItems = subItems
-
-                case .files:
-                    let scanPath = def.subItemsPath.map { ($0 as NSString).expandingTildeInPath } ?? expanded
-                    let files = svc.subFiles(at: scanPath)
-                    var subItems: [SubItem] = files.map { file in
-                        // Strip hash prefix from Homebrew filenames (e.g. "abc123--node-20.tar.gz" → "node-20.tar.gz")
-                        let displayName = Self.cleanFileName(file.name)
-                        return SubItem(
-                            name: displayName,
-                            path: file.path,
-                            sizeBytes: file.sizeBytes,
-                            modifiedDate: file.modifiedDate,
-                            isSelected: true
-                        )
-                    }
-                    subItems.sort { $0.sizeBytes > $1.sizeBytes }
-                    item.subItems = subItems
-
-                case .none:
-                    break
+                // Stream parent into the UI immediately so the row appears
+                // while sub-items (which can be slow for Xcode/Homebrew) keep
+                // scanning in the background.
+                let parentItem = item
+                await MainActor.run { [weak self] in
+                    self?.appendStreamedItem(parentItem)
                 }
 
-                scanned.append(item)
+                // Fork sub-item scan as a child task so the main loop can
+                // proceed to the next def without waiting.
+                if def.subItemMode != .none {
+                    Task.detached(priority: .utility) { [weak self] in
+                        let subItems = Self.scanSubItems(def: def, expandedPath: expanded, service: svc)
+                        await MainActor.run { [weak self] in
+                            self?.applySubItems(itemID: parentItem.id, subItems: subItems)
+                        }
+                    }
+                }
             }
-
-            scanned.sort { $0.sizeBytes > $1.sizeBytes }
 
             await MainActor.run { [weak self] in
                 guard let self else { return }
-                self.items = scanned
                 self.isScanning = false
                 self.scanProgress = 1.0
                 self.currentScanItem = ""
-                // Auto-select first available risk that has items
-                if let firstRisk = self.riskSummary.first?.0 {
-                    self.selectedRisk = firstRisk
-                }
-                // Auto-select first item in that risk category for detail panel
-                if let firstItem = self.filteredItems.first {
-                    self.selectedItemID = firstItem.id
-                }
             }
+        }
+    }
+
+    /// Append a freshly-scanned parent item to the visible list. Auto-select
+    /// the first risk + first item once when the first item arrives so the
+    /// detail panel populates without further user action.
+    private func appendStreamedItem(_ item: CacheItem) {
+        items.append(item)
+        if selectedItemID == nil {
+            if let firstRisk = riskSummary.first?.0 {
+                selectedRisk = firstRisk
+            }
+            if let firstItem = filteredItems.first {
+                selectedItemID = firstItem.id
+            }
+        }
+    }
+
+    /// Replace placeholder sub-items on a parent item once the background scan
+    /// finishes. No-op if the parent has been cleaned away in the meantime.
+    private func applySubItems(itemID: UUID, subItems: [SubItem]) {
+        guard let idx = items.firstIndex(where: { $0.id == itemID }) else { return }
+        items[idx].subItems = subItems
+        items[idx].isLoadingSubItems = false
+    }
+
+    private nonisolated static func scanSubItems(def: CacheDefinition, expandedPath: String, service: any CacheScanService) -> [SubItem] {
+        let scanPath = def.subItemsPath.map { ($0 as NSString).expandingTildeInPath } ?? expandedPath
+        switch def.subItemMode {
+        case .directories:
+            let subDirs = service.subDirectories(at: scanPath)
+            var subItems: [SubItem] = subDirs.map { dir in
+                SubItem(
+                    name: dir.name,
+                    path: dir.path,
+                    sizeBytes: service.sizeOfDirectory(at: dir.path),
+                    modifiedDate: dir.modifiedDate,
+                    isSelected: true
+                )
+            }
+            subItems.sort { $0.sizeBytes > $1.sizeBytes }
+            return subItems
+        case .files:
+            let files = service.subFiles(at: scanPath)
+            var subItems: [SubItem] = files.map { file in
+                // Strip hash prefix from Homebrew filenames (e.g. "abc123--node-20.tar.gz" → "node-20.tar.gz")
+                let displayName = Self.cleanFileName(file.name)
+                return SubItem(
+                    name: displayName,
+                    path: file.path,
+                    sizeBytes: file.sizeBytes,
+                    modifiedDate: file.modifiedDate,
+                    isSelected: true
+                )
+            }
+            subItems.sort { $0.sizeBytes > $1.sizeBytes }
+            return subItems
+        case .none:
+            return []
         }
     }
 

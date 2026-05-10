@@ -51,14 +51,15 @@ struct SubItemsDetailView: View {
             }
             .padding(20)
 
-            // Stats row
+            // Stats row — show "—" placeholders for count/selected while
+            // sub-items are still loading so the user doesn't see stale "0".
             HStack(spacing: 0) {
                 statCell(value: item.sizeFormatted, label: l10n.t("subitem.totalSize"))
                 Divider().frame(height: 34)
-                statCell(value: "\(subItems.count)", label: countLabel)
+                statCell(value: item.isLoadingSubItems ? "—" : "\(subItems.count)", label: countLabel)
                 Divider().frame(height: 34)
                 statCell(
-                    value: "\(selectedCount)",
+                    value: item.isLoadingSubItems ? "—" : "\(selectedCount)",
                     label: l10n.t("subitem.selected"),
                     accent: true
                 )
@@ -94,6 +95,12 @@ struct SubItemsDetailView: View {
                         .foregroundColor(.secondary)
 
                     HStack {
+                        if item.isLoadingSubItems {
+                            Text(l10n.t("scan.loadingItems"))
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                            Spacer()
+                        } else {
                         Text(l10n.t("subitem.nSelected")
                             .replacingOccurrences(of: "%1", with: "\(selectedCount)")
                             .replacingOccurrences(of: "%2", with: "\(subItems.count)"))
@@ -128,18 +135,39 @@ struct SubItemsDetailView: View {
                             .buttonStyle(.plain)
                             .foregroundColor(.brand)
                         }
+                        }
                     }
                 }
 
                 Divider()
 
-                // Sub-item rows
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(subItems) { sub in
-                            subItemRow(sub)
-                            if sub.id != subItems.last?.id {
-                                Divider().padding(.leading, 30)
+                // Sub-item rows — or loading state while sub-items are still
+                // being scanned in the background. Parent size is already
+                // known and shown in the header above; this just waits for the
+                // detailed list to populate.
+                if item.isLoadingSubItems {
+                    VStack(spacing: 6) {
+                        Spacer().frame(height: 8)
+                        ProgressView().scaleEffect(0.7)
+                        Text(l10n.t("scan.loadingItems"))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.secondary)
+                        Text(l10n.t("scan.loadingItemsHint"))
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                        Spacer().frame(height: 8)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .accessibilityElement(children: .combine)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(subItems) { sub in
+                                subItemRow(sub)
+                                if sub.id != subItems.last?.id {
+                                    Divider().padding(.leading, 30)
+                                }
                             }
                         }
                     }

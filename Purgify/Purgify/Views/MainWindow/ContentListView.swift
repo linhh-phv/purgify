@@ -34,6 +34,14 @@ struct ContentListView: View {
 
             Divider()
 
+            // Progressive scan progress strip — only while scanning and at
+            // least one item has streamed in (initial empty state is handled
+            // by ScanningView in MainWindowView).
+            if scanner.isScanning && scanner.scanItemTotal > 0 {
+                progressStrip
+                Divider()
+            }
+
             // Item list
             if scanner.filteredItems.isEmpty {
                 Spacer()
@@ -57,6 +65,20 @@ struct ContentListView: View {
                                 Divider().padding(.leading, 52)
                             }
                         }
+
+                        // Hint at bottom of list while still scanning.
+                        if scanner.isScanning {
+                            HStack(spacing: 6) {
+                                ProgressView().scaleEffect(0.5)
+                                Text(l10n.t("scan.moreItemsScanning"))
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .accessibilityElement(children: .combine)
+                        }
                     }
                 }
             }
@@ -64,6 +86,54 @@ struct ContentListView: View {
         .frame(width: 400)
         .background(Color.bgContent)
     }
+
+    private var progressStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(progressStatusText)
+                .font(.system(size: 12))
+                .foregroundColor(.primary)
+                .lineLimit(1)
+                .truncationMode(.tail)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(Color.divider)
+                        .frame(height: 2)
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(Color.brand)
+                        .frame(
+                            width: max(0, geo.size.width * scanner.scanProgress),
+                            height: 2
+                        )
+                        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2),
+                                   value: scanner.scanProgress)
+                }
+            }
+            .frame(height: 2)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(progressStatusText)
+    }
+
+    private var progressStatusText: String {
+        let current = scanner.currentScanItem.isEmpty ? "" : l10n.t(scanner.currentScanItem)
+        let template = l10n.t("scan.progressFormat")
+        if current.isEmpty {
+            // No current item name yet — fall back to count-only template.
+            return l10n.t("scan.progressCount")
+                .replacingOccurrences(of: "%1", with: "\(scanner.scanItemIndex)")
+                .replacingOccurrences(of: "%2", with: "\(scanner.scanItemTotal)")
+        }
+        return template
+            .replacingOccurrences(of: "%1", with: current)
+            .replacingOccurrences(of: "%2", with: "\(scanner.scanItemIndex)")
+            .replacingOccurrences(of: "%3", with: "\(scanner.scanItemTotal)")
+    }
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var allSelectedInCurrentRisk: Bool {
         let filtered = scanner.filteredItems

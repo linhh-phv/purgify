@@ -12,7 +12,13 @@ struct MainWindowView: View {
 
     var body: some View {
         Group {
-            if scanner.isScanning {
+            // Show full-screen ScanningView only on the very first moments of
+            // a fresh scan when no items have streamed in yet. As soon as the
+            // first item appears, transition to the 3-column layout — even if
+            // scanning is still running for the rest. This gives the user
+            // visible feedback within ~100ms instead of blocking the entire UI
+            // for the duration of the scan.
+            if scanner.isScanning && scanner.items.isEmpty {
                 ScanningView()
             } else if scanner.isEmptyState {
                 EmptyStateView()
@@ -86,11 +92,12 @@ struct MainWindowView: View {
         }
     }
 
-    /// Toolbar selection UI is only relevant on the 3-column layout. Hide it
-    /// while scanning (items can be non-empty during a re-scan) and on the
-    /// empty state.
+    /// Toolbar selection UI is only relevant on the 3-column layout. Allow it
+    /// during a streaming scan (items.isEmpty=false guards the layout switch)
+    /// — user can clean already-discovered caches without waiting for the
+    /// scan to finish.
     private var toolbarVisible: Bool {
-        !scanner.isScanning && !scanner.isEmptyState && scanner.selectedBytes > 0
+        !scanner.items.isEmpty && !scanner.isEmptyState && scanner.selectedBytes > 0
     }
 
     private var threeColumnLayout: some View {

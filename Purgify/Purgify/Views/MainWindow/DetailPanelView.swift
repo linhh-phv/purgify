@@ -8,7 +8,12 @@ struct DetailPanelView: View {
     var body: some View {
         Group {
             if let item = scanner.selectedItem {
-                if item.hasSubItems {
+                // Route on subItemMode (declared intent) rather than
+                // hasSubItems (subItems != nil), because during the streaming
+                // scan a sub-item-bearing parent appears with subItems == nil
+                // until the background scan finishes. We still want
+                // SubItemsDetailView so it can render its loading state.
+                if item.subItemMode != .none {
                     SubItemsDetailView(item: item)
                 } else {
                     itemDetail(item)

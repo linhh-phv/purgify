@@ -95,6 +95,10 @@ struct CacheItem: Identifiable {
     var isSelected: Bool = false
     var subItems: [SubItem]? = nil
     var subItemMode: SubItemMode = .none
+    /// True while sub-items are being scanned in background — parent size is
+    /// already known but the inner list isn't. Drives loading UI in
+    /// SubItemsDetailView so the user sees progress instead of an empty list.
+    var isLoadingSubItems: Bool = false
 
     var sizeFormatted: String {
         ByteFormatter.format(sizeBytes)

@@ -551,7 +551,12 @@ class LocalizationManager: ObservableObject {
             "subitem.nSelected":      "%1 / %2 selected",
 
             // Scan progress
-            "scan.itemCount": "%1 of %2 items",
+            "scan.itemCount":         "%1 of %2 items",
+            "scan.progressFormat":    "Scanning %1… %2 of %3",
+            "scan.progressCount":     "Scanning… %1 of %2",
+            "scan.moreItemsScanning": "More items appear as scan completes…",
+            "scan.loadingItems":      "Loading items…",
+            "scan.loadingItemsHint":  "Scanning sub-items inside this cache.",
 
             // Menu bar
             "menubar.cleanSelected": "Clean Selected · %@",
@@ -1124,7 +1129,12 @@ class LocalizationManager: ObservableObject {
             "subitem.nSelected":     "%1 / %2 đã chọn",
 
             // Scan progress
-            "scan.itemCount": "%1 / %2 mục",
+            "scan.itemCount":         "%1 / %2 mục",
+            "scan.progressFormat":    "Đang quét %1… %2 / %3",
+            "scan.progressCount":     "Đang quét… %1 / %2",
+            "scan.moreItemsScanning": "Các mục khác sẽ xuất hiện khi quét xong…",
+            "scan.loadingItems":      "Đang tải mục…",
+            "scan.loadingItemsHint":  "Đang quét các mục con trong cache này.",
 
             // Menu bar
             "menubar.cleanSelected": "Dọn dẹp · %@",
