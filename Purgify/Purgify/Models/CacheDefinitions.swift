@@ -103,5 +103,34 @@ enum CacheDefinitions {
         CacheDefinition(nameKey: "cache.appleMusic",        detailKey: "cache.appleMusic.detail",        path: "~/Library/Caches/com.apple.Music",                                icon: "music.note.house.fill",         iconColor: Color(red: 0.99, green: 0.24, blue: 0.27), risk: .safe,    requiresFDA: true),
         CacheDefinition(nameKey: "cache.diagnosticReports", detailKey: "cache.diagnosticReports.detail", path: "~/Library/Logs/DiagnosticReports",                                icon: "exclamationmark.triangle.fill", iconColor: Color(red: 0.56, green: 0.56, blue: 0.58), risk: .safe,    requiresFDA: true),
         CacheDefinition(nameKey: "cache.mailDownloads",     detailKey: "cache.mailDownloads.detail",     path: "~/Library/Containers/com.apple.mail/Data/Library/Mail Downloads", icon: "envelope.fill",                 iconColor: Color(red: 0.00, green: 0.48, blue: 1.00), risk: .caution, requiresFDA: true),
+
+        // MARK: Advanced — User files (cần FDA để scan ~/Downloads, ~/Desktop, ~/Documents)
+        CacheDefinition(
+            nameKey: "userfile.installers", detailKey: "userfile.installers.detail",
+            path: "~/Downloads", icon: "shippingbox.fill",
+            iconColor: Color(red: 0.45, green: 0.45, blue: 0.50),
+            risk: .caution, subItemMode: .files,
+            requiresFDA: true,
+            fileExtensions: [".dmg", ".pkg", ".mpkg"],
+            additionalScanRoots: ["~/Desktop", "~/Documents"]
+        ),
+        CacheDefinition(
+            nameKey: "userfile.archives", detailKey: "userfile.archives.detail",
+            path: "~/Downloads", icon: "doc.zipper",
+            iconColor: Color(red: 0.93, green: 0.62, blue: 0.16),
+            risk: .caution, subItemMode: .files,
+            requiresFDA: true,
+            fileExtensions: [".zip", ".tar.gz", ".tgz", ".tar", ".7z", ".rar"],
+            additionalScanRoots: ["~/Desktop", "~/Documents"]
+        ),
+        CacheDefinition(
+            nameKey: "userfile.discImages", detailKey: "userfile.discImages.detail",
+            path: "~/Downloads", icon: "opticaldisc.fill",
+            iconColor: Color(red: 0.48, green: 0.26, blue: 0.74),
+            risk: .caution, subItemMode: .files,
+            requiresFDA: true,
+            fileExtensions: [".iso", ".img", ".cdr"],
+            additionalScanRoots: ["~/Desktop", "~/Documents"]
+        ),
     ]
 }

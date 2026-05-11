@@ -121,4 +121,85 @@ struct LocalCacheScanService: CacheScanService {
             )
         }
     }
+
+    nonisolated func userFiles(roots: [String], extensions: [String]) -> [(name: String, path: String, sizeBytes: Int64, lastUsedDate: Date?)] {
+        guard !roots.isEmpty, !extensions.isEmpty else { return [] }
+
+        let fm = FileManager.default
+        // Multi-extension match handles compound suffixes like ".tar.gz" by
+        // checking the lowercased filename ends with any provided extension.
+        let normalized = extensions.map { $0.lowercased() }
+        // Skip directories that almost never contain installers and would
+        // explode the walk (project trees, library data, system noise).
+        let skipDirs: Set<String> = [
+            "node_modules", ".git", ".build", "Pods", "DerivedData",
+            "Library", ".Trash", "vendor", "dist", "build", ".cache",
+            ".npm", ".yarn", ".cargo", ".gradle", ".m2", ".pub-cache"
+        ]
+        let resourceKeys: Set<URLResourceKey> = [
+            .fileSizeKey, .isRegularFileKey, .isDirectoryKey,
+            .contentAccessDateKey, .contentModificationDateKey
+        ]
+        let maxDepth = 3
+        let perRootCap = 5_000
+        var results: [(name: String, path: String, sizeBytes: Int64, lastUsedDate: Date?)] = []
+
+        for root in roots {
+            guard fm.fileExists(atPath: root) else { continue }
+            let rootURL = URL(fileURLWithPath: root)
+            var visited = 0
+            walk(
+                url: rootURL, depth: 0, maxDepth: maxDepth,
+                fm: fm, skip: skipDirs, exts: normalized,
+                resourceKeys: Array(resourceKeys),
+                visited: &visited, cap: perRootCap,
+                results: &results
+            )
+        }
+        return results
+    }
+
+    /// Depth-limited recursive walk — collects regular files whose name ends
+    /// with one of `exts`. Caps per-root visits to avoid worst-case blowup
+    /// (Documents folders with hundreds of thousands of unrelated files).
+    private nonisolated func walk(
+        url: URL, depth: Int, maxDepth: Int,
+        fm: FileManager, skip: Set<String>, exts: [String],
+        resourceKeys: [URLResourceKey],
+        visited: inout Int, cap: Int,
+        results: inout [(name: String, path: String, sizeBytes: Int64, lastUsedDate: Date?)]
+    ) {
+        guard visited < cap else { return }
+        guard let contents = try? fm.contentsOfDirectory(
+            at: url,
+            includingPropertiesForKeys: resourceKeys,
+            options: [.skipsHiddenFiles]
+        ) else { return }
+
+        for child in contents {
+            visited += 1
+            guard visited < cap else { return }
+            guard let values = try? child.resourceValues(forKeys: Set(resourceKeys)) else { continue }
+
+            if values.isDirectory == true {
+                let name = child.lastPathComponent
+                if skip.contains(name) || name.hasPrefix(".") { continue }
+                if depth + 1 <= maxDepth {
+                    walk(url: child, depth: depth + 1, maxDepth: maxDepth,
+                         fm: fm, skip: skip, exts: exts,
+                         resourceKeys: resourceKeys,
+                         visited: &visited, cap: cap, results: &results)
+                }
+            } else if values.isRegularFile == true {
+                let lower = child.lastPathComponent.lowercased()
+                guard exts.contains(where: { lower.hasSuffix($0) }) else { continue }
+                results.append((
+                    name: child.lastPathComponent,
+                    path: child.path,
+                    sizeBytes: Int64(values.fileSize ?? 0),
+                    lastUsedDate: values.contentAccessDate ?? values.contentModificationDate
+                ))
+            }
+        }
+    }
 }

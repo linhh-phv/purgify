@@ -26,4 +26,11 @@ protocol CacheScanService: Sendable {
     /// Tìm kiếm trong các thư mục dev thường gặp với độ sâu tối đa 3.
     /// Returns (projects, scannedRoots) — scannedRoots == 0 means no directories were accessible.
     nonisolated func findRelatedProjects(indicators: [String]) -> (projects: [RelatedApp], scannedRoots: Int)
+
+    /// Walk `roots` recursively (depth-limited) and return regular files whose
+    /// extension matches one in `extensions` (case-insensitive, no leading dot).
+    /// Date returned is `lastAccessDate` (falls back to `modifiedDate` when the
+    /// volume is mounted with `noatime` or the OS hasn't recorded an access).
+    /// Used for the user-file groups (Installers, Archives, Disc images).
+    nonisolated func userFiles(roots: [String], extensions: [String]) -> [(name: String, path: String, sizeBytes: Int64, lastUsedDate: Date?)]
 }

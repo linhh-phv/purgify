@@ -23,8 +23,22 @@ struct CacheDefinition {
     /// True for caches in TCC-protected directories (Safari, Mail, etc.) — scanning
     /// triggers a Full Disk Access prompt. Only scanned when Advanced mode is ON.
     let requiresFDA: Bool
+    /// When set, this definition surfaces user files (e.g. installers in Downloads)
+    /// instead of a tool-managed cache directory. The scan walks `path` plus
+    /// `additionalScanRoots`, filters to these extensions, and reports
+    /// last-access dates so the user can prune files they haven't touched.
+    /// Parent size is the sum of matched files (NOT the size of the root folder).
+    let fileExtensions: [String]?
+    /// Extra scan roots merged with `path` when `fileExtensions` is set.
+    let additionalScanRoots: [String]?
 
     var supportsSubItems: Bool { subItemMode != .none }
+
+    /// True for definitions that surface user-owned files (installers, archives)
+    /// rather than tool-generated caches. Used to drive default selection
+    /// (off — user files are riskier) and date-label semantics ("last used"
+    /// instead of "modified").
+    var isUserFileScan: Bool { fileExtensions != nil }
 
     init(nameKey: String, detailKey: String, path: String, icon: String, iconColor: Color,
          risk: RiskLevel, supportsSubItems: Bool = false, projectIndicators: [String] = [],
@@ -39,11 +53,14 @@ struct CacheDefinition {
         self.subItemsPath = nil
         self.projectIndicators = projectIndicators
         self.requiresFDA = requiresFDA
+        self.fileExtensions = nil
+        self.additionalScanRoots = nil
     }
 
     init(nameKey: String, detailKey: String, path: String, icon: String, iconColor: Color,
          risk: RiskLevel, subItemMode: SubItemMode, subItemsPath: String? = nil,
-         projectIndicators: [String] = [], requiresFDA: Bool = false) {
+         projectIndicators: [String] = [], requiresFDA: Bool = false,
+         fileExtensions: [String]? = nil, additionalScanRoots: [String]? = nil) {
         self.nameKey = nameKey
         self.detailKey = detailKey
         self.path = path
@@ -54,6 +71,8 @@ struct CacheDefinition {
         self.subItemsPath = subItemsPath
         self.projectIndicators = projectIndicators
         self.requiresFDA = requiresFDA
+        self.fileExtensions = fileExtensions
+        self.additionalScanRoots = additionalScanRoots
     }
 }
 
@@ -70,6 +89,11 @@ struct SubItem: Identifiable {
     var sizeBytes: Int64 = 0
     var modifiedDate: Date?
     var isSelected: Bool = true
+    /// Optional localization key for a date-label prefix (e.g. "subitem.lastUsed"
+    /// → "Last used"). When nil, only the relative-time string is shown. Used by
+    /// user-file scans (Installers, Archives, Disc images) where the date
+    /// represents last access rather than modification.
+    var dateLabelKey: String? = nil
 
     var sizeFormatted: String {
         ByteFormatter.format(sizeBytes)

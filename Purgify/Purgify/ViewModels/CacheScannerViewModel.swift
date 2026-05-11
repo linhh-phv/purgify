@@ -184,6 +184,20 @@ class CacheScannerViewModel: ObservableObject {
                     self?.scanItemIndex = index + 1
                 }
 
+                // User-file scan branch (Installers, Archives, Disc images):
+                // walk multiple roots, filter by extension, surface last-used
+                // dates. Parent row is built with sub-items inline — no follow-up
+                // background task — because the walk IS the sub-item scan.
+                if def.isUserFileScan {
+                    let userFileItem = Self.scanUserFiles(def: def, service: svc)
+                    if let userFileItem {
+                        await MainActor.run { [weak self] in
+                            self?.appendStreamedItem(userFileItem)
+                        }
+                    }
+                    continue
+                }
+
                 let expanded = (def.path as NSString).expandingTildeInPath
                 guard svc.itemExists(at: expanded) else { continue }
 
@@ -253,6 +267,54 @@ class CacheScannerViewModel: ObservableObject {
         guard let idx = items.firstIndex(where: { $0.id == itemID }) else { return }
         items[idx].subItems = subItems
         items[idx].isLoadingSubItems = false
+    }
+
+    /// Build a CacheItem for a user-file definition (Installers / Archives /
+    /// Disc images). Walks every configured scan root, filters by extension,
+    /// and returns nil if no files match — caller skips empty groups so the
+    /// list doesn't show empty rows. Sub-items are sorted oldest-first so the
+    /// most stale entries surface at the top for review.
+    private nonisolated static func scanUserFiles(def: CacheDefinition, service: any CacheScanService) -> CacheItem? {
+        let roots = ([def.path] + (def.additionalScanRoots ?? []))
+            .map { ($0 as NSString).expandingTildeInPath }
+        let exts = def.fileExtensions ?? []
+        let files = service.userFiles(roots: roots, extensions: exts)
+        guard !files.isEmpty else { return nil }
+
+        let totalSize = files.reduce(0 as Int64) { $0 + $1.sizeBytes }
+        var subItems: [SubItem] = files.map { f in
+            SubItem(
+                name: f.name,
+                path: f.path,
+                sizeBytes: f.sizeBytes,
+                modifiedDate: f.lastUsedDate,
+                isSelected: false,
+                dateLabelKey: "subitem.lastUsed"
+            )
+        }
+        // Oldest last-used first; tie-break by largest size so the most
+        // valuable cleanup candidates surface together at the top.
+        subItems.sort { lhs, rhs in
+            let l = lhs.modifiedDate ?? .distantPast
+            let r = rhs.modifiedDate ?? .distantPast
+            if l != r { return l < r }
+            return lhs.sizeBytes > rhs.sizeBytes
+        }
+
+        var item = CacheItem(
+            nameKey: def.nameKey,
+            detailKey: def.detailKey,
+            path: def.path,
+            icon: def.icon,
+            iconColor: def.iconColor,
+            risk: def.risk,
+            sizeBytes: totalSize
+        )
+        item.isSelected = false   // user files: never auto-tick the parent
+        item.subItemMode = .files
+        item.isLoadingSubItems = false
+        item.subItems = subItems
+        return item
     }
 
     private nonisolated static func scanSubItems(def: CacheDefinition, expandedPath: String, service: any CacheScanService) -> [SubItem] {

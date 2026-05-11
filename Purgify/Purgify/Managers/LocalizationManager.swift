@@ -550,6 +550,7 @@ class LocalizationManager: ObservableObject {
             "subitem.cleanProjects":  "Clean %1 Selected Projects · %2",
             "subitem.cleanFiles":     "Clean %1 Selected Files · %2",
             "subitem.nSelected":      "%1 / %2 selected",
+            "subitem.lastUsed":       "Last used",
 
             // Scan progress
             "scan.itemCount":         "%1 of %2 items",
@@ -599,6 +600,28 @@ class LocalizationManager: ObservableObject {
             "cache.mailDownloads":     "Mail Downloads",
             "cache.appleMusic":        "Apple Music Cache",
             "cache.diagnosticReports": "Diagnostic Reports",
+
+            // User-file groups (Advanced — Installers, Archives, Disc images)
+            "userfile.installers":         "Installers (.dmg / .pkg)",
+            "userfile.installers.detail":
+                "App installers downloaded to Downloads / Desktop / Documents.\n\n" +
+                "Once you've installed the app, the .dmg or .pkg can be deleted safely — " +
+                "you can always re-download from the vendor's site.\n\n" +
+                "✅ Apps already installed continue to run normally.\n" +
+                "⚠️ If you keep installers for offline reinstall (Sketch, Final Cut, " +
+                "Adobe…), review the list before cleaning.",
+            "userfile.archives":           "Archives (.zip / .tar / .7z)",
+            "userfile.archives.detail":
+                "Compressed archives in Downloads / Desktop / Documents.\n\n" +
+                "Could be source code, photo backups, theme bundles, or installer payloads. " +
+                "Open each one before deleting if you're not sure what's inside.\n\n" +
+                "⚠️ Some apps ship as .zip — extract first, then the archive is safe to delete.",
+            "userfile.discImages":         "Disc images (.iso / .img)",
+            "userfile.discImages.detail":
+                "Disc and disk images in Downloads / Desktop / Documents.\n\n" +
+                "Usually OS installers (Windows ISO, Linux distros) or VM disk images. " +
+                "Rarely reused after installation completes — large and easy wins.\n\n" +
+                "⚠️ Keep if you reinstall the same OS often.",
 
             // Post-clean upsell banner (legacy — superseded by cleanSuccess.* modal)
             "banner.heading":  "Unlock 4 more caches",
@@ -1129,6 +1152,7 @@ class LocalizationManager: ObservableObject {
             "subitem.cleanProjects": "Dọn %1 dự án đã chọn · %2",
             "subitem.cleanFiles":    "Dọn %1 tệp đã chọn · %2",
             "subitem.nSelected":     "%1 / %2 đã chọn",
+            "subitem.lastUsed":      "Mở lần cuối",
 
             // Scan progress
             "scan.itemCount":         "%1 / %2 mục",
@@ -1178,6 +1202,27 @@ class LocalizationManager: ObservableObject {
             "cache.mailDownloads":     "Mail Downloads",
             "cache.appleMusic":        "Apple Music Cache",
             "cache.diagnosticReports": "Báo cáo chẩn đoán",
+
+            // Nhóm file người dùng (Advanced — Installers, Archives, Disc images)
+            "userfile.installers":         "Bộ cài (.dmg / .pkg)",
+            "userfile.installers.detail":
+                "Bộ cài app đã tải về Downloads / Desktop / Documents.\n\n" +
+                "Sau khi cài xong, file .dmg / .pkg có thể xóa an toàn — cần thì tải lại từ trang chủ.\n\n" +
+                "✅ App đã cài vẫn chạy bình thường.\n" +
+                "⚠️ Nếu bạn giữ bộ cài để cài lại offline (Sketch, Final Cut, Adobe…), " +
+                "kiểm tra danh sách trước khi xóa.",
+            "userfile.archives":           "File nén (.zip / .tar / .7z)",
+            "userfile.archives.detail":
+                "File nén trong Downloads / Desktop / Documents.\n\n" +
+                "Có thể là source code, ảnh backup, theme, hoặc payload installer. " +
+                "Mở kiểm tra trước khi xóa nếu không chắc nội dung.\n\n" +
+                "⚠️ Một số app phát hành dạng .zip — giải nén xong rồi xóa file nén được.",
+            "userfile.discImages":         "Disc image (.iso / .img)",
+            "userfile.discImages.detail":
+                "Disc/disk image trong Downloads / Desktop / Documents.\n\n" +
+                "Thường là OS installer (Windows ISO, Linux), VM disk. " +
+                "Ít khi dùng lại sau khi cài — file lớn, dọn nhanh ăn dung lượng.\n\n" +
+                "⚠️ Giữ lại nếu bạn hay cài lại cùng OS đó.",
 
             // Banner nhắc bật Advanced sau khi clean (legacy — modal cleanSuccess thay thế)
             "banner.heading":  "Mở khóa thêm 4 cache",

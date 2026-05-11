@@ -216,6 +216,11 @@ struct SubItemsDetailView: View {
 
     // MARK: - Helpers
 
+    private func dateDisplay(for sub: SubItem) -> String {
+        guard let key = sub.dateLabelKey else { return sub.relativeTimeString }
+        return "\(l10n.t(key)) · \(sub.relativeTimeString)"
+    }
+
     private func statCell(value: String, label: String, accent: Bool = false) -> some View {
         VStack(spacing: 4) {
             Text(value)
@@ -251,7 +256,7 @@ struct SubItemsDetailView: View {
                     .foregroundColor(sub.isSelected ? .primary : .secondary)
                     .lineLimit(1)
                 if !sub.relativeTimeString.isEmpty {
-                    Text(sub.relativeTimeString)
+                    Text(dateDisplay(for: sub))
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                 }
