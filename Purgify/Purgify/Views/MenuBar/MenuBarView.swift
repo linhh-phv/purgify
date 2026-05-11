@@ -7,6 +7,8 @@ struct MenuBarView: View {
     @Environment(\.openWindow) private var openWindow
     @Environment(\.dismiss) private var dismiss
 
+    @State private var showCleanConfirm = false
+
     var body: some View {
         VStack(spacing: 0) {
             headerView
@@ -144,7 +146,7 @@ struct MenuBarView: View {
     private var cleanButtonSection: some View {
         if scanner.selectedBytes > 0 {
             Button {
-                scanner.clean()
+                showCleanConfirm = true
             } label: {
                 HStack(spacing: 6) {
                     if scanner.isCleaning {
@@ -170,6 +172,21 @@ struct MenuBarView: View {
             .buttonStyle(.plain)
             .disabled(scanner.isCleaning)
             .padding(14)
+            .confirmationDialog(
+                l10n.t("cleanPreview.title"),
+                isPresented: $showCleanConfirm,
+                titleVisibility: .visible
+            ) {
+                Button(l10n.t("cleanPreview.confirm")
+                    .replacingOccurrences(of: "%@", with: ByteFormatter.format(scanner.selectedBytes)),
+                    role: .destructive
+                ) {
+                    scanner.cleanNow()
+                }
+                Button(l10n.t("cleanPreview.cancel"), role: .cancel) {}
+            } message: {
+                Text(l10n.t("cleanPreview.subtitle"))
+            }
 
             Divider()
         }

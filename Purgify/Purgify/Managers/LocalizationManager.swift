@@ -669,6 +669,13 @@ class LocalizationManager: ObservableObject {
             "about.author":       "Pham Linh",
             "about.viewOnGitHub": "View on GitHub",
             "about.copyright":    "© 2025 Purgify. Open source under MIT License.",
+
+            // Clean preview sheet
+            "cleanPreview.title":    "Review Before Cleaning",
+            "cleanPreview.subtitle": "These items will be permanently deleted and cannot be recovered.",
+            "cleanPreview.total":    "Total",
+            "cleanPreview.cancel":   "Cancel",
+            "cleanPreview.confirm":  "Delete %@",
         ],
 
         // MARK: Vietnamese
@@ -1295,6 +1302,13 @@ class LocalizationManager: ObservableObject {
             "about.author":       "Pham Linh",
             "about.viewOnGitHub": "Xem trên GitHub",
             "about.copyright":    "© 2025 Purgify. Mã nguồn mở theo giấy phép MIT.",
+
+            // Clean preview sheet
+            "cleanPreview.title":    "Xem lại trước khi dọn",
+            "cleanPreview.subtitle": "Các mục này sẽ bị xóa vĩnh viễn và không thể khôi phục.",
+            "cleanPreview.total":    "Tổng cộng",
+            "cleanPreview.cancel":   "Hủy",
+            "cleanPreview.confirm":  "Xóa %@",
         ]
     ]
 }

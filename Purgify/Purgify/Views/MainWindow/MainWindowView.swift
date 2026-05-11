@@ -53,6 +53,11 @@ struct MainWindowView: View {
             FDAGuideView()
                 .environmentObject(l10n)
         }
+        .sheet(item: $scanner.pendingCleanPreview) { preview in
+            CleanPreviewSheet(preview: preview)
+                .environmentObject(l10n)
+                .environmentObject(scanner)
+        }
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 // Selection UI — always mounted (opacity hides when nothing

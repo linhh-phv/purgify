@@ -1,6 +1,32 @@
 import Foundation
 import Combine
 import AppKit
+import SwiftUI
+
+// MARK: - CleanPreview
+
+struct CleanPreview: Identifiable {
+    let id = UUID()
+
+    struct Row: Identifiable {
+        let id = UUID()
+        let icon: String
+        let iconColor: Color
+        // Either a l10n key ("cache.xcode") or raw display name ("iPhone 15 Pro · iOS 17.0").
+        // The sheet calls l10n.t(name) — raw names pass through unchanged since they're not in the dict.
+        let name: String
+        let sizeBytes: Int64
+    }
+
+    enum TargetMode {
+        case global
+        case singleItem(UUID)
+    }
+
+    let rows: [Row]
+    let totalBytes: Int64
+    let targetMode: TargetMode
+}
 
 @MainActor
 class CacheScannerViewModel: ObservableObject {
@@ -28,6 +54,10 @@ class CacheScannerViewModel: ObservableObject {
 
     /// Drives the Clean Success modal sheet presentation.
     @Published var showCleanSuccess: Bool = false
+
+    /// When non-nil, drives the "Review before cleaning" preview sheet.
+    /// Set to nil to dismiss (cancel or after confirm).
+    @Published var pendingCleanPreview: CleanPreview? = nil
 
     // Selection state for 3-column layout
     @Published var selectedRisk: RiskLevel = .safe
@@ -442,11 +472,53 @@ class CacheScannerViewModel: ObservableObject {
 
     // MARK: - Clean
 
+    /// Called from the main window toolbar. Builds a preview sheet instead of
+    /// deleting immediately — the user confirms in CleanPreviewSheet.
     func clean() {
-        // Re-entrancy guard: Cmd+Return shortcut + .disabled() can race when a
-        // user spams the key faster than SwiftUI propagates the disabled state.
         guard !isCleaning else { return }
         let toClean = items.filter(\.isSelected)
+        guard !toClean.isEmpty else { return }
+        pendingCleanPreview = buildCleanPreview(for: toClean, mode: .global)
+    }
+
+    /// Called from the menu bar — skips the preview sheet and deletes directly.
+    func cleanNow() {
+        guard !isCleaning else { return }
+        let toClean = items.filter(\.isSelected)
+        guard !toClean.isEmpty else { return }
+        executeClean(toClean: toClean)
+    }
+
+    /// Called from detail/sub-item panels. Builds a preview sheet for a single item.
+    func cleanItem(_ id: UUID) {
+        guard !isCleaning else { return }
+        guard let item = items.first(where: { $0.id == id }) else { return }
+        pendingCleanPreview = buildCleanPreview(for: [item], mode: .singleItem(id))
+    }
+
+    /// Called by CleanPreviewSheet "Delete" button — executes the pending clean.
+    func confirmClean() {
+        guard let preview = pendingCleanPreview else { return }
+        let mode = preview.targetMode
+        pendingCleanPreview = nil
+        switch mode {
+        case .global:
+            let toClean = items.filter(\.isSelected)
+            executeClean(toClean: toClean)
+        case .singleItem(let id):
+            executeCleanItem(id: id)
+        }
+    }
+
+    /// Called by CleanPreviewSheet "Cancel" button.
+    func cancelClean() {
+        pendingCleanPreview = nil
+    }
+
+    // MARK: - Private Execute Methods
+
+    private func executeClean(toClean: [CacheItem]) {
+        guard !isCleaning else { return }
         guard !toClean.isEmpty else { return }
         let touchedRisks = Set(toClean.map(\.risk))
         let itemCount = toClean.count
@@ -488,7 +560,7 @@ class CacheScannerViewModel: ObservableObject {
         }
     }
 
-    func cleanItem(_ id: UUID) {
+    private func executeCleanItem(id: UUID) {
         guard !isCleaning else { return }
         guard let item = items.first(where: { $0.id == id }) else { return }
         isCleaning = true
@@ -521,6 +593,50 @@ class CacheScannerViewModel: ObservableObject {
                 self.applyCleanResultLocally(itemIDs: [id])
                 self.showCleanSuccess = freed > 0
             }
+        }
+    }
+
+    // MARK: - Preview Builder
+
+    private func buildCleanPreview(for items: [CacheItem], mode: CleanPreview.TargetMode) -> CleanPreview {
+        var rows: [CleanPreview.Row] = []
+        for item in items {
+            rows.append(contentsOf: previewRows(for: item))
+        }
+        let total = rows.reduce(0 as Int64) { $0 + $1.sizeBytes }
+        return CleanPreview(rows: rows, totalBytes: total, targetMode: mode)
+    }
+
+    private func previewRows(for item: CacheItem) -> [CleanPreview.Row] {
+        if item.hasSubItems, let subItems = item.subItems {
+            let selectedSubs = subItems.filter(\.isSelected)
+            // Show individual sub-items when: deleteSubsOnly flag is set,
+            // OR not all sub-items are selected (partial selection).
+            if item.deleteSubsOnly || selectedSubs.count != subItems.count {
+                return selectedSubs.map { sub in
+                    CleanPreview.Row(
+                        icon: item.icon,
+                        iconColor: item.iconColor,
+                        name: sub.name,
+                        sizeBytes: sub.sizeBytes
+                    )
+                }
+            } else {
+                // All sub-items selected and not deleteSubsOnly — show parent row.
+                return [CleanPreview.Row(
+                    icon: item.icon,
+                    iconColor: item.iconColor,
+                    name: item.nameKey,
+                    sizeBytes: item.sizeBytes
+                )]
+            }
+        } else {
+            return [CleanPreview.Row(
+                icon: item.icon,
+                iconColor: item.iconColor,
+                name: item.nameKey,
+                sizeBytes: item.sizeBytes
+            )]
         }
     }
 
