@@ -159,6 +159,175 @@ struct LocalCacheScanService: CacheScanService {
         return results
     }
 
+    // MARK: - iOS Simulator scanning
+
+    nonisolated func iOSSimulators() -> [(name: String, runtime: String, path: String, sizeBytes: Int64, lastUsedDate: Date?)] {
+        let devicesPath = NSHomeDirectory() + "/Library/Developer/CoreSimulator/Devices"
+        let fm = FileManager.default
+        guard let uuids = try? fm.contentsOfDirectory(atPath: devicesPath) else { return [] }
+
+        var results: [(name: String, runtime: String, path: String, sizeBytes: Int64, lastUsedDate: Date?)] = []
+        for uuid in uuids {
+            let devicePath = devicesPath + "/" + uuid
+            let plistPath = devicePath + "/device.plist"
+            guard let dict = NSDictionary(contentsOfFile: plistPath) as? [String: Any] else { continue }
+
+            let displayName = dict["name"] as? String ?? uuid
+            let runtimeStr = dict["runtime"] as? String ?? ""
+            let runtime = Self.parseSimRuntime(runtimeStr)
+
+            let size = sizeOfDirectory(at: devicePath)
+            guard size > 0 else { continue }
+
+            let lastUsed = (try? URL(fileURLWithPath: devicePath)
+                .resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
+
+            results.append((name: displayName, runtime: runtime, path: devicePath,
+                            sizeBytes: size, lastUsedDate: lastUsed))
+        }
+        return results
+    }
+
+    nonisolated func iOSSimulatorRuntimes() -> [(name: String, path: String, sizeBytes: Int64)] {
+        let fm = FileManager.default
+        let home = NSHomeDirectory()
+        let searchPaths = [
+            home + "/Library/Developer/CoreSimulator/Profiles/Runtimes",
+            home + "/Library/Developer/CoreSimulator/Volumes"
+        ]
+
+        var results: [(name: String, path: String, sizeBytes: Int64)] = []
+        var seen = Set<String>()
+        for searchPath in searchPaths {
+            guard let contents = try? fm.contentsOfDirectory(atPath: searchPath) else { continue }
+            for item in contents {
+                let itemPath = searchPath + "/" + item
+                guard !seen.contains(itemPath) else { continue }
+                seen.insert(itemPath)
+
+                let size = sizeOfDirectory(at: itemPath)
+                guard size > 0 else { continue }
+
+                let displayName = item
+                    .replacingOccurrences(of: ".simruntime", with: "")
+                    .replacingOccurrences(of: "_", with: " ")
+                results.append((name: displayName, path: itemPath, sizeBytes: size))
+            }
+        }
+        return results
+    }
+
+    private nonisolated static func parseSimRuntime(_ runtime: String) -> String {
+        // "com.apple.CoreSimulator.SimRuntime.iOS-17-0" → "iOS 17.0"
+        guard let lastDot = runtime.lastIndex(of: ".") else { return runtime }
+        let suffix = String(runtime[runtime.index(after: lastDot)...])
+        let parts = suffix.components(separatedBy: "-")
+        guard parts.count >= 2 else { return suffix }
+        let platform = parts[0]
+        let version = parts[1...].joined(separator: ".")
+        return "\(platform) \(version)"
+    }
+
+    // MARK: - Android AVD scanning
+
+    nonisolated func androidAVDs() -> [(name: String, apiLevel: String, path: String, sizeBytes: Int64, lastUsedDate: Date?)] {
+        let fm = FileManager.default
+        let avdDir = NSHomeDirectory() + "/.android/avd"
+        guard let contents = try? fm.contentsOfDirectory(atPath: avdDir) else { return [] }
+
+        var results: [(name: String, apiLevel: String, path: String, sizeBytes: Int64, lastUsedDate: Date?)] = []
+        for item in contents {
+            guard item.hasSuffix(".avd") else { continue }
+            let avdPath = avdDir + "/" + item
+            let ini = Self.parseIniFile(avdPath + "/config.ini")
+
+            let displayName = ini["avd.name"] ?? String(item.dropLast(4))
+            let apiLevel = Self.extractAndroidAPILevel(from: ini)
+
+            let size = sizeOfDirectory(at: avdPath)
+            guard size > 0 else { continue }
+
+            let userdataPath = avdPath + "/userdata-qemu.img"
+            let lastUsed = (try? URL(fileURLWithPath: userdataPath)
+                .resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
+                ?? (try? URL(fileURLWithPath: avdPath)
+                    .resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
+
+            results.append((name: displayName, apiLevel: apiLevel, path: avdPath,
+                            sizeBytes: size, lastUsedDate: lastUsed))
+        }
+        return results
+    }
+
+    nonisolated func androidSystemImages() -> [(name: String, path: String, sizeBytes: Int64)] {
+        let fm = FileManager.default
+        let home = NSHomeDirectory()
+        let searchPaths = [
+            home + "/Library/Android/sdk/system-images",
+            home + "/Android/sdk/system-images"
+        ]
+
+        var results: [(name: String, path: String, sizeBytes: Int64)] = []
+        for basePath in searchPaths {
+            guard let apiLevels = try? fm.contentsOfDirectory(atPath: basePath) else { continue }
+            for apiLevel in apiLevels.sorted() {
+                let apiPath = basePath + "/" + apiLevel
+                guard let variants = try? fm.contentsOfDirectory(atPath: apiPath) else { continue }
+                for variant in variants.sorted() {
+                    let variantPath = apiPath + "/" + variant
+                    guard let abis = try? fm.contentsOfDirectory(atPath: variantPath) else { continue }
+                    for abi in abis.sorted() {
+                        let imagePath = variantPath + "/" + abi
+                        var isDir: ObjCBool = false
+                        guard fm.fileExists(atPath: imagePath, isDirectory: &isDir),
+                              isDir.boolValue else { continue }
+                        let size = sizeOfDirectory(at: imagePath)
+                        guard size > 0 else { continue }
+                        let apiDisplay = apiLevel.hasPrefix("android-")
+                            ? "API \(apiLevel.dropFirst(8))" : apiLevel
+                        let displayName = "\(apiDisplay) · \(variant) · \(abi)"
+                        results.append((name: displayName, path: imagePath, sizeBytes: size))
+                    }
+                }
+            }
+        }
+        return results
+    }
+
+    private nonisolated static func parseIniFile(_ path: String) -> [String: String] {
+        guard let content = try? String(contentsOfFile: path, encoding: .utf8) else { return [:] }
+        var result: [String: String] = [:]
+        for line in content.components(separatedBy: .newlines) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            guard !trimmed.hasPrefix("#"), !trimmed.hasPrefix(";"),
+                  let eqIdx = trimmed.firstIndex(of: "=") else { continue }
+            let key = String(trimmed[..<eqIdx]).trimmingCharacters(in: .whitespaces)
+            let value = String(trimmed[trimmed.index(after: eqIdx)...]).trimmingCharacters(in: .whitespaces)
+            result[key] = value
+        }
+        return result
+    }
+
+    private nonisolated static func extractAndroidAPILevel(from ini: [String: String]) -> String {
+        // "image.sysdir.1" = "system-images/android-34/google_apis/arm64-v8a/"
+        if let sysdir = ini["image.sysdir.1"] {
+            let parts = sysdir.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+                .components(separatedBy: "/")
+            if parts.count >= 2 {
+                let apiPart = parts[1]
+                if apiPart.hasPrefix("android-") {
+                    return "API \(apiPart.dropFirst(8))"
+                }
+            }
+        }
+        if let target = ini["target"], target.hasPrefix("android-") {
+            return "API \(target.dropFirst(8))"
+        }
+        return ini["target"] ?? ""
+    }
+
+    // MARK: - User-file walk
+
     /// Depth-limited recursive walk — collects regular files whose name ends
     /// with one of `exts`. Caps per-root visits to avoid worst-case blowup
     /// (Documents folders with hundreds of thousands of unrelated files).

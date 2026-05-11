@@ -5,6 +5,14 @@ enum SubItemMode {
     case none           // No sub-items
     case directories    // Scan child directories (Xcode DerivedData)
     case files          // Scan child files recursively (Homebrew downloads)
+    case vms            // iOS Simulators / Android AVDs / system images
+}
+
+enum VMScanType {
+    case iOSSimulators
+    case iOSRuntimes
+    case androidAVDs
+    case androidSystemImages
 }
 
 struct CacheDefinition {
@@ -31,14 +39,18 @@ struct CacheDefinition {
     let fileExtensions: [String]?
     /// Extra scan roots merged with `path` when `fileExtensions` is set.
     let additionalScanRoots: [String]?
+    /// When set, this definition uses platform-specific VM scanning (iOS Simulators,
+    /// Android AVDs, etc.) instead of generic directory/file walking.
+    let vmScanType: VMScanType?
 
     var supportsSubItems: Bool { subItemMode != .none }
 
     /// True for definitions that surface user-owned files (installers, archives)
-    /// rather than tool-generated caches. Used to drive default selection
-    /// (off — user files are riskier) and date-label semantics ("last used"
-    /// instead of "modified").
+    /// rather than tool-generated caches.
     var isUserFileScan: Bool { fileExtensions != nil }
+
+    /// True for definitions that surface mobile VM data (iOS Simulators, Android AVDs).
+    var isVMScan: Bool { vmScanType != nil }
 
     init(nameKey: String, detailKey: String, path: String, icon: String, iconColor: Color,
          risk: RiskLevel, supportsSubItems: Bool = false, projectIndicators: [String] = [],
@@ -55,12 +67,14 @@ struct CacheDefinition {
         self.requiresFDA = requiresFDA
         self.fileExtensions = nil
         self.additionalScanRoots = nil
+        self.vmScanType = nil
     }
 
     init(nameKey: String, detailKey: String, path: String, icon: String, iconColor: Color,
          risk: RiskLevel, subItemMode: SubItemMode, subItemsPath: String? = nil,
          projectIndicators: [String] = [], requiresFDA: Bool = false,
-         fileExtensions: [String]? = nil, additionalScanRoots: [String]? = nil) {
+         fileExtensions: [String]? = nil, additionalScanRoots: [String]? = nil,
+         vmScanType: VMScanType? = nil) {
         self.nameKey = nameKey
         self.detailKey = detailKey
         self.path = path
@@ -73,6 +87,7 @@ struct CacheDefinition {
         self.requiresFDA = requiresFDA
         self.fileExtensions = fileExtensions
         self.additionalScanRoots = additionalScanRoots
+        self.vmScanType = vmScanType
     }
 }
 
@@ -123,6 +138,10 @@ struct CacheItem: Identifiable {
     /// already known but the inner list isn't. Drives loading UI in
     /// SubItemsDetailView so the user sees progress instead of an empty list.
     var isLoadingSubItems: Bool = false
+    /// When true, the clean operation deletes sub-items individually rather than
+    /// removing the parent directory. Required for user-file and VM groups where
+    /// the parent path (e.g. ~/Downloads, ~/.android/avd) must never be deleted.
+    var deleteSubsOnly: Bool = false
 
     var sizeFormatted: String {
         ByteFormatter.format(sizeBytes)

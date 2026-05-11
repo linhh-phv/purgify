@@ -98,6 +98,32 @@ enum CacheDefinitions {
         CacheDefinition(nameKey: "cache.tvosDeviceSupport",    detailKey: "cache.tvosDeviceSupport.detail",    path: "~/Library/Developer/Xcode/tvOS DeviceSupport",                    icon: "appletv",       iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
         CacheDefinition(nameKey: "cache.visionosDeviceSupport", detailKey: "cache.visionosDeviceSupport.detail", path: "~/Library/Developer/Xcode/visionOS DeviceSupport",              icon: "visionpro",     iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
 
+        // MARK: Caution — Mobile VM Management (iOS Simulators + Android AVDs)
+        CacheDefinition(
+            nameKey: "vm.iOSSimulators", detailKey: "vm.iOSSimulators.detail",
+            path: "~/Library/Developer/CoreSimulator/Devices",
+            icon: "iphone", iconColor: Color(red: 0.00, green: 0.48, blue: 1.00),
+            risk: .caution, subItemMode: .vms, vmScanType: .iOSSimulators
+        ),
+        CacheDefinition(
+            nameKey: "vm.iOSRuntimes", detailKey: "vm.iOSRuntimes.detail",
+            path: "~/Library/Developer/CoreSimulator/Profiles/Runtimes",
+            icon: "cpu.fill", iconColor: Color(red: 0.00, green: 0.48, blue: 1.00),
+            risk: .caution, subItemMode: .vms, vmScanType: .iOSRuntimes
+        ),
+        CacheDefinition(
+            nameKey: "vm.androidAVDs", detailKey: "vm.androidAVDs.detail",
+            path: "~/.android/avd",
+            icon: "candybarphone", iconColor: Color(red: 0.24, green: 0.86, blue: 0.52),
+            risk: .caution, subItemMode: .vms, vmScanType: .androidAVDs
+        ),
+        CacheDefinition(
+            nameKey: "vm.androidImages", detailKey: "vm.androidImages.detail",
+            path: "~/Library/Android/sdk/system-images",
+            icon: "square.stack.3d.up.fill", iconColor: Color(red: 0.24, green: 0.86, blue: 0.52),
+            risk: .caution, subItemMode: .vms, vmScanType: .androidSystemImages
+        ),
+
         // MARK: Advanced — yêu cầu Full Disk Access (chỉ scan khi user bật toggle)
         CacheDefinition(nameKey: "cache.safari",            detailKey: "cache.safari.detail",            path: "~/Library/Caches/com.apple.Safari",                               icon: "safari.fill",                   iconColor: Color(red: 0.06, green: 0.71, blue: 0.93), risk: .safe,    requiresFDA: true),
         CacheDefinition(nameKey: "cache.appleMusic",        detailKey: "cache.appleMusic.detail",        path: "~/Library/Caches/com.apple.Music",                                icon: "music.note.house.fill",         iconColor: Color(red: 0.99, green: 0.24, blue: 0.27), risk: .safe,    requiresFDA: true),

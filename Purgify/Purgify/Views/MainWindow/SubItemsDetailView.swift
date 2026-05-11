@@ -24,18 +24,21 @@ struct SubItemsDetailView: View {
         !subItems.isEmpty && subItems.allSatisfy(\.isSelected)
     }
 
-    private var isFileMode: Bool {
-        item.subItemMode == .files
-    }
+    private var isFileMode: Bool { item.subItemMode == .files }
+    private var isVMMode: Bool   { item.subItemMode == .vms }
 
-    /// "PROJECTS" or "FILES"
+    /// "PROJECTS", "FILES", or "DEVICES"
     private var countLabel: String {
-        l10n.t(isFileMode ? "subitem.files" : "subitem.projects")
+        if isFileMode { return l10n.t("subitem.files") }
+        if isVMMode   { return l10n.t("subitem.devices") }
+        return l10n.t("subitem.projects")
     }
 
     /// Clean button text key
     private var cleanButtonKey: String {
-        isFileMode ? "subitem.cleanFiles" : "subitem.cleanProjects"
+        if isFileMode { return "subitem.cleanFiles" }
+        if isVMMode   { return "subitem.cleanDevices" }
+        return "subitem.cleanProjects"
     }
 
     var body: some View {

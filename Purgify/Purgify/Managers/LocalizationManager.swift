@@ -546,9 +546,11 @@ class LocalizationManager: ObservableObject {
             "subitem.totalSize":      "TOTAL SIZE",
             "subitem.projects":       "RELATED PROJECTS",
             "subitem.files":          "FILES",
+            "subitem.devices":        "DEVICES",
             "subitem.selected":       "SELECTED",
             "subitem.cleanProjects":  "Clean %1 Selected Projects · %2",
             "subitem.cleanFiles":     "Clean %1 Selected Files · %2",
+            "subitem.cleanDevices":   "Delete %1 Selected Devices · %2",
             "subitem.nSelected":      "%1 / %2 selected",
             "subitem.lastUsed":       "Last used",
 
@@ -622,6 +624,29 @@ class LocalizationManager: ObservableObject {
                 "Usually OS installers (Windows ISO, Linux distros) or VM disk images. " +
                 "Rarely reused after installation completes — large and easy wins.\n\n" +
                 "⚠️ Keep if you reinstall the same OS often.",
+
+            // Mobile VM groups (iOS Simulators, Android AVDs, system images)
+            "vm.iOSSimulators":         "iOS Simulators",
+            "vm.iOSSimulators.detail":
+                "iOS Simulator devices created by Xcode — each one stores its own app data, settings, and installed apps.\n\n" +
+                "Deleting a simulator removes all data inside it (installed apps, user data, keychain). " +
+                "You can re-create simulators for free in Xcode → Window → Devices and Simulators.\n\n" +
+                "⚠️ Stale simulators (old iOS versions, rarely used) are shown oldest-used first — safe to prune if you no longer test against those OS versions.",
+            "vm.iOSRuntimes":           "iOS Simulator Runtimes",
+            "vm.iOSRuntimes.detail":
+                "Downloaded iOS Simulator runtime bundles — each runtime is 4–10 GB and is required to run simulators for that iOS version.\n\n" +
+                "Deleting a runtime means simulators for that iOS version can no longer launch until you re-download it from Xcode.\n\n" +
+                "⚠️ Only delete runtimes for iOS versions you no longer test against. Re-download any time from Xcode → Settings → Platforms.",
+            "vm.androidAVDs":           "Android Emulators (AVD)",
+            "vm.androidAVDs.detail":
+                "Android Virtual Devices (AVDs) managed by Android Studio — each one stores its own disk image, app data, and emulator snapshot.\n\n" +
+                "Deleting an AVD removes all its data. You can re-create AVDs in Android Studio → Device Manager at any time.\n\n" +
+                "⚠️ Stale emulators (old API levels, unused devices) are shown oldest-used first — safe to prune if you no longer test against those Android versions.",
+            "vm.androidImages":         "Android System Images",
+            "vm.androidImages.detail":
+                "Downloaded Android SDK system images — each one is 1–4 GB and is required to create and run AVDs for that API level and variant.\n\n" +
+                "Deleting a system image means AVDs using it can no longer launch until you re-download from Android Studio SDK Manager.\n\n" +
+                "⚠️ Only delete images for API levels you no longer use. Re-download any time from Android Studio → SDK Manager → SDK Images.",
 
             // Post-clean upsell banner (legacy — superseded by cleanSuccess.* modal)
             "banner.heading":  "Unlock 4 more caches",
@@ -1148,9 +1173,11 @@ class LocalizationManager: ObservableObject {
             "subitem.totalSize":     "TỔNG KÍCH THƯỚC",
             "subitem.projects":      "DỰ ÁN LIÊN QUAN",
             "subitem.files":         "TỆP TIN",
+            "subitem.devices":       "THIẾT BỊ",
             "subitem.selected":      "ĐÃ CHỌN",
             "subitem.cleanProjects": "Dọn %1 dự án đã chọn · %2",
             "subitem.cleanFiles":    "Dọn %1 tệp đã chọn · %2",
+            "subitem.cleanDevices":  "Xóa %1 thiết bị đã chọn · %2",
             "subitem.nSelected":     "%1 / %2 đã chọn",
             "subitem.lastUsed":      "Mở lần cuối",
 
@@ -1223,6 +1250,29 @@ class LocalizationManager: ObservableObject {
                 "Thường là OS installer (Windows ISO, Linux), VM disk. " +
                 "Ít khi dùng lại sau khi cài — file lớn, dọn nhanh ăn dung lượng.\n\n" +
                 "⚠️ Giữ lại nếu bạn hay cài lại cùng OS đó.",
+
+            // Nhóm VM mobile (iOS Simulators, Android AVDs, system images)
+            "vm.iOSSimulators":         "iOS Simulators",
+            "vm.iOSSimulators.detail":
+                "Các thiết bị iOS Simulator do Xcode tạo ra — mỗi simulator lưu trữ dữ liệu app, cài đặt và app đã cài riêng.\n\n" +
+                "Xóa simulator sẽ mất toàn bộ dữ liệu bên trong (app đã cài, dữ liệu người dùng, keychain). " +
+                "Bạn có thể tạo lại simulator miễn phí trong Xcode → Window → Devices and Simulators.\n\n" +
+                "⚠️ Các simulator cũ (iOS version cũ, ít dùng) hiển thị theo thứ tự mở lần cuối xa nhất — an toàn để xóa nếu bạn không còn test trên iOS version đó nữa.",
+            "vm.iOSRuntimes":           "iOS Simulator Runtimes",
+            "vm.iOSRuntimes.detail":
+                "Các runtime bundle của iOS Simulator đã tải về — mỗi runtime nặng 4–10 GB và cần thiết để chạy simulator cho iOS version đó.\n\n" +
+                "Xóa runtime thì simulator của iOS version đó không thể khởi động cho đến khi bạn tải lại từ Xcode.\n\n" +
+                "⚠️ Chỉ xóa runtime của iOS version bạn không còn test nữa. Tải lại bất cứ lúc nào từ Xcode → Settings → Platforms.",
+            "vm.androidAVDs":           "Android Emulators (AVD)",
+            "vm.androidAVDs.detail":
+                "Các Android Virtual Device (AVD) được quản lý bởi Android Studio — mỗi AVD lưu disk image, dữ liệu app và snapshot riêng.\n\n" +
+                "Xóa AVD sẽ mất toàn bộ dữ liệu. Bạn có thể tạo lại trong Android Studio → Device Manager bất cứ lúc nào.\n\n" +
+                "⚠️ Các emulator cũ (API level cũ, ít dùng) hiển thị theo thứ tự mở lần cuối xa nhất — an toàn để xóa nếu bạn không còn test trên Android version đó nữa.",
+            "vm.androidImages":         "Android System Images",
+            "vm.androidImages.detail":
+                "Các Android SDK system image đã tải về — mỗi image nặng 1–4 GB và cần thiết để tạo và chạy AVD cho API level và variant đó.\n\n" +
+                "Xóa system image thì AVD dùng nó không thể khởi động cho đến khi bạn tải lại từ Android Studio SDK Manager.\n\n" +
+                "⚠️ Chỉ xóa image của API level bạn không còn dùng nữa. Tải lại bất cứ lúc nào từ Android Studio → SDK Manager → SDK Images.",
 
             // Banner nhắc bật Advanced sau khi clean (legacy — modal cleanSuccess thay thế)
             "banner.heading":  "Mở khóa thêm 4 cache",

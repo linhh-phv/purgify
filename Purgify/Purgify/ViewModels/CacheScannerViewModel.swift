@@ -198,6 +198,18 @@ class CacheScannerViewModel: ObservableObject {
                     continue
                 }
 
+                // VM scan branch (iOS Simulators, Android AVDs, system images):
+                // reads metadata from device.plist / config.ini, sizes each directory.
+                if def.isVMScan, let vmType = def.vmScanType {
+                    let vmItem = Self.scanVMItems(def: def, vmType: vmType, service: svc)
+                    if let vmItem {
+                        await MainActor.run { [weak self] in
+                            self?.appendStreamedItem(vmItem)
+                        }
+                    }
+                    continue
+                }
+
                 let expanded = (def.path as NSString).expandingTildeInPath
                 guard svc.itemExists(at: expanded) else { continue }
 
@@ -314,6 +326,81 @@ class CacheScannerViewModel: ObservableObject {
         item.subItemMode = .files
         item.isLoadingSubItems = false
         item.subItems = subItems
+        item.deleteSubsOnly = true  // never delete ~/Downloads itself
+        return item
+    }
+
+    /// Build a CacheItem for a VM definition (iOS Simulators, Android AVDs, etc.).
+    /// Reads metadata from device.plist / config.ini, computes per-device sizes,
+    /// and returns nil when the platform isn't installed (path doesn't exist / empty).
+    private nonisolated static func scanVMItems(
+        def: CacheDefinition,
+        vmType: VMScanType,
+        service: any CacheScanService
+    ) -> CacheItem? {
+        var subItems: [SubItem]
+
+        switch vmType {
+        case .iOSSimulators:
+            let devices = service.iOSSimulators()
+            guard !devices.isEmpty else { return nil }
+            subItems = devices.map { d in
+                SubItem(
+                    name: d.runtime.isEmpty ? d.name : "\(d.name) · \(d.runtime)",
+                    path: d.path,
+                    sizeBytes: d.sizeBytes,
+                    modifiedDate: d.lastUsedDate,
+                    isSelected: false,
+                    dateLabelKey: "subitem.lastUsed"
+                )
+            }.sorted { ($0.modifiedDate ?? .distantFuture) < ($1.modifiedDate ?? .distantFuture) }
+
+        case .iOSRuntimes:
+            let runtimes = service.iOSSimulatorRuntimes()
+            guard !runtimes.isEmpty else { return nil }
+            subItems = runtimes.map { r in
+                SubItem(name: r.name, path: r.path, sizeBytes: r.sizeBytes, isSelected: false)
+            }.sorted { $0.sizeBytes > $1.sizeBytes }
+
+        case .androidAVDs:
+            let avds = service.androidAVDs()
+            guard !avds.isEmpty else { return nil }
+            subItems = avds.map { a in
+                let displayName = a.apiLevel.isEmpty ? a.name : "\(a.name) · \(a.apiLevel)"
+                return SubItem(
+                    name: displayName,
+                    path: a.path,
+                    sizeBytes: a.sizeBytes,
+                    modifiedDate: a.lastUsedDate,
+                    isSelected: false,
+                    dateLabelKey: "subitem.lastUsed"
+                )
+            }.sorted { ($0.modifiedDate ?? .distantFuture) < ($1.modifiedDate ?? .distantFuture) }
+
+        case .androidSystemImages:
+            let images = service.androidSystemImages()
+            guard !images.isEmpty else { return nil }
+            subItems = images.map { img in
+                SubItem(name: img.name, path: img.path, sizeBytes: img.sizeBytes, isSelected: false)
+            }.sorted { $0.sizeBytes > $1.sizeBytes }
+        }
+
+        let totalSize = subItems.reduce(0 as Int64) { $0 + $1.sizeBytes }
+
+        var item = CacheItem(
+            nameKey: def.nameKey,
+            detailKey: def.detailKey,
+            path: def.path,
+            icon: def.icon,
+            iconColor: def.iconColor,
+            risk: def.risk,
+            sizeBytes: totalSize
+        )
+        item.isSelected = false
+        item.subItemMode = .vms
+        item.isLoadingSubItems = false
+        item.subItems = subItems
+        item.deleteSubsOnly = true  // never delete the root AVD/Devices folder
         return item
     }
 
@@ -348,7 +435,7 @@ class CacheScannerViewModel: ObservableObject {
             }
             subItems.sort { $0.sizeBytes > $1.sizeBytes }
             return subItems
-        case .none:
+        case .none, .vms:
             return []
         }
     }
@@ -371,10 +458,10 @@ class CacheScannerViewModel: ObservableObject {
             var freed: Int64 = 0
             for item in toClean {
                 if item.hasSubItems, let subItems = item.subItems {
-                    // Clean only selected sub-items
                     let selectedSubs = subItems.filter(\.isSelected)
-                    if selectedSubs.count == subItems.count {
-                        // All selected → remove parent
+                    // deleteSubsOnly items (user files, VMs) must never have their
+                    // parent folder removed — always delete sub-items individually.
+                    if !item.deleteSubsOnly && selectedSubs.count == subItems.count {
                         freed += item.sizeBytes
                         try? svc.removeItem(at: item.expandedPath)
                     } else {
@@ -411,7 +498,7 @@ class CacheScannerViewModel: ObservableObject {
             var freed: Int64 = 0
             if item.hasSubItems, let subItems = item.subItems {
                 let selectedSubs = subItems.filter(\.isSelected)
-                if selectedSubs.count == subItems.count {
+                if !item.deleteSubsOnly && selectedSubs.count == subItems.count {
                     freed = item.sizeBytes
                     try? svc.removeItem(at: item.expandedPath)
                 } else {

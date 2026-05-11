@@ -33,4 +33,22 @@ protocol CacheScanService: Sendable {
     /// volume is mounted with `noatime` or the OS hasn't recorded an access).
     /// Used for the user-file groups (Installers, Archives, Disc images).
     nonisolated func userFiles(roots: [String], extensions: [String]) -> [(name: String, path: String, sizeBytes: Int64, lastUsedDate: Date?)]
+
+    /// List iOS Simulator device instances from CoreSimulator/Devices/.
+    /// Reads device.plist for the display name and runtime identifier.
+    /// `lastUsedDate` is the modification date of the device directory.
+    nonisolated func iOSSimulators() -> [(name: String, runtime: String, path: String, sizeBytes: Int64, lastUsedDate: Date?)]
+
+    /// List downloaded iOS Simulator runtime bundles (.simruntime) from user-accessible
+    /// CoreSimulator locations. Returns empty when no user-level runtimes are present.
+    nonisolated func iOSSimulatorRuntimes() -> [(name: String, path: String, sizeBytes: Int64)]
+
+    /// List Android AVD instances from ~/.android/avd/*.avd directories.
+    /// Reads config.ini for the display name and API level.
+    /// `lastUsedDate` is the modification date of userdata-qemu.img (proxy for last boot).
+    nonisolated func androidAVDs() -> [(name: String, apiLevel: String, path: String, sizeBytes: Int64, lastUsedDate: Date?)]
+
+    /// List Android SDK system image directories (3-level: api/variant/abi).
+    /// Searches the standard ~/Library/Android/sdk/system-images path.
+    nonisolated func androidSystemImages() -> [(name: String, path: String, sizeBytes: Int64)]
 }
