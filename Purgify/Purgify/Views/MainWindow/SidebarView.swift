@@ -81,7 +81,7 @@ struct SidebarView: View {
                         .cornerRadius(7)
                     }
                     .buttonStyle(.plain)
-                    .disabled(scanner.isScanning)
+                    .disabled(scanner.isScanning || scanner.isCleaning)
 
                     LanguageToggle()
 

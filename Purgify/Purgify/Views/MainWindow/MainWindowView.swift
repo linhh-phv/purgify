@@ -70,9 +70,15 @@ struct MainWindowView: View {
                     scanner.clean()
                 } label: {
                     HStack(spacing: 7) {
-                        Image(systemName: "trash")
-                            .font(.system(size: 12))
-                        Text(l10n.t("app.cleanSelected"))
+                        if scanner.isCleaning {
+                            ProgressView()
+                                .controlSize(.small)
+                                .tint(.white)
+                        } else {
+                            Image(systemName: "trash")
+                                .font(.system(size: 12))
+                        }
+                        Text(l10n.t(scanner.isCleaning ? "app.cleaning" : "app.cleanSelected"))
                             .font(.system(size: 12, weight: .medium))
                     }
                     .foregroundColor(.white)

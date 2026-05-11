@@ -6,6 +6,7 @@ struct ContentRowView: View {
     let isSelected: Bool
 
     @EnvironmentObject var l10n: LocalizationManager
+    @EnvironmentObject var scanner: CacheScannerViewModel
 
     var body: some View {
         HStack(spacing: 10) {
@@ -23,7 +24,10 @@ struct ContentRowView: View {
                             .foregroundColor(.white)
                         : nil
                 )
-                .onTapGesture { item.isSelected.toggle() }
+                .onTapGesture {
+                    guard !scanner.isCleaning else { return }
+                    item.isSelected.toggle()
+                }
 
             // Brand-colored icon
             Image(systemName: item.icon)

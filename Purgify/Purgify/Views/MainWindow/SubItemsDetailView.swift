@@ -114,6 +114,7 @@ struct SubItemsDetailView: View {
                             .font(.system(size: 11))
                             .buttonStyle(.plain)
                             .foregroundColor(.brand)
+                            .disabled(scanner.isCleaning)
                         } else if selectedCount == 0 {
                             Button(l10n.t("risk.selectAll")) {
                                 scanner.selectAllSubItems(itemID: item.id)
@@ -121,6 +122,7 @@ struct SubItemsDetailView: View {
                             .font(.system(size: 11))
                             .buttonStyle(.plain)
                             .foregroundColor(.brand)
+                            .disabled(scanner.isCleaning)
                         } else {
                             Button(l10n.t("risk.selectAll")) {
                                 scanner.selectAllSubItems(itemID: item.id)
@@ -128,12 +130,14 @@ struct SubItemsDetailView: View {
                             .font(.system(size: 11))
                             .buttonStyle(.plain)
                             .foregroundColor(.secondary)
+                            .disabled(scanner.isCleaning)
                             Button(l10n.t("risk.deselectAll")) {
                                 scanner.deselectAllSubItems(itemID: item.id)
                             }
                             .font(.system(size: 11))
                             .buttonStyle(.plain)
                             .foregroundColor(.brand)
+                            .disabled(scanner.isCleaning)
                         }
                         }
                     }
@@ -185,15 +189,24 @@ struct SubItemsDetailView: View {
             Button {
                 scanner.cleanItem(item.id)
             } label: {
-                Text(l10n.t(cleanButtonKey)
-                    .replacingOccurrences(of: "%1", with: "\(selectedCount)")
-                    .replacingOccurrences(of: "%2", with: ByteFormatter.format(selectedBytes)))
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 36)
-                    .background(selectedCount > 0 ? Color.brand : Color.gray)
-                    .cornerRadius(9)
+                HStack(spacing: 8) {
+                    if scanner.isCleaning {
+                        ProgressView()
+                            .controlSize(.small)
+                            .tint(.white)
+                    }
+                    Text(scanner.isCleaning
+                        ? l10n.t("app.cleaning")
+                        : l10n.t(cleanButtonKey)
+                            .replacingOccurrences(of: "%1", with: "\(selectedCount)")
+                            .replacingOccurrences(of: "%2", with: ByteFormatter.format(selectedBytes)))
+                        .font(.system(size: 14, weight: .semibold))
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 36)
+                .background(selectedCount > 0 ? Color.brand : Color.gray)
+                .cornerRadius(9)
             }
             .buttonStyle(.plain)
             .disabled(scanner.isCleaning || selectedCount == 0)
@@ -228,6 +241,7 @@ struct SubItemsDetailView: View {
                         : nil
                 )
                 .onTapGesture {
+                    guard !scanner.isCleaning else { return }
                     scanner.toggleSubItem(itemID: item.id, subItemID: sub.id)
                 }
 
@@ -252,6 +266,7 @@ struct SubItemsDetailView: View {
         .padding(.vertical, 6)
         .contentShape(Rectangle())
         .onTapGesture {
+            guard !scanner.isCleaning else { return }
             scanner.toggleSubItem(itemID: item.id, subItemID: sub.id)
         }
     }

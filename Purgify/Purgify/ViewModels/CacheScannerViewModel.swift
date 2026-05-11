@@ -88,7 +88,10 @@ class CacheScannerViewModel: ObservableObject {
                 .sink { [weak self] in
                     guard let self else { return }
                     let advancedEnabled = UserDefaults.standard.bool(forKey: "advancedScanningEnabled")
-                    guard advancedEnabled, self.hasScanned, !self.isScanning else { return }
+                    // Skip auto-rescan during a clean — clearing `items` mid-clean
+                    // races with the in-flight task and pops the success modal
+                    // on top of a fresh scan. User can re-scan manually after.
+                    guard advancedEnabled, self.hasScanned, !self.isScanning, !self.isCleaning else { return }
                     self.scan()
                 }
         }
@@ -143,6 +146,11 @@ class CacheScannerViewModel: ObservableObject {
     }
 
     func scan(keepCleanedFlag: Bool = false) {
+        // Block scans while a clean is in flight — `items = []` here would
+        // race with `applyCleanResultLocally` and leave the success modal
+        // popping on top of a fresh scan. UI buttons should already be
+        // disabled; this guards programmatic callers (FDA subscription).
+        guard !isCleaning else { return }
         hasScanned = true
         isScanning = true
         scanProgress = 0
@@ -286,7 +294,11 @@ class CacheScannerViewModel: ObservableObject {
     // MARK: - Clean
 
     func clean() {
+        // Re-entrancy guard: Cmd+Return shortcut + .disabled() can race when a
+        // user spams the key faster than SwiftUI propagates the disabled state.
+        guard !isCleaning else { return }
         let toClean = items.filter(\.isSelected)
+        guard !toClean.isEmpty else { return }
         let touchedRisks = Set(toClean.map(\.risk))
         let itemCount = toClean.count
         isCleaning = true
@@ -328,6 +340,7 @@ class CacheScannerViewModel: ObservableObject {
     }
 
     func cleanItem(_ id: UUID) {
+        guard !isCleaning else { return }
         guard let item = items.first(where: { $0.id == id }) else { return }
         isCleaning = true
         let svc = service

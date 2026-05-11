@@ -19,6 +19,7 @@ struct ContentListView: View {
                     .font(.system(size: 13))
                     .buttonStyle(.plain)
                     .foregroundColor(.brand)
+                    .disabled(scanner.isCleaning)
                 } else {
                     Button(l10n.t("risk.selectAll")) {
                         scanner.selectAllInCurrentRisk()
@@ -26,6 +27,7 @@ struct ContentListView: View {
                     .font(.system(size: 13))
                     .buttonStyle(.plain)
                     .foregroundColor(.brand)
+                    .disabled(scanner.isCleaning)
                 }
             }
             .padding(.horizontal, 16)

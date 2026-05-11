@@ -50,7 +50,7 @@ struct MenuBarView: View {
                     .cornerRadius(6)
             }
             .buttonStyle(.plain)
-            .disabled(scanner.isScanning)
+            .disabled(scanner.isScanning || scanner.isCleaning)
         }
         .padding(14)
     }
@@ -147,10 +147,18 @@ struct MenuBarView: View {
                 scanner.clean()
             } label: {
                 HStack(spacing: 6) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 11))
-                    Text(l10n.t("menubar.cleanSelected")
-                        .replacingOccurrences(of: "%@", with: ByteFormatter.format(scanner.selectedBytes)))
+                    if scanner.isCleaning {
+                        ProgressView()
+                            .controlSize(.small)
+                            .tint(.white)
+                    } else {
+                        Image(systemName: "trash")
+                            .font(.system(size: 11))
+                    }
+                    Text(scanner.isCleaning
+                        ? l10n.t("app.cleaning")
+                        : l10n.t("menubar.cleanSelected")
+                            .replacingOccurrences(of: "%@", with: ByteFormatter.format(scanner.selectedBytes)))
                         .font(.system(size: 12, weight: .semibold))
                 }
                 .foregroundColor(.white)

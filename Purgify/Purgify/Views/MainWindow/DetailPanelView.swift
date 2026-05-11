@@ -123,13 +123,22 @@ struct DetailPanelView: View {
             Button {
                 scanner.cleanItem(item.id)
             } label: {
-                Text(l10n.t("detail.clean").replacingOccurrences(of: "%@", with: l10n.t(item.nameKey)))
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 36)
-                    .background(Color.brand)
-                    .cornerRadius(9)
+                HStack(spacing: 8) {
+                    if scanner.isCleaning {
+                        ProgressView()
+                            .controlSize(.small)
+                            .tint(.white)
+                    }
+                    Text(scanner.isCleaning
+                        ? l10n.t("app.cleaning")
+                        : l10n.t("detail.clean").replacingOccurrences(of: "%@", with: l10n.t(item.nameKey)))
+                        .font(.system(size: 14, weight: .semibold))
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 36)
+                .background(Color.brand)
+                .cornerRadius(9)
             }
             .buttonStyle(.plain)
             .disabled(scanner.isCleaning)
