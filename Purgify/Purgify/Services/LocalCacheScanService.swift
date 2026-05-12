@@ -25,7 +25,10 @@ struct LocalCacheScanService: CacheScanService {
     }
 
     nonisolated func removeItem(at path: String) throws {
-        try FileManager.default.removeItem(atPath: path)
+        try FileManager.default.trashItem(
+            at: URL(fileURLWithPath: path),
+            resultingItemURL: nil
+        )
     }
 
     nonisolated func subDirectories(at path: String) -> [(name: String, path: String, modifiedDate: Date?)] {

@@ -16,6 +16,8 @@ struct CleanPreview: Identifiable {
         // The sheet calls l10n.t(name) — raw names pass through unchanged since they're not in the dict.
         let name: String
         let sizeBytes: Int64
+        /// Absolute filesystem path — used for the "Reveal in Finder" button.
+        let path: String
     }
 
     enum TargetMode {
@@ -397,13 +399,18 @@ class CacheScannerViewModel: ObservableObject {
             guard !avds.isEmpty else { return nil }
             subItems = avds.map { a in
                 let displayName = a.apiLevel.isEmpty ? a.name : "\(a.name) · \(a.apiLevel)"
+                // Each .avd directory has a paired .ini pointer file that Android
+                // Studio uses as its device registry entry. Deleting only the
+                // .avd directory leaves a broken entry in the AVD Manager.
+                let iniPath = URL(fileURLWithPath: a.path).deletingPathExtension().path + ".ini"
                 return SubItem(
                     name: displayName,
                     path: a.path,
                     sizeBytes: a.sizeBytes,
                     modifiedDate: a.lastUsedDate,
                     isSelected: false,
-                    dateLabelKey: "subitem.lastUsed"
+                    dateLabelKey: "subitem.lastUsed",
+                    associatedPaths: [iniPath]
                 )
             }.sorted { ($0.modifiedDate ?? .distantFuture) < ($1.modifiedDate ?? .distantFuture) }
 
@@ -540,6 +547,7 @@ class CacheScannerViewModel: ObservableObject {
                         for sub in selectedSubs {
                             freed += sub.sizeBytes
                             try? svc.removeItem(at: sub.path)
+                            for extra in sub.associatedPaths { try? svc.removeItem(at: extra) }
                         }
                     }
                 } else {
@@ -577,6 +585,7 @@ class CacheScannerViewModel: ObservableObject {
                     for sub in selectedSubs {
                         freed += sub.sizeBytes
                         try? svc.removeItem(at: sub.path)
+                        for extra in sub.associatedPaths { try? svc.removeItem(at: extra) }
                     }
                 }
             } else {
@@ -618,7 +627,8 @@ class CacheScannerViewModel: ObservableObject {
                         icon: item.icon,
                         iconColor: item.iconColor,
                         name: sub.name,
-                        sizeBytes: sub.sizeBytes
+                        sizeBytes: sub.sizeBytes,
+                        path: sub.path
                     )
                 }
             } else {
@@ -627,7 +637,8 @@ class CacheScannerViewModel: ObservableObject {
                     icon: item.icon,
                     iconColor: item.iconColor,
                     name: item.nameKey,
-                    sizeBytes: item.sizeBytes
+                    sizeBytes: item.sizeBytes,
+                    path: item.expandedPath
                 )]
             }
         } else {
@@ -635,7 +646,8 @@ class CacheScannerViewModel: ObservableObject {
                 icon: item.icon,
                 iconColor: item.iconColor,
                 name: item.nameKey,
-                sizeBytes: item.sizeBytes
+                sizeBytes: item.sizeBytes,
+                path: item.expandedPath
             )]
         }
     }

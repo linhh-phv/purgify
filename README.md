@@ -14,7 +14,7 @@ A lightweight macOS menu bar app that scans and cleans caches across your Mac �
 
 ## Features
 
-- Scans **68 cache types** across categories — no permission prompts required by default:
+- Scans **79 cache types** across categories — no permission prompts required by default:
   - **Developer tools** — npm, Yarn, pnpm, Bun, CocoaPods, Xcode DerivedData, SwiftUI Previews, Gradle, Maven, Docker, Cargo, pip, Poetry, Flutter, Go, Terraform, nvm, and more
   - **Browsers** — Chrome, Arc, Firefox, Brave, Edge, Vivaldi, Opera, DuckDuckGo
   - **Media apps** — Spotify, VLC, IINA, Plex
@@ -24,10 +24,15 @@ A lightweight macOS menu bar app that scans and cleans caches across your Mac �
   - **Productivity** — Raycast, Notion, Obsidian
   - **Games** — Steam
   - **System** — QuickLook, App Store, User Logs, iOS/watchOS/tvOS/visionOS Device Support
+- **Mobile VM management** — list and selectively remove stale iOS Simulators, iOS Runtimes, Android AVDs, and Android System Images with last-used dates and sizes
+- **User file detection** — surfaces old installers (`.dmg`, `.pkg`), archives (`.zip`, `.tar.gz`, `.rar`), and disc images (`.iso`) in Downloads, Desktop, and Documents so you can safely prune them
 - **Advanced scanning** (optional) — unlocks Safari, Mail Downloads, Apple Music, and Diagnostic Reports with Full Disk Access
+- **Safe by design — items go to Trash, not permanently erased.** Restore anything you didn't mean to remove directly from Trash
+- **Review before cleaning** — a confirmation sheet lists every file and folder that will be moved, with the exact path and a Finder reveal button, before anything is touched
 - Risk-based categorization: **Safe**, **Moderate**, **Caution**
-- Selective cleaning — choose exactly what to delete
-- Menu bar quick view + full window app
+- Selective cleaning — choose exactly what to remove
+- Progressive scan — results stream in as scanning completes, no waiting
+- Menu bar quick view + full 3-column window app
 - Vietnamese & English language support
 - Dark Mode support
 
@@ -62,8 +67,9 @@ Build and run with **⌘R** in Xcode. No external dependencies required.
 
 1. Click the **Purgify** icon in the menu bar to see detected caches
 2. Click **Open Full App** for the detailed 3-column view
-3. Select caches by risk level, review details, and clean selectively
-4. Optionally enable **Advanced Scanning** in Settings to unlock 4 additional protected caches
+3. Select caches by risk level, review individual items, and clean selectively
+4. A preview sheet lists exactly what will be moved to Trash — confirm or cancel before anything happens
+5. Optionally enable **Advanced Scanning** in Settings to unlock 4 additional protected caches
 
 ## Architecture
 
@@ -78,7 +84,8 @@ Purgify/Purgify/
 └── Views/
     ├── Components/  (CleanSuccessView, LanguageToggle, PostCleanBanner)
     ├── MainWindow/  (MainWindowView, SidebarView, ContentListView, ContentRowView,
-    │                 DetailPanelView, SubItemsDetailView, EmptyStateView, ScanningView)
+    │                 DetailPanelView, SubItemsDetailView, CleanPreviewSheet,
+    │                 EmptyStateView, ScanningView)
     ├── MenuBar/     (MenuBarView)
     └── Settings/    (SettingsView, FDAGuideView)
 ```

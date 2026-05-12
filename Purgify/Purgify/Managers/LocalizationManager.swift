@@ -79,7 +79,7 @@ class LocalizationManager: ObservableObject {
 
             // Clean confirmation
             "clean.confirm.title":   "Clean %@ of cache?",
-            "clean.confirm.message": "This action cannot be undone. Caches will be rebuilt automatically when needed.",
+            "clean.confirm.message": "Items will be moved to Trash. Caches will be rebuilt automatically when needed.",
             "clean.confirm.clean":   "Clean",
             "clean.confirm.cancel":  "Cancel",
 
@@ -671,11 +671,12 @@ class LocalizationManager: ObservableObject {
             "about.copyright":    "© 2025 Purgify. Open source under MIT License.",
 
             // Clean preview sheet
-            "cleanPreview.title":    "Review Before Cleaning",
-            "cleanPreview.subtitle": "These items will be permanently deleted and cannot be recovered.",
-            "cleanPreview.total":    "Total",
-            "cleanPreview.cancel":   "Cancel",
-            "cleanPreview.confirm":  "Delete %@",
+            "cleanPreview.title":           "Review Before Cleaning",
+            "cleanPreview.subtitle":        "These items will be moved to Trash. You can restore them from Trash if needed.",
+            "cleanPreview.total":           "Total",
+            "cleanPreview.cancel":          "Cancel",
+            "cleanPreview.confirm":         "Move %@ to Trash",
+            "cleanPreview.revealInFinder":  "Reveal in Finder",
         ],
 
         // MARK: Vietnamese
@@ -713,7 +714,7 @@ class LocalizationManager: ObservableObject {
 
             // Clean confirmation
             "clean.confirm.title":   "Dọn %@ bộ nhớ đệm?",
-            "clean.confirm.message": "Thao tác này không thể hoàn tác. Bộ nhớ đệm sẽ tự tạo lại khi cần.",
+            "clean.confirm.message": "Các mục sẽ được chuyển vào Thùng rác. Bộ nhớ đệm sẽ tự tạo lại khi cần.",
             "clean.confirm.clean":   "Dọn dẹp",
             "clean.confirm.cancel":  "Hủy",
 
@@ -1304,11 +1305,12 @@ class LocalizationManager: ObservableObject {
             "about.copyright":    "© 2025 Purgify. Mã nguồn mở theo giấy phép MIT.",
 
             // Clean preview sheet
-            "cleanPreview.title":    "Xem lại trước khi dọn",
-            "cleanPreview.subtitle": "Các mục này sẽ bị xóa vĩnh viễn và không thể khôi phục.",
-            "cleanPreview.total":    "Tổng cộng",
-            "cleanPreview.cancel":   "Hủy",
-            "cleanPreview.confirm":  "Xóa %@",
+            "cleanPreview.title":           "Xem lại trước khi dọn",
+            "cleanPreview.subtitle":        "Các mục này sẽ được chuyển vào Thùng rác. Bạn có thể khôi phục nếu cần.",
+            "cleanPreview.total":           "Tổng cộng",
+            "cleanPreview.cancel":          "Hủy",
+            "cleanPreview.confirm":         "Chuyển %@ vào Thùng rác",
+            "cleanPreview.revealInFinder":  "Hiện trong Finder",
         ]
     ]
 }

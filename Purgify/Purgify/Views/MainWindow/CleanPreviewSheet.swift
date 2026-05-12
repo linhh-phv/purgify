@@ -1,7 +1,9 @@
 import SwiftUI
+import AppKit
 
 /// "Review Before Cleaning" sheet — lists every item that will be deleted,
-/// with icon, name, and size. User confirms with "Delete" or cancels.
+/// with icon, name, abbreviated path, and size. Tapping the folder icon
+/// reveals the item in Finder. User confirms with "Delete" or cancels.
 struct CleanPreviewSheet: View {
     let preview: CleanPreview
 
@@ -48,7 +50,7 @@ struct CleanPreviewSheet: View {
                     }
                 }
             }
-            .frame(maxHeight: 280)
+            .frame(maxHeight: 320)
 
             Divider()
 
@@ -86,14 +88,14 @@ struct CleanPreviewSheet: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
         }
-        .frame(width: 420)
+        .frame(width: 460)
     }
 
     // MARK: - Row View
 
     private func rowView(_ row: CleanPreview.Row) -> some View {
         HStack(spacing: 10) {
-            // Icon in a rounded rect background
+            // Icon
             ZStack {
                 RoundedRectangle(cornerRadius: 6)
                     .fill(row.iconColor.opacity(0.15))
@@ -103,18 +105,61 @@ struct CleanPreviewSheet: View {
                     .foregroundColor(row.iconColor)
             }
 
-            Text(l10n.t(row.name))
-                .font(.system(size: 13))
-                .lineLimit(1)
-                .truncationMode(.middle)
+            // Name + path
+            VStack(alignment: .leading, spacing: 2) {
+                Text(l10n.t(row.name))
+                    .font(.system(size: 13))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+
+                Text(abbreviate(row.path))
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
 
             Spacer()
 
-            Text(ByteFormatter.format(row.sizeBytes))
-                .font(.system(size: 13, weight: .medium).monospacedDigit())
-                .foregroundColor(.secondary)
+            // Size + reveal button
+            HStack(spacing: 8) {
+                Text(ByteFormatter.format(row.sizeBytes))
+                    .font(.system(size: 13, weight: .medium).monospacedDigit())
+                    .foregroundColor(.secondary)
+
+                Button {
+                    revealInFinder(row.path)
+                } label: {
+                    Image(systemName: "folder")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                        .frame(width: 24, height: 24)
+                        .background(Color.primary.opacity(0.06))
+                        .cornerRadius(5)
+                }
+                .buttonStyle(.plain)
+                .help(l10n.t("cleanPreview.revealInFinder"))
+            }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 9)
+    }
+
+    // MARK: - Helpers
+
+    /// Replaces the home directory prefix with `~` for compact display.
+    private func abbreviate(_ path: String) -> String {
+        (path as NSString).abbreviatingWithTildeInPath
+    }
+
+    /// Selects and reveals the item in Finder. If the item doesn't exist yet
+    /// (rare race between scan and preview), opens its parent directory instead.
+    private func revealInFinder(_ path: String) {
+        let url = URL(fileURLWithPath: path)
+        if FileManager.default.fileExists(atPath: path) {
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+        } else {
+            NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: url.deletingLastPathComponent().path)
+        }
     }
 }

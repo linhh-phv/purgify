@@ -109,6 +109,10 @@ struct SubItem: Identifiable {
     /// user-file scans (Installers, Archives, Disc images) where the date
     /// represents last access rather than modification.
     var dateLabelKey: String? = nil
+    /// Additional paths to delete alongside `path` (e.g. the `.ini` pointer
+    /// file that accompanies each Android `.avd` directory). Deleted with
+    /// `try?` so missing files are silently ignored.
+    var associatedPaths: [String] = []
 
     var sizeFormatted: String {
         ByteFormatter.format(sizeBytes)
