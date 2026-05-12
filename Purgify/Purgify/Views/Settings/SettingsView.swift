@@ -10,6 +10,7 @@ struct SettingsView: View {
     @EnvironmentObject var fdaStatus: FDAStatus
 
     @Environment(\.dismiss) var dismiss
+    @Environment(\.updateManager) var updater
 
     @State private var launchAtLogin = false
     @AppStorage("advancedScanningEnabled") private var advancedEnabled = false
@@ -183,6 +184,12 @@ struct SettingsView: View {
 
                     linkRow(label: l10n.t("about.viewOnGitHub")) {
                         NSWorkspace.shared.open(URL(string: "https://github.com/linhh-phv/purgify")!)
+                    }
+
+                    Divider()
+
+                    linkRow(label: l10n.t("app.checkForUpdates")) {
+                        updater.checkForUpdates()
                     }
 
                     Divider()
