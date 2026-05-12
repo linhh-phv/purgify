@@ -74,44 +74,24 @@ jobs:
           DOWNLOAD_URL="https://github.com/linhh-phv/purgify/releases/download/v${VERSION}/Purgify-${VERSION}.dmg"
           PUB_DATE=$(date -u "+%a, %d %b %Y %H:%M:%S +0000")
           DMG_SIZE=$(stat -f%z "$DMG_PATH")
-
-          # Install Sparkle tools
-          brew install --cask sparkle
-          SIGN_UPDATE=$(find /opt/homebrew/Caskroom/sparkle -name "sign_update" | head -1)
-
-          # Sign DMG using private key from secret
-          echo "$SPARKLE_PRIVATE_KEY" > /tmp/sparkle_key
-          SIGNATURE=$("$SIGN_UPDATE" --ed-key-file /tmp/sparkle_key "$DMG_PATH" | awk '{print $NF}')
-          rm -f /tmp/sparkle_key
-
           BUILD=$(xcodebuild -project Purgify/Purgify.xcodeproj -scheme Purgify \
             -showBuildSettings 2>/dev/null | grep -w CURRENT_PROJECT_VERSION | awk '{print $3}')
 
-          cat > /tmp/appcast.xml <<EOF
-          <?xml version="1.0" encoding="utf-8"?>
-          <rss version="2.0"
-               xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"
-               xmlns:dc="http://purl.org/dc/elements/1.1/">
-            <channel>
-              <title>Purgify</title>
-              <link>https://github.com/linhh-phv/purgify</link>
-              <description>Purgify release feed</description>
-              <language>en</language>
-              <item>
-                <title>Version ${VERSION}</title>
-                <sparkle:releaseNotesLink>https://github.com/linhh-phv/purgify/releases/tag/v${VERSION}</sparkle:releaseNotesLink>
-                <pubDate>${PUB_DATE}</pubDate>
-                <enclosure
-                  url="${DOWNLOAD_URL}"
-                  sparkle:version="${BUILD}"
-                  sparkle:shortVersionString="${VERSION}"
-                  length="${DMG_SIZE}"
-                  type="application/octet-stream"
-                  sparkle:edSignature="${SIGNATURE}"/>
-              </item>
-            </channel>
-          </rss>
-          EOF
+          brew install --cask sparkle
+          SIGN_UPDATE=$(find /opt/homebrew/Caskroom/sparkle -name "sign_update" | grep -v dSYM | head -1)
+
+          printf '%s' "$SPARKLE_PRIVATE_KEY" > /tmp/sparkle_key
+          SIGN_OUTPUT=$("$SIGN_UPDATE" --ed-key-file /tmp/sparkle_key "$DMG_PATH" 2>&1)
+          rm -f /tmp/sparkle_key
+          echo "sign_update output: $SIGN_OUTPUT"
+
+          SIGNATURE=$(echo "$SIGN_OUTPUT" | grep -o 'sparkle:edSignature="[^"]*"' | sed 's/sparkle:edSignature="\(.*\)"/\1/')
+          if [[ -z "$SIGNATURE" ]]; then
+            echo "ERROR: Could not extract signature from sign_update output"
+            exit 1
+          fi
+
+          python3 scripts/gen_appcast.py "$VERSION" "$BUILD" "$DMG_SIZE" "$DOWNLOAD_URL" "$PUB_DATE" "$SIGNATURE"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
