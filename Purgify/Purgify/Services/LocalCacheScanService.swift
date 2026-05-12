@@ -329,6 +329,115 @@ struct LocalCacheScanService: CacheScanService {
         return ini["target"] ?? ""
     }
 
+    // MARK: - Xcode DerivedData with project existence check
+
+    nonisolated func xcodeDerivedData() -> [(name: String, path: String, sizeBytes: Int64, projectFound: Bool)] {
+        let derivedDataPath = NSHomeDirectory() + "/Library/Developer/Xcode/DerivedData"
+        let fm = FileManager.default
+        guard let entries = try? fm.contentsOfDirectory(atPath: derivedDataPath) else { return [] }
+
+        let projectLocations = Self.findXcodeProjectNames()
+
+        var results: [(name: String, path: String, sizeBytes: Int64, projectFound: Bool)] = []
+        for entry in entries {
+            guard entry != "ModuleCache.noindex", entry != "SDKStatCaches.noindex" else { continue }
+            let dirPath = derivedDataPath + "/" + entry
+            let projectName = Self.extractDerivedDataProjectName(entry)
+            let size = sizeOfDirectory(at: dirPath)
+            guard size > 0 else { continue }
+            let found = projectLocations.contains(projectName.lowercased())
+            results.append((name: projectName, path: dirPath, sizeBytes: size, projectFound: found))
+        }
+        return results.sorted { $0.sizeBytes > $1.sizeBytes }
+    }
+
+    private nonisolated static func extractDerivedDataProjectName(_ folderName: String) -> String {
+        // "Purgify-godzljblebpmyvhcahwqbrowctpc" → "Purgify"
+        // Strip trailing "-<hash>" where hash is alphanumeric
+        guard let dashRange = folderName.range(of: "-[a-z0-9]{10,}$",
+                                                options: .regularExpression) else {
+            return folderName
+        }
+        return String(folderName[..<dashRange.lowerBound])
+    }
+
+    private nonisolated static func findXcodeProjectNames() -> Set<String> {
+        let fm = FileManager.default
+        let home = NSHomeDirectory()
+        let roots = ["Desktop", "Documents", "Developer", "code", "repos", "work", "Projects", "Sites"]
+            .map { home + "/" + $0 }
+            .filter { fm.fileExists(atPath: $0) }
+
+        let skipDirs: Set<String> = [
+            "node_modules", ".git", "build", "DerivedData", "Library",
+            ".Trash", "Pods", ".pub-cache", ".cargo", ".npm", "dist"
+        ]
+
+        var names = Set<String>()
+        for root in roots {
+            Self.findProjectNames(in: root, depth: 0, maxDepth: 5,
+                                  fm: fm, skip: skipDirs, results: &names)
+            if names.count >= 200 { break }
+        }
+        return names
+    }
+
+    private nonisolated static func findProjectNames(
+        in path: String, depth: Int, maxDepth: Int,
+        fm: FileManager, skip: Set<String>, results: inout Set<String>
+    ) {
+        guard depth <= maxDepth else { return }
+        guard let contents = try? fm.contentsOfDirectory(atPath: path) else { return }
+        for item in contents {
+            if item.hasSuffix(".xcodeproj") || item.hasSuffix(".xcworkspace") {
+                let name = item
+                    .replacingOccurrences(of: ".xcodeproj", with: "")
+                    .replacingOccurrences(of: ".xcworkspace", with: "")
+                results.insert(name.lowercased())
+            }
+        }
+        guard depth < maxDepth else { return }
+        for item in contents {
+            guard !skip.contains(item), !item.hasPrefix("."),
+                  !item.hasSuffix(".xcodeproj"), !item.hasSuffix(".xcworkspace") else { continue }
+            let sub = path + "/" + item
+            var isDir: ObjCBool = false
+            if fm.fileExists(atPath: sub, isDirectory: &isDir), isDir.boolValue {
+                findProjectNames(in: sub, depth: depth + 1, maxDepth: maxDepth,
+                                 fm: fm, skip: skip, results: &results)
+            }
+        }
+    }
+
+    // MARK: - iOS Simulator Runtimes with usage detection
+
+    nonisolated func iOSSimulatorRuntimesWithUsage() -> [(name: String, path: String, sizeBytes: Int64, inUse: Bool)] {
+        let usedRuntimes = Self.collectUsedSimulatorRuntimes()
+        return iOSSimulatorRuntimes().map { r in
+            // Match folder display name back to a runtime identifier fragment.
+            // "iOS 17.0" → "iOS-17-0", "watchOS 10.0" → "watchOS-10-0"
+            let key = r.name.replacingOccurrences(of: " ", with: "-")
+                            .replacingOccurrences(of: ".", with: "-")
+            let inUse = usedRuntimes.contains { $0.contains(key) }
+            return (name: r.name, path: r.path, sizeBytes: r.sizeBytes, inUse: inUse)
+        }
+    }
+
+    private nonisolated static func collectUsedSimulatorRuntimes() -> Set<String> {
+        let fm = FileManager.default
+        let devicesPath = NSHomeDirectory() + "/Library/Developer/CoreSimulator/Devices"
+        guard let uuids = try? fm.contentsOfDirectory(atPath: devicesPath) else { return [] }
+        var runtimes = Set<String>()
+        for uuid in uuids {
+            let plistPath = devicesPath + "/" + uuid + "/device.plist"
+            if let dict = NSDictionary(contentsOfFile: plistPath) as? [String: Any],
+               let runtime = dict["runtime"] as? String {
+                runtimes.insert(runtime)
+            }
+        }
+        return runtimes
+    }
+
     // MARK: - Android SDK component scanning
 
     nonisolated func androidSdkPlatforms() -> [(apiLevel: Int, path: String, sizeBytes: Int64, inUse: Bool)] {

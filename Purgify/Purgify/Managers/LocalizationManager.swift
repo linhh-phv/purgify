@@ -129,8 +129,9 @@ class LocalizationManager: ObservableObject {
             "cache.xcode":  "Xcode DerivedData",
             "cache.xcode.detail":
                 "Build artifacts created by Xcode — compiled objects, indexes, and build logs.\n\n" +
-                "Unlike other caches, this directly impacts build speed: clearing it forces a full rebuild " +
-                "the next time you open a project in Xcode, which can take 5–15 minutes for large projects.\n\n" +
+                "Purgify checks whether each project folder still exists on disk:\n" +
+                "🗑️ 'Orphaned' entries belong to projects no longer found on this Mac — safe to delete.\n" +
+                "⚠️ 'Project found' entries will trigger a full rebuild the next time you open that project in Xcode (5–15 min for large projects).\n\n" +
                 "Your source code is never touched.",
 
             "cache.gradle": "Gradle Cache",
@@ -794,8 +795,9 @@ class LocalizationManager: ObservableObject {
             "cache.xcode":  "Xcode DerivedData",
             "cache.xcode.detail":
                 "Kết quả build của Xcode — file biên dịch, chỉ mục và build logs.\n\n" +
-                "Khác với các cache khác, đây ảnh hưởng trực tiếp đến tốc độ build: " +
-                "xóa sẽ buộc build lại toàn bộ lần sau khi mở dự án trong Xcode, có thể mất 5–15 phút với dự án lớn.\n\n" +
+                "Purgify kiểm tra xem folder project tương ứng còn tồn tại trên máy không:\n" +
+                "🗑️ 'Orphaned' — project không còn tìm thấy trên máy, xóa an toàn.\n" +
+                "⚠️ 'Project found' — project vẫn còn, xóa sẽ bắt Xcode build lại toàn bộ lần sau (5–15 phút với project lớn).\n\n" +
                 "Mã nguồn không bị đụng.",
 
             "cache.gradle": "Gradle Cache",

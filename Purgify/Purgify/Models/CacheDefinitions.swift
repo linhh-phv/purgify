@@ -53,7 +53,7 @@ enum CacheDefinitions {
         CacheDefinition(nameKey: "cache.nvm",               detailKey: "cache.nvm.detail",               path: "~/.nvm/.cache",                                icon: "shippingbox.fill",               iconColor: Color(red: 0.42, green: 0.68, blue: 0.22), risk: .safe),
 
         // MARK: Moderate — có thể cần rebuild project
-        CacheDefinition(nameKey: "cache.xcode",  detailKey: "cache.xcode.detail",  path: "~/Library/Developer/Xcode/DerivedData", icon: "hammer.fill",      iconColor: Color(red: 0.08, green: 0.46, blue: 0.98), risk: .moderate, supportsSubItems: true),
+        CacheDefinition(nameKey: "cache.xcode", detailKey: "cache.xcode.detail", path: "~/Library/Developer/Xcode/DerivedData", icon: "hammer.fill", iconColor: Color(red: 0.08, green: 0.46, blue: 0.98), risk: .moderate, subItemMode: .vms, vmScanType: .xcodeDerivedData),
         CacheDefinition(nameKey: "cache.gradle", detailKey: "cache.gradle.detail", path: "~/.gradle/caches",                      icon: "gearshape.fill",   iconColor: Color(red: 0.01, green: 0.55, blue: 0.46), risk: .moderate, projectIndicators: ["build.gradle", "build.gradle.kts"]),
         CacheDefinition(nameKey: "cache.metro",  detailKey: "cache.metro.detail",  path: "~/.metro",                              icon: "tram.fill",        iconColor: Color(red: 0.94, green: 0.31, blue: 0.13), risk: .moderate, projectIndicators: ["package.json"]),
         CacheDefinition(nameKey: "cache.maven",  detailKey: "cache.maven.detail",  path: "~/.m2/repository",                      icon: "archivebox.fill",  iconColor: Color(red: 0.78, green: 0.10, blue: 0.21), risk: .moderate, projectIndicators: ["pom.xml"]),

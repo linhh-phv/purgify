@@ -57,6 +57,15 @@ protocol CacheScanService: Sendable {
     /// `createdDate` comes from the archive's Info.plist CreationDate field.
     nonisolated func xcodeArchives() -> [(name: String, version: String, path: String, sizeBytes: Int64, createdDate: Date?)]
 
+    /// List Xcode DerivedData project folders, checking whether the source project
+    /// still exists on disk. `projectFound` is false for orphaned entries whose
+    /// .xcodeproj / .xcworkspace can no longer be located.
+    nonisolated func xcodeDerivedData() -> [(name: String, path: String, sizeBytes: Int64, projectFound: Bool)]
+
+    /// List iOS Simulator runtime bundles, with `inUse` indicating whether
+    /// at least one simulator device is registered against that runtime.
+    nonisolated func iOSSimulatorRuntimesWithUsage() -> [(name: String, path: String, sizeBytes: Int64, inUse: Bool)]
+
     /// List Android SDK platform directories (android-XX) from the SDK platforms/ folder.
     /// Scans active projects to flag which API levels are referenced in build.gradle files.
     nonisolated func androidSdkPlatforms() -> [(apiLevel: Int, path: String, sizeBytes: Int64, inUse: Bool)]

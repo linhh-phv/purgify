@@ -388,10 +388,16 @@ class CacheScannerViewModel: ObservableObject {
             }.sorted { ($0.modifiedDate ?? .distantFuture) < ($1.modifiedDate ?? .distantFuture) }
 
         case .iOSRuntimes:
-            let runtimes = service.iOSSimulatorRuntimes()
+            let runtimes = service.iOSSimulatorRuntimesWithUsage()
             guard !runtimes.isEmpty else { return nil }
             subItems = runtimes.map { r in
-                SubItem(name: r.name, path: r.path, sizeBytes: r.sizeBytes, isSelected: false)
+                let status = r.inUse ? "in use" : "unused"
+                return SubItem(
+                    name: "\(r.name)  ·  \(status)",
+                    path: r.path,
+                    sizeBytes: r.sizeBytes,
+                    isSelected: false
+                )
             }.sorted { $0.sizeBytes > $1.sizeBytes }
 
         case .androidAVDs:
@@ -420,6 +426,19 @@ class CacheScannerViewModel: ObservableObject {
             subItems = images.map { img in
                 SubItem(name: img.name, path: img.path, sizeBytes: img.sizeBytes, isSelected: false)
             }.sorted { $0.sizeBytes > $1.sizeBytes }
+
+        case .xcodeDerivedData:
+            let items = service.xcodeDerivedData()
+            guard !items.isEmpty else { return nil }
+            subItems = items.map { d in
+                let status = d.projectFound ? "project found" : "orphaned"
+                return SubItem(
+                    name: "\(d.name)  ·  \(status)",
+                    path: d.path,
+                    sizeBytes: d.sizeBytes,
+                    isSelected: false
+                )
+            }
 
         case .xcodeArchives:
             let archives = service.xcodeArchives()
