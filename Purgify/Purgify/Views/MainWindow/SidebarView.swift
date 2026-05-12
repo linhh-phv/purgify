@@ -6,6 +6,12 @@ struct SidebarView: View {
     @EnvironmentObject var l10n: LocalizationManager
 
     @State private var showSettings = false
+    @Environment(\.updateManager) private var updater
+
+    private var versionString: String {
+        let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        return "v\(v)"
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -62,6 +68,22 @@ struct SidebarView: View {
                     Spacer()
                     Text(ByteFormatter.format(scanner.totalBytes))
                         .font(.system(size: 12, weight: .semibold))
+                }
+
+                // Version + Check for Updates
+                HStack {
+                    Text(versionString)
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Button {
+                        updater.checkForUpdates()
+                    } label: {
+                        Text(l10n.t("app.checkForUpdates"))
+                            .font(.system(size: 11))
+                            .foregroundColor(.brand)
+                    }
+                    .buttonStyle(.plain)
                 }
 
                 HStack(spacing: 8) {
