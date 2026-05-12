@@ -4,7 +4,7 @@ import SwiftUI
 struct MenuBarView: View {
     @EnvironmentObject var scanner: CacheScannerViewModel
     @EnvironmentObject var l10n: LocalizationManager
-    @Environment(UpdateManager.self) var updater
+    @Environment(\.updateManager) var updater
     @Environment(\.openWindow) private var openWindow
     @Environment(\.dismiss) private var dismiss
 

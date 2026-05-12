@@ -1,20 +1,17 @@
 import Sparkle
-import Observation
+import SwiftUI
 
 /// Wraps Sparkle's updater controller for SwiftUI environment injection.
-@Observable
-final class UpdateManager: NSObject {
+final class UpdateManager {
     private let updaterController: SPUStandardUpdaterController
-    // Held strongly because Sparkle keeps only a weak reference to the delegate
     private let feedDelegate = UpdateFeedDelegate()
 
-    override init() {
+    init() {
         updaterController = SPUStandardUpdaterController(
             startingUpdater: true,
             updaterDelegate: feedDelegate,
             userDriverDelegate: nil
         )
-        super.init()
     }
 
     func checkForUpdates() {
@@ -25,5 +22,18 @@ final class UpdateManager: NSObject {
 private final class UpdateFeedDelegate: NSObject, SPUUpdaterDelegate {
     func feedURLString(for updater: SPUUpdater) -> String? {
         "https://github.com/linhh-phv/purgify/releases/latest/download/appcast.xml"
+    }
+}
+
+// MARK: - SwiftUI Environment
+
+private struct UpdateManagerKey: EnvironmentKey {
+    static let defaultValue = UpdateManager()
+}
+
+extension EnvironmentValues {
+    var updateManager: UpdateManager {
+        get { self[UpdateManagerKey.self] }
+        set { self[UpdateManagerKey.self] = newValue }
     }
 }
