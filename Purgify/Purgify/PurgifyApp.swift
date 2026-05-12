@@ -11,6 +11,7 @@ struct PurgifyApp: App {
     @StateObject private var l10n = LocalizationManager()
     @StateObject private var fdaStatus: FDAStatus
     @StateObject private var scanner: CacheScannerViewModel
+    @State private var updater = UpdateManager()
 
     init() {
         let fda = FDAStatus()
@@ -24,6 +25,7 @@ struct PurgifyApp: App {
                 .environmentObject(scanner)
                 .environmentObject(l10n)
                 .environmentObject(fdaStatus)
+                .environment(updater)
                 .tint(.brand)
         }
         .menuBarExtraStyle(.window)
@@ -33,6 +35,7 @@ struct PurgifyApp: App {
                 .environmentObject(scanner)
                 .environmentObject(l10n)
                 .environmentObject(fdaStatus)
+                .environment(updater)
                 .tint(.brand)
         }
         .windowStyle(.titleBar)

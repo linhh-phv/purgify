@@ -6,13 +6,30 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		320CF57D2FB2C8A4001FAC70 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 320CF57C2FB2C8A4001FAC70 /* Sparkle */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		321EE2162F8F979400EB83F3 /* Purgify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Purgify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3278CD9F2FB2CDF30085D1FD /* Exceptions for "Purgify" folder in "Purgify" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 321EE2152F8F979400EB83F3 /* Purgify */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		321EE2182F8F979400EB83F3 /* Purgify */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3278CD9F2FB2CDF30085D1FD /* Exceptions for "Purgify" folder in "Purgify" target */,
+			);
 			path = Purgify;
 			sourceTree = "<group>";
 		};
@@ -23,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				320CF57D2FB2C8A4001FAC70 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +83,7 @@
 			);
 			name = Purgify;
 			packageProductDependencies = (
+				320CF57C2FB2C8A4001FAC70 /* Sparkle */,
 			);
 			productName = Purgify;
 			productReference = 321EE2162F8F979400EB83F3 /* Purgify.app */;
@@ -94,6 +113,9 @@
 			);
 			mainGroup = 321EE20D2F8F979400EB83F3;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				320CF57B2FB2C8A4001FAC70 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 321EE2172F8F979400EB83F3 /* Products */;
 			projectDirPath = "";
@@ -258,6 +280,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Purgify/Info.plist;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -290,6 +313,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Purgify/Info.plist;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -331,6 +355,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		320CF57B2FB2C8A4001FAC70 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.9.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		320CF57C2FB2C8A4001FAC70 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 320CF57B2FB2C8A4001FAC70 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 321EE20E2F8F979400EB83F3 /* Project object */;
 }

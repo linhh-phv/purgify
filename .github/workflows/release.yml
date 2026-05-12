@@ -65,10 +65,60 @@ jobs:
           echo "$NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+      - name: Generate appcast.xml
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          DMG_PATH="/tmp/Purgify-${VERSION}.dmg"
+          DOWNLOAD_URL="https://github.com/linhh-phv/purgify/releases/download/v${VERSION}/Purgify-${VERSION}.dmg"
+          PUB_DATE=$(date -u "+%a, %d %b %Y %H:%M:%S +0000")
+          DMG_SIZE=$(stat -f%z "$DMG_PATH")
+
+          # Install Sparkle tools
+          brew install --cask sparkle
+          SIGN_UPDATE=$(find /opt/homebrew/Caskroom/sparkle -name "sign_update" | head -1)
+
+          # Sign DMG using private key from secret
+          echo "$SPARKLE_PRIVATE_KEY" > /tmp/sparkle_key
+          SIGNATURE=$("$SIGN_UPDATE" --ed-key-file /tmp/sparkle_key "$DMG_PATH" | awk '{print $NF}')
+          rm -f /tmp/sparkle_key
+
+          BUILD=$(xcodebuild -project Purgify/Purgify.xcodeproj -scheme Purgify \
+            -showBuildSettings 2>/dev/null | grep -w CURRENT_PROJECT_VERSION | awk '{print $3}')
+
+          cat > /tmp/appcast.xml <<EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <rss version="2.0"
+               xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"
+               xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+              <title>Purgify</title>
+              <link>https://github.com/linhh-phv/purgify</link>
+              <description>Purgify release feed</description>
+              <language>en</language>
+              <item>
+                <title>Version ${VERSION}</title>
+                <sparkle:releaseNotesLink>https://github.com/linhh-phv/purgify/releases/tag/v${VERSION}</sparkle:releaseNotesLink>
+                <pubDate>${PUB_DATE}</pubDate>
+                <enclosure
+                  url="${DOWNLOAD_URL}"
+                  sparkle:version="${BUILD}"
+                  sparkle:shortVersionString="${VERSION}"
+                  length="${DMG_SIZE}"
+                  type="application/octet-stream"
+                  sparkle:edSignature="${SIGNATURE}"/>
+              </item>
+            </channel>
+          </rss>
+          EOF
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.version }}
           name: Purgify v${{ steps.version.outputs.version }}
           body: ${{ steps.notes.outputs.notes }}
-          files: /tmp/Purgify-${{ steps.version.outputs.version }}.dmg
+          files: |
+            /tmp/Purgify-${{ steps.version.outputs.version }}.dmg
+            /tmp/appcast.xml

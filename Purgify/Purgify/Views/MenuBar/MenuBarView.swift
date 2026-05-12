@@ -4,6 +4,7 @@ import SwiftUI
 struct MenuBarView: View {
     @EnvironmentObject var scanner: CacheScannerViewModel
     @EnvironmentObject var l10n: LocalizationManager
+    @Environment(UpdateManager.self) var updater
     @Environment(\.openWindow) private var openWindow
     @Environment(\.dismiss) private var dismiss
 
@@ -211,6 +212,16 @@ struct MenuBarView: View {
             .foregroundColor(.brand)
 
             Spacer()
+
+            Button {
+                updater.checkForUpdates()
+            } label: {
+                Image(systemName: "arrow.down.circle")
+                    .font(.caption)
+            }
+            .buttonStyle(.plain)
+            .foregroundColor(.secondary)
+            .help(l10n.t("app.checkForUpdates"))
 
             Button(l10n.t("app.quit")) {
                 NSApplication.shared.terminate(nil)
