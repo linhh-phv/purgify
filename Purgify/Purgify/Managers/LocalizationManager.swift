@@ -647,6 +647,26 @@ class LocalizationManager: ObservableObject {
                 "Downloaded iOS Simulator runtime bundles — each runtime is 4–10 GB and is required to run simulators for that iOS version.\n\n" +
                 "Deleting a runtime means simulators for that iOS version can no longer launch until you re-download it from Xcode.\n\n" +
                 "⚠️ Only delete runtimes for iOS versions you no longer test against. Re-download any time from Xcode → Settings → Platforms.",
+            "vm.androidPlatforms":      "Android SDK Platforms",
+            "vm.androidPlatforms.detail":
+                "Android SDK platform packages installed at ~/Library/Android/sdk/platforms — one per API level (android-35, android-34, …).\n\n" +
+                "Each platform is required to compile apps targeting that API level. " +
+                "Purgify scans your active projects to flag which API levels are referenced in build.gradle files.\n\n" +
+                "✅ Platforms marked 'in use' are needed to build your current projects.\n" +
+                "🗑️ Platforms marked 'unused' are not referenced by any project found on this Mac and can be deleted. " +
+                "You can re-download any platform any time via Android Studio → SDK Manager.",
+            "vm.androidBuildTools":     "Android Build-tools",
+            "vm.androidBuildTools.detail":
+                "Android SDK build-tools packages at ~/Library/Android/sdk/build-tools — each version contains the compiler, dexer, and packaging tools used during a build.\n\n" +
+                "Purgify scans your projects' build.gradle files for the buildToolsVersion field to determine which versions are actively referenced.\n\n" +
+                "✅ Versions marked 'in use' are referenced by a project on this Mac — keep at least the latest one.\n" +
+                "🗑️ Older versions marked 'unused' can usually be deleted safely. Gradle falls back to the nearest available version.",
+            "vm.androidNDK":            "Android NDK",
+            "vm.androidNDK.detail":
+                "Android NDK (Native Development Kit) versions at ~/Library/Android/sdk/ndk — each version is 2–4 GB and required for projects that compile C/C++ or Rust native code.\n\n" +
+                "Purgify scans your projects' build.gradle files for the ndkVersion field to detect which versions are actively pinned.\n\n" +
+                "✅ Versions marked 'in use' are pinned by a project — deleting them will break native builds.\n" +
+                "🗑️ Versions marked 'unused' are not referenced by any project on this Mac and are safe to remove.",
             "vm.androidAVDs":           "Android Emulators (AVD)",
             "vm.androidAVDs.detail":
                 "Android Virtual Devices (AVDs) managed by Android Studio — each one stores its own disk image, app data, and emulator snapshot.\n\n" +
@@ -1291,6 +1311,26 @@ class LocalizationManager: ObservableObject {
                 "Các runtime bundle của iOS Simulator đã tải về — mỗi runtime nặng 4–10 GB và cần thiết để chạy simulator cho iOS version đó.\n\n" +
                 "Xóa runtime thì simulator của iOS version đó không thể khởi động cho đến khi bạn tải lại từ Xcode.\n\n" +
                 "⚠️ Chỉ xóa runtime của iOS version bạn không còn test nữa. Tải lại bất cứ lúc nào từ Xcode → Settings → Platforms.",
+            "vm.androidPlatforms":      "Android SDK Platforms",
+            "vm.androidPlatforms.detail":
+                "Các gói platform Android SDK tại ~/Library/Android/sdk/platforms — mỗi API level có một thư mục riêng (android-35, android-34, …).\n\n" +
+                "Mỗi platform cần thiết để build app nhắm đến API level đó. " +
+                "Purgify quét các project đang active để xác định API level nào được dùng trong build.gradle.\n\n" +
+                "✅ Các platform 'in use' đang được dùng để build project — không xóa.\n" +
+                "🗑️ Các platform 'unused' không được dùng bởi project nào trên máy — có thể xóa. " +
+                "Tải lại bất cứ lúc nào từ Android Studio → SDK Manager.",
+            "vm.androidBuildTools":     "Android Build-tools",
+            "vm.androidBuildTools.detail":
+                "Các gói build-tools Android SDK tại ~/Library/Android/sdk/build-tools — mỗi version chứa compiler, dexer và công cụ packaging dùng khi build.\n\n" +
+                "Purgify quét file build.gradle của các project để xác định version nào được chỉ định qua buildToolsVersion.\n\n" +
+                "✅ Versions 'in use' đang được project tham chiếu — giữ ít nhất version mới nhất.\n" +
+                "🗑️ Versions cũ 'unused' thường có thể xóa an toàn — Gradle tự fallback sang version gần nhất.",
+            "vm.androidNDK":            "Android NDK",
+            "vm.androidNDK.detail":
+                "Các version Android NDK (Native Development Kit) tại ~/Library/Android/sdk/ndk — mỗi version nặng 2–4 GB, cần thiết cho project có code C/C++ hoặc Rust native.\n\n" +
+                "Purgify quét file build.gradle để xác định version nào được pin qua ndkVersion.\n\n" +
+                "✅ Versions 'in use' đang được project pin — xóa sẽ làm native build thất bại.\n" +
+                "🗑️ Versions 'unused' không được dùng bởi project nào trên máy — an toàn để xóa.",
             "vm.androidAVDs":           "Android Emulators (AVD)",
             "vm.androidAVDs.detail":
                 "Các Android Virtual Device (AVD) được quản lý bởi Android Studio — mỗi AVD lưu disk image, dữ liệu app và snapshot riêng.\n\n" +

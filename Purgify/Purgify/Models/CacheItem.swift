@@ -14,6 +14,9 @@ enum VMScanType {
     case androidAVDs
     case androidSystemImages
     case xcodeArchives
+    case androidSdkPlatforms
+    case androidSdkBuildTools
+    case androidSdkNDK
 }
 
 struct CacheDefinition {

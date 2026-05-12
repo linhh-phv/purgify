@@ -56,4 +56,16 @@ protocol CacheScanService: Sendable {
     /// Walks 2 levels (date folders → .xcarchive), reads Info.plist for name + version.
     /// `createdDate` comes from the archive's Info.plist CreationDate field.
     nonisolated func xcodeArchives() -> [(name: String, version: String, path: String, sizeBytes: Int64, createdDate: Date?)]
+
+    /// List Android SDK platform directories (android-XX) from the SDK platforms/ folder.
+    /// Scans active projects to flag which API levels are referenced in build.gradle files.
+    nonisolated func androidSdkPlatforms() -> [(apiLevel: Int, path: String, sizeBytes: Int64, inUse: Bool)]
+
+    /// List Android SDK build-tools version directories.
+    /// Scans active projects to flag which versions are referenced via buildToolsVersion.
+    nonisolated func androidSdkBuildTools() -> [(version: String, path: String, sizeBytes: Int64, inUse: Bool)]
+
+    /// List Android NDK version directories from the SDK ndk/ folder.
+    /// Scans active projects to flag which NDK versions are referenced via ndkVersion.
+    nonisolated func androidSdkNDK() -> [(version: String, path: String, sizeBytes: Int64, inUse: Bool)]
 }

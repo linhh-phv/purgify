@@ -435,6 +435,45 @@ class CacheScannerViewModel: ObservableObject {
                     dateLabelKey: "subitem.archived"
                 )
             }.sorted { ($0.modifiedDate ?? .distantPast) > ($1.modifiedDate ?? .distantPast) }
+
+        case .androidSdkPlatforms:
+            let platforms = service.androidSdkPlatforms()
+            guard !platforms.isEmpty else { return nil }
+            subItems = platforms.map { p in
+                let status = p.inUse ? "in use" : "unused"
+                return SubItem(
+                    name: "API \(p.apiLevel)  ·  \(status)",
+                    path: p.path,
+                    sizeBytes: p.sizeBytes,
+                    isSelected: false
+                )
+            }
+
+        case .androidSdkBuildTools:
+            let tools = service.androidSdkBuildTools()
+            guard !tools.isEmpty else { return nil }
+            subItems = tools.map { t in
+                let status = t.inUse ? "in use" : "unused"
+                return SubItem(
+                    name: "\(t.version)  ·  \(status)",
+                    path: t.path,
+                    sizeBytes: t.sizeBytes,
+                    isSelected: false
+                )
+            }
+
+        case .androidSdkNDK:
+            let ndks = service.androidSdkNDK()
+            guard !ndks.isEmpty else { return nil }
+            subItems = ndks.map { n in
+                let status = n.inUse ? "in use" : "unused"
+                return SubItem(
+                    name: "NDK \(n.version)  ·  \(status)",
+                    path: n.path,
+                    sizeBytes: n.sizeBytes,
+                    isSelected: false
+                )
+            }
         }
 
         let totalSize = subItems.reduce(0 as Int64) { $0 + $1.sizeBytes }

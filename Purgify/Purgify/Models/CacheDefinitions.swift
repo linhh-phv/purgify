@@ -123,6 +123,24 @@ enum CacheDefinitions {
             icon: "square.stack.3d.up.fill", iconColor: Color(red: 0.24, green: 0.86, blue: 0.52),
             risk: .caution, subItemMode: .vms, vmScanType: .androidSystemImages
         ),
+        CacheDefinition(
+            nameKey: "vm.androidPlatforms", detailKey: "vm.androidPlatforms.detail",
+            path: "~/Library/Android/sdk/platforms",
+            icon: "sdcard.fill", iconColor: Color(red: 0.24, green: 0.86, blue: 0.52),
+            risk: .caution, subItemMode: .vms, vmScanType: .androidSdkPlatforms
+        ),
+        CacheDefinition(
+            nameKey: "vm.androidBuildTools", detailKey: "vm.androidBuildTools.detail",
+            path: "~/Library/Android/sdk/build-tools",
+            icon: "wrench.and.screwdriver.fill", iconColor: Color(red: 0.24, green: 0.86, blue: 0.52),
+            risk: .caution, subItemMode: .vms, vmScanType: .androidSdkBuildTools
+        ),
+        CacheDefinition(
+            nameKey: "vm.androidNDK", detailKey: "vm.androidNDK.detail",
+            path: "~/Library/Android/sdk/ndk",
+            icon: "cpu.fill", iconColor: Color(red: 0.24, green: 0.86, blue: 0.52),
+            risk: .caution, subItemMode: .vms, vmScanType: .androidSdkNDK
+        ),
 
         // MARK: Caution — Xcode Archives (build hoàn chỉnh đã sign)
         CacheDefinition(

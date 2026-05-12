@@ -329,6 +329,173 @@ struct LocalCacheScanService: CacheScanService {
         return ini["target"] ?? ""
     }
 
+    // MARK: - Android SDK component scanning
+
+    nonisolated func androidSdkPlatforms() -> [(apiLevel: Int, path: String, sizeBytes: Int64, inUse: Bool)] {
+        let sdkRoot = Self.androidSdkRoot()
+        let platformsPath = sdkRoot + "/platforms"
+        let fm = FileManager.default
+        guard let entries = try? fm.contentsOfDirectory(atPath: platformsPath) else { return [] }
+
+        let usedVersions = Self.scanAndroidProjectVersions()
+        var results: [(apiLevel: Int, path: String, sizeBytes: Int64, inUse: Bool)] = []
+
+        for entry in entries {
+            guard entry.hasPrefix("android-"),
+                  let level = Int(entry.dropFirst("android-".count)) else { continue }
+            let dirPath = platformsPath + "/" + entry
+            let size = sizeOfDirectory(at: dirPath)
+            guard size > 0 else { continue }
+            let inUse = usedVersions.sdkLevels.contains(level)
+            results.append((apiLevel: level, path: dirPath, sizeBytes: size, inUse: inUse))
+        }
+        return results.sorted { $0.apiLevel > $1.apiLevel }
+    }
+
+    nonisolated func androidSdkBuildTools() -> [(version: String, path: String, sizeBytes: Int64, inUse: Bool)] {
+        let sdkRoot = Self.androidSdkRoot()
+        let buildToolsPath = sdkRoot + "/build-tools"
+        let fm = FileManager.default
+        guard let entries = try? fm.contentsOfDirectory(atPath: buildToolsPath) else { return [] }
+
+        let usedVersions = Self.scanAndroidProjectVersions()
+        var results: [(version: String, path: String, sizeBytes: Int64, inUse: Bool)] = []
+
+        for entry in entries {
+            let dirPath = buildToolsPath + "/" + entry
+            let size = sizeOfDirectory(at: dirPath)
+            guard size > 0 else { continue }
+            let inUse = usedVersions.buildToolsVersions.contains(entry)
+            results.append((version: entry, path: dirPath, sizeBytes: size, inUse: inUse))
+        }
+        return results.sorted { Self.compareVersionStrings($0.version, $1.version) > 0 }
+    }
+
+    nonisolated func androidSdkNDK() -> [(version: String, path: String, sizeBytes: Int64, inUse: Bool)] {
+        let sdkRoot = Self.androidSdkRoot()
+        let ndkPath = sdkRoot + "/ndk"
+        let fm = FileManager.default
+        guard let entries = try? fm.contentsOfDirectory(atPath: ndkPath) else { return [] }
+
+        let usedVersions = Self.scanAndroidProjectVersions()
+        var results: [(version: String, path: String, sizeBytes: Int64, inUse: Bool)] = []
+
+        for entry in entries {
+            let dirPath = ndkPath + "/" + entry
+            let size = sizeOfDirectory(at: dirPath)
+            guard size > 0 else { continue }
+            let inUse = usedVersions.ndkVersions.contains(entry)
+            results.append((version: entry, path: dirPath, sizeBytes: size, inUse: inUse))
+        }
+        return results.sorted { Self.compareVersionStrings($0.version, $1.version) > 0 }
+    }
+
+    private nonisolated static func androidSdkRoot() -> String {
+        let home = NSHomeDirectory()
+        let candidates = [
+            home + "/Library/Android/sdk",
+            home + "/Android/sdk",
+        ]
+        return candidates.first { FileManager.default.fileExists(atPath: $0) }
+            ?? (home + "/Library/Android/sdk")
+    }
+
+    private struct AndroidUsedVersions {
+        var sdkLevels: Set<Int> = []
+        var buildToolsVersions: Set<String> = []
+        var ndkVersions: Set<String> = []
+    }
+
+    private nonisolated static func scanAndroidProjectVersions() -> AndroidUsedVersions {
+        let fm = FileManager.default
+        let home = NSHomeDirectory()
+        let roots = ["Desktop", "Documents", "Developer", "code", "repos", "work", "Projects", "Sites"]
+            .map { home + "/" + $0 }
+            .filter { fm.fileExists(atPath: $0) }
+
+        let skipDirs: Set<String> = [
+            "node_modules", ".git", ".gradle", "build", "DerivedData",
+            "Library", ".Trash", "vendor", "dist", "Pods", ".pub-cache",
+            ".cargo", ".npm", ".yarn"
+        ]
+
+        var gradleFiles: [String] = []
+        for root in roots {
+            Self.findGradleFiles(in: root, depth: 0, maxDepth: 6, fm: fm,
+                                 skip: skipDirs, results: &gradleFiles)
+            if gradleFiles.count >= 100 { break }
+        }
+
+        var versions = AndroidUsedVersions()
+        let sdkPattern = #"(?:compileSdk(?:Version)?)\s*[=(]\s*(\d+)"#
+        let buildToolsPattern = #"buildToolsVersion\s*[=:]\s*["']([0-9.]+)["']"#
+        let ndkPattern = #"ndkVersion\s*[=:]\s*["']([0-9.]+)["']"#
+
+        for path in gradleFiles {
+            guard let content = try? String(contentsOfFile: path, encoding: .utf8) else { continue }
+            if let regex = try? NSRegularExpression(pattern: sdkPattern) {
+                for match in regex.matches(in: content, range: NSRange(content.startIndex..., in: content)) {
+                    if let range = Range(match.range(at: 1), in: content),
+                       let level = Int(content[range]) {
+                        versions.sdkLevels.insert(level)
+                    }
+                }
+            }
+            if let regex = try? NSRegularExpression(pattern: buildToolsPattern) {
+                for match in regex.matches(in: content, range: NSRange(content.startIndex..., in: content)) {
+                    if let range = Range(match.range(at: 1), in: content) {
+                        versions.buildToolsVersions.insert(String(content[range]))
+                    }
+                }
+            }
+            if let regex = try? NSRegularExpression(pattern: ndkPattern) {
+                for match in regex.matches(in: content, range: NSRange(content.startIndex..., in: content)) {
+                    if let range = Range(match.range(at: 1), in: content) {
+                        versions.ndkVersions.insert(String(content[range]))
+                    }
+                }
+            }
+        }
+        return versions
+    }
+
+    private nonisolated static func findGradleFiles(
+        in path: String, depth: Int, maxDepth: Int,
+        fm: FileManager, skip: Set<String>,
+        results: inout [String]
+    ) {
+        guard depth <= maxDepth, results.count < 100 else { return }
+        guard let contents = try? fm.contentsOfDirectory(atPath: path) else { return }
+
+        for item in contents {
+            if item.hasSuffix(".gradle") || item.hasSuffix(".gradle.kts") {
+                results.append(path + "/" + item)
+            }
+        }
+        guard depth < maxDepth else { return }
+        for item in contents {
+            guard !skip.contains(item), !item.hasPrefix(".") else { continue }
+            let sub = path + "/" + item
+            var isDir: ObjCBool = false
+            if fm.fileExists(atPath: sub, isDirectory: &isDir), isDir.boolValue {
+                findGradleFiles(in: sub, depth: depth + 1, maxDepth: maxDepth,
+                                fm: fm, skip: skip, results: &results)
+            }
+        }
+    }
+
+    private nonisolated static func compareVersionStrings(_ a: String, _ b: String) -> Int {
+        let aParts = a.split(separator: ".").compactMap { Int($0) }
+        let bParts = b.split(separator: ".").compactMap { Int($0) }
+        let maxLen = max(aParts.count, bParts.count)
+        for i in 0..<maxLen {
+            let av = i < aParts.count ? aParts[i] : 0
+            let bv = i < bParts.count ? bParts[i] : 0
+            if av != bv { return av - bv }
+        }
+        return 0
+    }
+
     // MARK: - Xcode Archives
 
     nonisolated func xcodeArchives() -> [(name: String, version: String, path: String, sizeBytes: Int64, createdDate: Date?)] {
