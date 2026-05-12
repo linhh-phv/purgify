@@ -13,6 +13,7 @@ enum VMScanType {
     case iOSRuntimes
     case androidAVDs
     case androidSystemImages
+    case xcodeArchives
 }
 
 struct CacheDefinition {

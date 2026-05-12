@@ -124,6 +124,15 @@ enum CacheDefinitions {
             risk: .caution, subItemMode: .vms, vmScanType: .androidSystemImages
         ),
 
+        // MARK: Caution — Xcode Archives (build hoàn chỉnh đã sign)
+        CacheDefinition(
+            nameKey: "xcode.archives", detailKey: "xcode.archives.detail",
+            path: "~/Library/Developer/Xcode/Archives",
+            icon: "archivebox.fill",
+            iconColor: Color(red: 0.08, green: 0.46, blue: 0.98),
+            risk: .caution, subItemMode: .vms, vmScanType: .xcodeArchives
+        ),
+
         // MARK: Advanced — yêu cầu Full Disk Access (chỉ scan khi user bật toggle)
         CacheDefinition(nameKey: "cache.safari",            detailKey: "cache.safari.detail",            path: "~/Library/Caches/com.apple.Safari",                               icon: "safari.fill",                   iconColor: Color(red: 0.06, green: 0.71, blue: 0.93), risk: .safe,    requiresFDA: true),
         CacheDefinition(nameKey: "cache.appleMusic",        detailKey: "cache.appleMusic.detail",        path: "~/Library/Caches/com.apple.Music",                                icon: "music.note.house.fill",         iconColor: Color(red: 0.99, green: 0.24, blue: 0.27), risk: .safe,    requiresFDA: true),

@@ -420,6 +420,21 @@ class CacheScannerViewModel: ObservableObject {
             subItems = images.map { img in
                 SubItem(name: img.name, path: img.path, sizeBytes: img.sizeBytes, isSelected: false)
             }.sorted { $0.sizeBytes > $1.sizeBytes }
+
+        case .xcodeArchives:
+            let archives = service.xcodeArchives()
+            guard !archives.isEmpty else { return nil }
+            subItems = archives.map { a in
+                let displayName = a.version.isEmpty ? a.name : "\(a.name) · v\(a.version)"
+                return SubItem(
+                    name: displayName,
+                    path: a.path,
+                    sizeBytes: a.sizeBytes,
+                    modifiedDate: a.createdDate,
+                    isSelected: false,
+                    dateLabelKey: "subitem.archived"
+                )
+            }.sorted { ($0.modifiedDate ?? .distantPast) > ($1.modifiedDate ?? .distantPast) }
         }
 
         let totalSize = subItems.reduce(0 as Int64) { $0 + $1.sizeBytes }

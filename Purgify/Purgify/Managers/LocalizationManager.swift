@@ -625,6 +625,16 @@ class LocalizationManager: ObservableObject {
                 "Rarely reused after installation completes — large and easy wins.\n\n" +
                 "⚠️ Keep if you reinstall the same OS often.",
 
+            // Xcode Archives
+            "xcode.archives":        "Xcode Archives",
+            "xcode.archives.detail":
+                "Completed, signed app builds saved by Xcode at ~/Library/Developer/Xcode/Archives.\n\n" +
+                "Each .xcarchive is a full build artifact used to export an .ipa or .app for distribution. " +
+                "Xcode keeps every archive you've ever created, and they can accumulate gigabytes over time.\n\n" +
+                "✅ Your installed app is not affected — archives are only needed to re-export or re-sign an old build.\n" +
+                "⚠️ Once deleted, you cannot re-export that specific build. If you need an older binary, you must rebuild from source.",
+            "subitem.archived":      "Archived",
+
             // Mobile VM groups (iOS Simulators, Android AVDs, system images)
             "vm.iOSSimulators":         "iOS Simulators",
             "vm.iOSSimulators.detail":
@@ -1258,6 +1268,16 @@ class LocalizationManager: ObservableObject {
                 "Thường là OS installer (Windows ISO, Linux), VM disk. " +
                 "Ít khi dùng lại sau khi cài — file lớn, dọn nhanh ăn dung lượng.\n\n" +
                 "⚠️ Giữ lại nếu bạn hay cài lại cùng OS đó.",
+
+            // Xcode Archives
+            "xcode.archives":        "Xcode Archives",
+            "xcode.archives.detail":
+                "Các bản build đã hoàn chỉnh và ký số, được Xcode lưu tại ~/Library/Developer/Xcode/Archives.\n\n" +
+                "Mỗi file .xcarchive là artifact build đầy đủ dùng để export .ipa hoặc .app phân phối lên App Store hoặc TestFlight. " +
+                "Xcode giữ lại mọi archive từ trước đến nay, và chúng có thể chiếm hàng chục GB theo thời gian.\n\n" +
+                "✅ App đang cài trên máy không bị ảnh hưởng — archive chỉ cần khi bạn muốn export lại hoặc ký lại bản build cũ.\n" +
+                "⚠️ Sau khi xóa, bạn không thể export lại bản build đó nữa. Muốn có binary cũ thì phải build lại từ source.",
+            "subitem.archived":      "Ngày archive",
 
             // Nhóm VM mobile (iOS Simulators, Android AVDs, system images)
             "vm.iOSSimulators":         "iOS Simulators",

@@ -329,6 +329,53 @@ struct LocalCacheScanService: CacheScanService {
         return ini["target"] ?? ""
     }
 
+    // MARK: - Xcode Archives
+
+    nonisolated func xcodeArchives() -> [(name: String, version: String, path: String, sizeBytes: Int64, createdDate: Date?)] {
+        let fm = FileManager.default
+        let archivesRoot = NSHomeDirectory() + "/Library/Developer/Xcode/Archives"
+        guard let dateFolders = try? fm.contentsOfDirectory(atPath: archivesRoot) else { return [] }
+
+        var results: [(name: String, version: String, path: String, sizeBytes: Int64, createdDate: Date?)] = []
+
+        for dateFolder in dateFolders.sorted() {
+            let datePath = archivesRoot + "/" + dateFolder
+            guard let entries = try? fm.contentsOfDirectory(atPath: datePath) else { continue }
+            for entry in entries {
+                guard entry.hasSuffix(".xcarchive") else { continue }
+                let archivePath = datePath + "/" + entry
+                let plistPath = archivePath + "/Info.plist"
+                let (name, version, createdDate) = Self.parseArchiveInfo(at: plistPath, fallbackName: entry)
+                let size = sizeOfDirectory(at: archivePath)
+                guard size > 0 else { continue }
+                results.append((name: name, version: version, path: archivePath, sizeBytes: size, createdDate: createdDate))
+            }
+        }
+        return results
+    }
+
+    private nonisolated static func parseArchiveInfo(at plistPath: String, fallbackName: String) -> (name: String, version: String, createdDate: Date?) {
+        guard let dict = NSDictionary(contentsOfFile: plistPath) as? [String: Any] else {
+            let name = fallbackName.replacingOccurrences(of: ".xcarchive", with: "")
+            return (name, "", nil)
+        }
+        let name = dict["Name"] as? String
+            ?? fallbackName.replacingOccurrences(of: ".xcarchive", with: "")
+        let createdDate = dict["CreationDate"] as? Date
+        let appProps = dict["ApplicationProperties"] as? [String: Any]
+        let shortVersion = appProps?["CFBundleShortVersionString"] as? String ?? ""
+        let buildNumber = appProps?["CFBundleVersion"] as? String ?? ""
+        let version: String
+        if shortVersion.isEmpty && buildNumber.isEmpty {
+            version = ""
+        } else if buildNumber.isEmpty {
+            version = shortVersion
+        } else {
+            version = "\(shortVersion) (\(buildNumber))"
+        }
+        return (name, version, createdDate)
+    }
+
     // MARK: - User-file walk
 
     /// Depth-limited recursive walk — collects regular files whose name ends

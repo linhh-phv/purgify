@@ -51,4 +51,9 @@ protocol CacheScanService: Sendable {
     /// List Android SDK system image directories (3-level: api/variant/abi).
     /// Searches the standard ~/Library/Android/sdk/system-images path.
     nonisolated func androidSystemImages() -> [(name: String, path: String, sizeBytes: Int64)]
+
+    /// List Xcode Archives (.xcarchive bundles) from ~/Library/Developer/Xcode/Archives/.
+    /// Walks 2 levels (date folders → .xcarchive), reads Info.plist for name + version.
+    /// `createdDate` comes from the archive's Info.plist CreationDate field.
+    nonisolated func xcodeArchives() -> [(name: String, version: String, path: String, sizeBytes: Int64, createdDate: Date?)]
 }
