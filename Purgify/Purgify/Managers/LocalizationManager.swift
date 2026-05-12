@@ -467,6 +467,11 @@ class LocalizationManager: ObservableObject {
                 "Preview data Xcode generates for SwiftUI canvas previews — often the LARGEST item in your Xcode folder (can exceed 10 GB).\n\n" +
                 "Your Xcode projects and source code are NOT touched.\n\n" +
                 "⚠️ The next time you open a SwiftUI file with previews, Xcode must regenerate preview data — expect slower preview rendering for a while.",
+            "cache.figma":        "Figma Desktop Profile",
+            "cache.figma.detail":
+                "Cached profile data for the Figma desktop app at ~/Library/Application Support/Figma/DesktopProfile — stores local font lists, plugin data, and offline document caches.\n\n" +
+                "Figma will rebuild this cache the next time you open the app and sign in. No files or designs are lost — everything is stored in Figma's cloud.\n\n" +
+                "✅ Safe to delete. Figma regenerates the profile automatically on next launch.",
 
             // More creative
 
@@ -1133,6 +1138,11 @@ class LocalizationManager: ObservableObject {
                 "Dữ liệu preview mà Xcode tạo ra cho SwiftUI canvas — thường là mục LỚN NHẤT trong thư mục Xcode (có thể vượt 10 GB).\n\n" +
                 "Dự án Xcode và mã nguồn KHÔNG bị đụng.\n\n" +
                 "⚠️ Lần mở file SwiftUI có preview kế tiếp, Xcode phải build lại preview — render sẽ chậm hơn một lúc.",
+            "cache.figma":        "Figma Desktop Profile",
+            "cache.figma.detail":
+                "Dữ liệu profile cache của Figma Desktop tại ~/Library/Application Support/Figma/DesktopProfile — lưu danh sách font, dữ liệu plugin và cache document offline.\n\n" +
+                "Figma sẽ build lại cache này lần sau khi bạn mở app và đăng nhập. Không có file hay thiết kế nào bị mất — mọi thứ được lưu trên cloud của Figma.\n\n" +
+                "✅ An toàn để xóa. Figma tự tạo lại profile khi khởi động lần sau.",
 
             // Creative (thêm)
 

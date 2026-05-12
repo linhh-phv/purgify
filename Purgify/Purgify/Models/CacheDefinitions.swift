@@ -67,6 +67,7 @@ enum CacheDefinitions {
         CacheDefinition(nameKey: "cache.zed",         detailKey: "cache.zed.detail",         path: "~/Library/Caches/dev.zed.Zed",                         icon: "bolt.fill",                               iconColor: Color(red: 0.34, green: 0.40, blue: 0.97), risk: .moderate),
         CacheDefinition(nameKey: "cache.sublimeText", detailKey: "cache.sublimeText.detail", path: "~/Library/Caches/com.sublimetext.4",                   icon: "text.alignleft",                          iconColor: Color(red: 1.00, green: 0.60, blue: 0.18), risk: .moderate),
         CacheDefinition(nameKey: "cache.swiftuiPreviews", detailKey: "cache.swiftuiPreviews.detail", path: "~/Library/Developer/Xcode/UserData/Previews",  icon: "eye.trianglebadge.exclamationmark.fill",  iconColor: Color(red: 0.98, green: 0.45, blue: 0.26), risk: .moderate),
+        CacheDefinition(nameKey: "cache.figma",           detailKey: "cache.figma.detail",           path: "~/Library/Application Support/Figma/DesktopProfile", icon: "square.on.square.fill", iconColor: Color(red: 0.49, green: 0.34, blue: 1.00), risk: .moderate, supportsSubItems: true),
 
         // MARK: Moderate — Communication apps (sẽ re-sync attachments/images)
         CacheDefinition(nameKey: "cache.slack",       detailKey: "cache.slack.detail",       path: "~/Library/Application Support/Slack/Cache",            icon: "bubble.left.and.bubble.right.fill",       iconColor: Color(red: 0.29, green: 0.08, blue: 0.29), risk: .moderate),
@@ -93,10 +94,10 @@ enum CacheDefinitions {
         CacheDefinition(nameKey: "cache.docker", detailKey: "cache.docker.detail", path: "~/Library/Containers/com.docker.docker/Data/vms", icon: "cube.fill",        iconColor: Color(red: 0.14, green: 0.59, blue: 0.93), risk: .caution),
 
         // MARK: Caution — device support (re-download khi cắm lại thiết bị)
-        CacheDefinition(nameKey: "cache.iosDeviceSupport",     detailKey: "cache.iosDeviceSupport.detail",     path: "~/Library/Developer/Xcode/iOS DeviceSupport",                     icon: "iphone",        iconColor: Color(red: 0.45, green: 0.45, blue: 0.50), risk: .caution),
-        CacheDefinition(nameKey: "cache.watchosDeviceSupport", detailKey: "cache.watchosDeviceSupport.detail", path: "~/Library/Developer/Xcode/watchOS DeviceSupport",                 icon: "applewatch",    iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
-        CacheDefinition(nameKey: "cache.tvosDeviceSupport",    detailKey: "cache.tvosDeviceSupport.detail",    path: "~/Library/Developer/Xcode/tvOS DeviceSupport",                    icon: "appletv",       iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
-        CacheDefinition(nameKey: "cache.visionosDeviceSupport", detailKey: "cache.visionosDeviceSupport.detail", path: "~/Library/Developer/Xcode/visionOS DeviceSupport",              icon: "visionpro",     iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution),
+        CacheDefinition(nameKey: "cache.iosDeviceSupport",      detailKey: "cache.iosDeviceSupport.detail",      path: "~/Library/Developer/Xcode/iOS DeviceSupport",     icon: "iphone",     iconColor: Color(red: 0.45, green: 0.45, blue: 0.50), risk: .caution, subItemMode: .vms, vmScanType: .deviceSupport),
+        CacheDefinition(nameKey: "cache.watchosDeviceSupport",  detailKey: "cache.watchosDeviceSupport.detail",  path: "~/Library/Developer/Xcode/watchOS DeviceSupport", icon: "applewatch", iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution, subItemMode: .vms, vmScanType: .deviceSupport),
+        CacheDefinition(nameKey: "cache.tvosDeviceSupport",     detailKey: "cache.tvosDeviceSupport.detail",     path: "~/Library/Developer/Xcode/tvOS DeviceSupport",    icon: "appletv",    iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution, subItemMode: .vms, vmScanType: .deviceSupport),
+        CacheDefinition(nameKey: "cache.visionosDeviceSupport", detailKey: "cache.visionosDeviceSupport.detail", path: "~/Library/Developer/Xcode/visionOS DeviceSupport", icon: "visionpro", iconColor: Color(red: 0.12, green: 0.12, blue: 0.12), risk: .caution, subItemMode: .vms, vmScanType: .deviceSupport),
 
         // MARK: Caution — Mobile VM Management (iOS Simulators + Android AVDs)
         CacheDefinition(

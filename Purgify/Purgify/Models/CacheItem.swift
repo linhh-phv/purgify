@@ -15,6 +15,7 @@ enum VMScanType {
     case androidSystemImages
     case xcodeArchives
     case xcodeDerivedData
+    case deviceSupport
     case androidSdkPlatforms
     case androidSdkBuildTools
     case androidSdkNDK

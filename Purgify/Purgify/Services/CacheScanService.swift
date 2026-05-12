@@ -57,6 +57,11 @@ protocol CacheScanService: Sendable {
     /// `createdDate` comes from the archive's Info.plist CreationDate field.
     nonisolated func xcodeArchives() -> [(name: String, version: String, path: String, sizeBytes: Int64, createdDate: Date?)]
 
+    /// List device support folders at `path` (iOS/watchOS/tvOS/visionOS DeviceSupport).
+    /// Groups entries by device identifier and marks older versions of the same device
+    /// as `isLatest: false` so the user knows which ones are safe to remove.
+    nonisolated func deviceSupportFolders(at path: String) -> [(name: String, path: String, sizeBytes: Int64, isLatest: Bool)]
+
     /// List Xcode DerivedData project folders, checking whether the source project
     /// still exists on disk. `projectFound` is false for orphaned entries whose
     /// .xcodeproj / .xcworkspace can no longer be located.

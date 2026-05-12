@@ -440,6 +440,20 @@ class CacheScannerViewModel: ObservableObject {
                 )
             }
 
+        case .deviceSupport:
+            let expandedPath = (def.path as NSString).expandingTildeInPath
+            let folders = service.deviceSupportFolders(at: expandedPath)
+            guard !folders.isEmpty else { return nil }
+            subItems = folders.map { f in
+                let status = f.isLatest ? "latest" : "older version"
+                return SubItem(
+                    name: "\(f.name)  ·  \(status)",
+                    path: f.path,
+                    sizeBytes: f.sizeBytes,
+                    isSelected: false
+                )
+            }
+
         case .xcodeArchives:
             let archives = service.xcodeArchives()
             guard !archives.isEmpty else { return nil }

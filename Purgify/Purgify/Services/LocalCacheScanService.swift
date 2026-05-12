@@ -329,6 +329,63 @@ struct LocalCacheScanService: CacheScanService {
         return ini["target"] ?? ""
     }
 
+    // MARK: - Device Support folders (iOS / watchOS / tvOS / visionOS)
+
+    nonisolated func deviceSupportFolders(at path: String) -> [(name: String, path: String, sizeBytes: Int64, isLatest: Bool)] {
+        let fm = FileManager.default
+        guard let entries = try? fm.contentsOfDirectory(atPath: path) else { return [] }
+
+        // Parse "iPhone11,6 18.7.8 (22H352)" → (device: "iPhone11,6", version: [18,7,8])
+        var parsed: [(entry: String, device: String, version: [Int])] = []
+        let versionRegex = try? NSRegularExpression(pattern: #"\s(\d+\.\d+(?:\.\d+)?)\s"#)
+
+        for entry in entries {
+            var device = entry
+            var version: [Int] = []
+            if let regex = versionRegex,
+               let match = regex.firstMatch(in: entry, range: NSRange(entry.startIndex..., in: entry)),
+               let range = Range(match.range(at: 1), in: entry) {
+                let verStr = String(entry[range])
+                version = verStr.split(separator: ".").compactMap { Int($0) }
+                device = String(entry[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
+            }
+            parsed.append((entry: entry, device: device, version: version))
+        }
+
+        // Find the latest version per device
+        var latestVersion: [String: [Int]] = [:]
+        for item in parsed {
+            let current = latestVersion[item.device] ?? []
+            if Self.versionGreaterThan(item.version, current) {
+                latestVersion[item.device] = item.version
+            }
+        }
+
+        var results: [(name: String, path: String, sizeBytes: Int64, isLatest: Bool)] = []
+        for item in parsed {
+            let fullPath = path + "/" + item.entry
+            let size = sizeOfDirectory(at: fullPath)
+            guard size > 0 else { continue }
+            let isLatest = latestVersion[item.device] == item.version
+            results.append((name: item.entry, path: fullPath, sizeBytes: size, isLatest: isLatest))
+        }
+        // Oldest versions first — prime cleanup candidates at top
+        return results.sorted { lhs, rhs in
+            if lhs.isLatest != rhs.isLatest { return !lhs.isLatest }
+            return lhs.sizeBytes > rhs.sizeBytes
+        }
+    }
+
+    private nonisolated static func versionGreaterThan(_ a: [Int], _ b: [Int]) -> Bool {
+        let maxLen = max(a.count, b.count)
+        for i in 0..<maxLen {
+            let av = i < a.count ? a[i] : 0
+            let bv = i < b.count ? b[i] : 0
+            if av != bv { return av > bv }
+        }
+        return false
+    }
+
     // MARK: - Xcode DerivedData with project existence check
 
     nonisolated func xcodeDerivedData() -> [(name: String, path: String, sizeBytes: Int64, projectFound: Bool)] {
