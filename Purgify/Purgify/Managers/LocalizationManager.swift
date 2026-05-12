@@ -235,6 +235,13 @@ class LocalizationManager: ObservableObject {
                 "The local clone of the CocoaPods specs repository — a database of all published pod versions and their metadata.\n\n" +
                 "Your Pods/ folders and project builds are completely untouched.\n\n" +
                 "The only effect: the next pod install re-clones the specs repo from GitHub, which can take a minute or two.",
+            "cache.carthage": "Carthage Cache",
+            "cache.carthage.detail":
+                "Prebuilt framework cache for Carthage, an iOS/macOS dependency manager.\n\n" +
+                "Carthage downloads and builds each framework listed in your Cartfile. " +
+                "This cache stores those built frameworks so they don't have to be rebuilt every time.\n\n" +
+                "✅ Your source code and Cartfile are untouched.\n" +
+                "The only effect: the next carthage update re-downloads and rebuilds frameworks — can take several minutes for large dependency trees.",
 
             "cache.terraform": "Terraform Plugin Cache",
             "cache.terraform.detail":
@@ -327,6 +334,15 @@ class LocalizationManager: ObservableObject {
                 "Precompiled JavaScript cache VS Code builds up to speed up startup.\n\n" +
                 "Your projects, settings, and extensions are NOT touched.\n\n" +
                 "The only effect: VS Code startup may be slightly slower the first time after cleaning — the cache regenerates automatically.",
+            "cache.vscodeVSIX": "VS Code Extension Packages",
+            "cache.vscodeVSIX.detail":
+                "Downloaded .vsix installer packages VS Code keeps after installing extensions.\n\n" +
+                "These are just the raw installation archives — your installed extensions continue to work normally after deleting them.\n\n" +
+                "✅ Safe to delete at any time. VS Code re-downloads the package if you reinstall the same extension.",
+            "cache.vscodeLogs": "VS Code Logs",
+            "cache.vscodeLogs.detail":
+                "Log files written by VS Code and its extensions during normal operation.\n\n" +
+                "✅ Safe to delete. VS Code recreates log files on next launch.",
 
             // Communication apps
 
@@ -449,6 +465,15 @@ class LocalizationManager: ObservableObject {
                 "Precompiled JavaScript cache Cursor builds up to speed up startup.\n\n" +
                 "Your projects, settings, and extensions are NOT touched.\n\n" +
                 "The only effect: Cursor startup may be slightly slower the first time after cleaning.",
+            "cache.cursorVSIX": "Cursor Extension Packages",
+            "cache.cursorVSIX.detail":
+                "Downloaded .vsix installer packages Cursor keeps after installing extensions.\n\n" +
+                "Your installed extensions continue to work normally after deleting them.\n\n" +
+                "✅ Safe to delete at any time. Cursor re-downloads the package if you reinstall the same extension.",
+            "cache.cursorLogs": "Cursor Logs",
+            "cache.cursorLogs.detail":
+                "Log files written by Cursor and its extensions during normal operation.\n\n" +
+                "✅ Safe to delete. Cursor recreates log files on next launch.",
 
             "cache.zed": "Zed Cache",
             "cache.zed.detail":
@@ -559,6 +584,7 @@ class LocalizationManager: ObservableObject {
             "subitem.cleanDevices":   "Delete %1 Selected Devices · %2",
             "subitem.nSelected":      "%1 / %2 selected",
             "subitem.lastUsed":       "Last used",
+            "subitem.lastBackup":     "Last backup",
 
             // Scan progress
             "scan.itemCount":         "%1 of %2 items",
@@ -640,6 +666,16 @@ class LocalizationManager: ObservableObject {
                 "✅ Your installed app is not affected — archives are only needed to re-export or re-sign an old build.\n" +
                 "⚠️ Once deleted, you cannot re-export that specific build. If you need an older binary, you must rebuild from source.",
             "subitem.archived":      "Archived",
+
+            // iOS Backups
+            "vm.iOSBackups":        "iPhone & iPad Backups",
+            "vm.iOSBackups.detail":
+                "Local iPhone and iPad backups created by Finder (or iTunes) at ~/Library/Application Support/MobileSync/Backup.\n\n" +
+                "Each backup can be 5–50 GB depending on device storage and apps installed. " +
+                "Multiple backups accumulate over time — one per device, kept indefinitely.\n\n" +
+                "✅ Your device is not affected — the backup is just a local copy.\n" +
+                "⚠️ If you delete a backup, you lose the ability to restore your device to that snapshot. " +
+                "iCloud Backup (if enabled on your device) is unaffected.",
 
             // Mobile VM groups (iOS Simulators, Android AVDs, system images)
             "vm.iOSSimulators":         "iOS Simulators",
@@ -906,6 +942,12 @@ class LocalizationManager: ObservableObject {
                 "Bản sao local của CocoaPods specs repository — cơ sở dữ liệu chứa metadata của tất cả pod đã xuất bản.\n\n" +
                 "Thư mục Pods/ và các project build hoàn toàn không bị ảnh hưởng.\n\n" +
                 "Tác động duy nhất: lần pod install tiếp theo clone lại specs repo từ GitHub, có thể mất 1–2 phút.",
+            "cache.carthage": "Carthage Cache",
+            "cache.carthage.detail":
+                "Cache framework đã build sẵn của Carthage — dependency manager cho iOS/macOS.\n\n" +
+                "Carthage tải và build từng framework trong Cartfile. Cache này lưu lại framework đã build để không cần rebuild mỗi lần.\n\n" +
+                "✅ Source code và Cartfile không bị đụng.\n" +
+                "Tác động duy nhất: lần carthage update tiếp theo tải lại và build lại framework — có thể mất vài phút với dependency tree lớn.",
 
             "cache.terraform": "Terraform Plugin Cache",
             "cache.terraform.detail":
@@ -998,6 +1040,15 @@ class LocalizationManager: ObservableObject {
                 "Cache JavaScript đã biên dịch trước để VS Code khởi động nhanh hơn.\n\n" +
                 "Dự án, cài đặt và extension KHÔNG bị đụng.\n\n" +
                 "Tác động duy nhất: VS Code khởi động chậm hơn một chút ở lần đầu sau khi xóa — cache tự build lại.",
+            "cache.vscodeVSIX": "VS Code Extension Packages",
+            "cache.vscodeVSIX.detail":
+                "Các file .vsix VS Code giữ lại sau khi cài extension — đây chỉ là archive cài đặt.\n\n" +
+                "Extension đã cài vẫn hoạt động bình thường sau khi xóa.\n\n" +
+                "✅ Xóa được bất cứ lúc nào. VS Code tải lại package nếu bạn cài lại extension đó.",
+            "cache.vscodeLogs": "VS Code Logs",
+            "cache.vscodeLogs.detail":
+                "File log do VS Code và các extension ghi lại trong quá trình hoạt động.\n\n" +
+                "✅ Xóa an toàn. VS Code tạo lại log khi khởi động lần sau.",
 
             // Ứng dụng giao tiếp
 
@@ -1120,6 +1171,15 @@ class LocalizationManager: ObservableObject {
                 "Cache JavaScript đã biên dịch trước để Cursor khởi động nhanh hơn.\n\n" +
                 "Dự án, cài đặt và extension KHÔNG bị đụng.\n\n" +
                 "Tác động duy nhất: Cursor khởi động chậm hơn một chút ở lần đầu sau khi xóa.",
+            "cache.cursorVSIX": "Cursor Extension Packages",
+            "cache.cursorVSIX.detail":
+                "Các file .vsix Cursor giữ lại sau khi cài extension — chỉ là archive cài đặt.\n\n" +
+                "Extension đã cài vẫn hoạt động bình thường sau khi xóa.\n\n" +
+                "✅ Xóa được bất cứ lúc nào. Cursor tải lại package nếu bạn cài lại extension đó.",
+            "cache.cursorLogs": "Cursor Logs",
+            "cache.cursorLogs.detail":
+                "File log do Cursor và các extension ghi lại trong quá trình hoạt động.\n\n" +
+                "✅ Xóa an toàn. Cursor tạo lại log khi khởi động lần sau.",
 
             "cache.zed": "Zed Cache",
             "cache.zed.detail":
@@ -1230,6 +1290,7 @@ class LocalizationManager: ObservableObject {
             "subitem.cleanDevices":  "Xóa %1 thiết bị đã chọn · %2",
             "subitem.nSelected":     "%1 / %2 đã chọn",
             "subitem.lastUsed":      "Mở lần cuối",
+            "subitem.lastBackup":    "Backup lần cuối",
 
             // Scan progress
             "scan.itemCount":         "%1 / %2 mục",
@@ -1310,6 +1371,16 @@ class LocalizationManager: ObservableObject {
                 "✅ App đang cài trên máy không bị ảnh hưởng — archive chỉ cần khi bạn muốn export lại hoặc ký lại bản build cũ.\n" +
                 "⚠️ Sau khi xóa, bạn không thể export lại bản build đó nữa. Muốn có binary cũ thì phải build lại từ source.",
             "subitem.archived":      "Ngày archive",
+
+            // iOS Backups
+            "vm.iOSBackups":        "Backup iPhone & iPad",
+            "vm.iOSBackups.detail":
+                "Backup iPhone và iPad lưu local qua Finder (hoặc iTunes) tại ~/Library/Application Support/MobileSync/Backup.\n\n" +
+                "Mỗi backup có thể nặng 5–50 GB tùy dung lượng thiết bị và app đã cài. " +
+                "Backup tích lũy theo thời gian — một bản mỗi thiết bị, giữ vô thời hạn.\n\n" +
+                "✅ Thiết bị không bị ảnh hưởng — backup chỉ là bản sao local.\n" +
+                "⚠️ Xóa backup thì mất khả năng restore thiết bị về snapshot đó. " +
+                "iCloud Backup (nếu bật trên thiết bị) không bị ảnh hưởng.",
 
             // Nhóm VM mobile (iOS Simulators, Android AVDs, system images)
             "vm.iOSSimulators":         "iOS Simulators",

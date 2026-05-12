@@ -329,6 +329,31 @@ struct LocalCacheScanService: CacheScanService {
         return ini["target"] ?? ""
     }
 
+    // MARK: - iOS Backups
+
+    nonisolated func iOSBackups() -> [(name: String, iOSVersion: String, path: String, sizeBytes: Int64, backupDate: Date?)] {
+        let fm = FileManager.default
+        let backupRoot = NSHomeDirectory() + "/Library/Application Support/MobileSync/Backup"
+        guard let entries = try? fm.contentsOfDirectory(atPath: backupRoot) else { return [] }
+
+        var results: [(name: String, iOSVersion: String, path: String, sizeBytes: Int64, backupDate: Date?)] = []
+        for entry in entries {
+            let backupPath = backupRoot + "/" + entry
+            let plistPath = backupPath + "/Info.plist"
+            guard let dict = NSDictionary(contentsOfFile: plistPath) as? [String: Any] else { continue }
+            let deviceName = dict["Device Name"] as? String
+                ?? dict["Display Name"] as? String
+                ?? entry
+            let iOSVersion = dict["Product Version"] as? String ?? ""
+            let backupDate = dict["Last Backup Date"] as? Date
+            let size = sizeOfDirectory(at: backupPath)
+            guard size > 0 else { continue }
+            results.append((name: deviceName, iOSVersion: iOSVersion, path: backupPath,
+                            sizeBytes: size, backupDate: backupDate))
+        }
+        return results.sorted { ($0.backupDate ?? .distantPast) > ($1.backupDate ?? .distantPast) }
+    }
+
     // MARK: - Device Support folders (iOS / watchOS / tvOS / visionOS)
 
     nonisolated func deviceSupportFolders(at path: String) -> [(name: String, path: String, sizeBytes: Int64, isLatest: Bool)] {

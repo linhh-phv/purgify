@@ -15,6 +15,7 @@ enum CacheDefinitions {
         CacheDefinition(nameKey: "cache.homebrew",       detailKey: "cache.homebrew.detail",       path: "~/Library/Caches/Homebrew",                icon: "mug.fill",               iconColor: Color(red: 0.98, green: 0.69, blue: 0.25), risk: .safe, subItemMode: .files, subItemsPath: "~/Library/Caches/Homebrew/downloads"),
         CacheDefinition(nameKey: "cache.cocoapods",      detailKey: "cache.cocoapods.detail",      path: "~/Library/Caches/CocoaPods",               icon: "leaf.fill",              iconColor: Color(red: 0.93, green: 0.20, blue: 0.13), risk: .safe, projectIndicators: ["Podfile"]),
         CacheDefinition(nameKey: "cache.cocoapodsSpecs", detailKey: "cache.cocoapodsSpecs.detail", path: "~/.cocoapods/repos",                       icon: "doc.text.fill",          iconColor: Color(red: 0.93, green: 0.20, blue: 0.13), risk: .safe, projectIndicators: ["Podfile"]),
+        CacheDefinition(nameKey: "cache.carthage",       detailKey: "cache.carthage.detail",       path: "~/Library/Caches/org.carthage.CarthageKit", icon: "shippingbox.fill",      iconColor: Color(red: 0.45, green: 0.45, blue: 0.50), risk: .safe, projectIndicators: ["Cartfile"]),
         CacheDefinition(nameKey: "cache.cargo",          detailKey: "cache.cargo.detail",          path: "~/.cargo/registry",                        icon: "wrench.adjustable.fill", iconColor: Color(red: 0.81, green: 0.26, blue: 0.17), risk: .safe, projectIndicators: ["Cargo.toml"]),
         CacheDefinition(nameKey: "cache.pip",            detailKey: "cache.pip.detail",            path: "~/Library/Caches/pip",                     icon: "terminal.fill",          iconColor: Color(red: 0.22, green: 0.47, blue: 0.67), risk: .safe, projectIndicators: ["requirements.txt", "setup.py", "pyproject.toml"]),
         CacheDefinition(nameKey: "cache.poetry",         detailKey: "cache.poetry.detail",         path: "~/Library/Caches/pypoetry",                icon: "books.vertical.fill",    iconColor: Color(red: 0.07, green: 0.44, blue: 0.78), risk: .safe, projectIndicators: ["pyproject.toml"]),
@@ -60,10 +61,14 @@ enum CacheDefinitions {
 
         // MARK: Moderate — IDE / Editor caches
         CacheDefinition(nameKey: "cache.jetbrains",   detailKey: "cache.jetbrains.detail",   path: "~/Library/Caches/JetBrains",                           icon: "chevron.left.forwardslash.chevron.right", iconColor: Color(red: 0.99, green: 0.24, blue: 0.55), risk: .moderate),
-        CacheDefinition(nameKey: "cache.vscode",      detailKey: "cache.vscode.detail",      path: "~/Library/Application Support/Code/Cache",             icon: "curlybraces",                             iconColor: Color(red: 0.00, green: 0.48, blue: 0.80), risk: .moderate),
-        CacheDefinition(nameKey: "cache.vscodeData",  detailKey: "cache.vscodeData.detail",  path: "~/Library/Application Support/Code/CachedData",        icon: "externaldrive.fill",                      iconColor: Color(red: 0.00, green: 0.48, blue: 0.80), risk: .moderate),
-        CacheDefinition(nameKey: "cache.cursor",      detailKey: "cache.cursor.detail",      path: "~/Library/Application Support/Cursor/Cache",           icon: "cursorarrow.rays",                        iconColor: Color(red: 0.10, green: 0.10, blue: 0.10), risk: .moderate),
-        CacheDefinition(nameKey: "cache.cursorData",  detailKey: "cache.cursorData.detail",  path: "~/Library/Application Support/Cursor/CachedData",      icon: "externaldrive.fill",                      iconColor: Color(red: 0.10, green: 0.10, blue: 0.10), risk: .moderate),
+        CacheDefinition(nameKey: "cache.vscode",       detailKey: "cache.vscode.detail",       path: "~/Library/Application Support/Code/Cache",                    icon: "curlybraces",        iconColor: Color(red: 0.00, green: 0.48, blue: 0.80), risk: .moderate),
+        CacheDefinition(nameKey: "cache.vscodeData",   detailKey: "cache.vscodeData.detail",   path: "~/Library/Application Support/Code/CachedData",               icon: "externaldrive.fill", iconColor: Color(red: 0.00, green: 0.48, blue: 0.80), risk: .moderate),
+        CacheDefinition(nameKey: "cache.vscodeVSIX",  detailKey: "cache.vscodeVSIX.detail",  path: "~/Library/Application Support/Code/CachedExtensionVSIXs",     icon: "puzzlepiece.fill",   iconColor: Color(red: 0.00, green: 0.48, blue: 0.80), risk: .safe),
+        CacheDefinition(nameKey: "cache.vscodeLogs",  detailKey: "cache.vscodeLogs.detail",  path: "~/Library/Application Support/Code/logs",                      icon: "doc.text.fill",      iconColor: Color(red: 0.00, green: 0.48, blue: 0.80), risk: .safe),
+        CacheDefinition(nameKey: "cache.cursor",       detailKey: "cache.cursor.detail",       path: "~/Library/Application Support/Cursor/Cache",                  icon: "cursorarrow.rays",   iconColor: Color(red: 0.10, green: 0.10, blue: 0.10), risk: .moderate),
+        CacheDefinition(nameKey: "cache.cursorData",   detailKey: "cache.cursorData.detail",   path: "~/Library/Application Support/Cursor/CachedData",             icon: "externaldrive.fill", iconColor: Color(red: 0.10, green: 0.10, blue: 0.10), risk: .moderate),
+        CacheDefinition(nameKey: "cache.cursorVSIX",  detailKey: "cache.cursorVSIX.detail",  path: "~/Library/Application Support/Cursor/CachedExtensionVSIXs",   icon: "puzzlepiece.fill",   iconColor: Color(red: 0.10, green: 0.10, blue: 0.10), risk: .safe),
+        CacheDefinition(nameKey: "cache.cursorLogs",  detailKey: "cache.cursorLogs.detail",  path: "~/Library/Application Support/Cursor/logs",                    icon: "doc.text.fill",      iconColor: Color(red: 0.10, green: 0.10, blue: 0.10), risk: .safe),
         CacheDefinition(nameKey: "cache.zed",         detailKey: "cache.zed.detail",         path: "~/Library/Caches/dev.zed.Zed",                         icon: "bolt.fill",                               iconColor: Color(red: 0.34, green: 0.40, blue: 0.97), risk: .moderate),
         CacheDefinition(nameKey: "cache.sublimeText", detailKey: "cache.sublimeText.detail", path: "~/Library/Caches/com.sublimetext.4",                   icon: "text.alignleft",                          iconColor: Color(red: 1.00, green: 0.60, blue: 0.18), risk: .moderate),
         CacheDefinition(nameKey: "cache.swiftuiPreviews", detailKey: "cache.swiftuiPreviews.detail", path: "~/Library/Developer/Xcode/UserData/Previews",  icon: "eye.trianglebadge.exclamationmark.fill",  iconColor: Color(red: 0.98, green: 0.45, blue: 0.26), risk: .moderate),
@@ -150,6 +155,17 @@ enum CacheDefinitions {
             icon: "archivebox.fill",
             iconColor: Color(red: 0.08, green: 0.46, blue: 0.98),
             risk: .caution, subItemMode: .vms, vmScanType: .xcodeArchives
+        ),
+
+        // MARK: Advanced — iOS Backups (FDA required on newer macOS)
+        CacheDefinition(
+            nameKey: "vm.iOSBackups", detailKey: "vm.iOSBackups.detail",
+            path: "~/Library/Application Support/MobileSync/Backup",
+            icon: "iphone.and.arrow.forward.inward",
+            iconColor: Color(red: 0.00, green: 0.48, blue: 1.00),
+            risk: .caution, subItemMode: .vms,
+            requiresFDA: true,
+            vmScanType: .iOSBackups
         ),
 
         // MARK: Advanced — yêu cầu Full Disk Access (chỉ scan khi user bật toggle)

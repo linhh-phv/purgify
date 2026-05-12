@@ -440,6 +440,21 @@ class CacheScannerViewModel: ObservableObject {
                 )
             }
 
+        case .iOSBackups:
+            let backups = service.iOSBackups()
+            guard !backups.isEmpty else { return nil }
+            subItems = backups.map { b in
+                let displayName = b.iOSVersion.isEmpty ? b.name : "\(b.name)  ·  iOS \(b.iOSVersion)"
+                return SubItem(
+                    name: displayName,
+                    path: b.path,
+                    sizeBytes: b.sizeBytes,
+                    modifiedDate: b.backupDate,
+                    isSelected: false,
+                    dateLabelKey: "subitem.lastBackup"
+                )
+            }
+
         case .deviceSupport:
             let expandedPath = (def.path as NSString).expandingTildeInPath
             let folders = service.deviceSupportFolders(at: expandedPath)

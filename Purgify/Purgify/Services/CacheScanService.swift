@@ -57,6 +57,10 @@ protocol CacheScanService: Sendable {
     /// `createdDate` comes from the archive's Info.plist CreationDate field.
     nonisolated func xcodeArchives() -> [(name: String, version: String, path: String, sizeBytes: Int64, createdDate: Date?)]
 
+    /// List iPhone/iPad backups from ~/Library/Application Support/MobileSync/Backup.
+    /// Reads Info.plist per backup folder for device name, iOS version, and date.
+    nonisolated func iOSBackups() -> [(name: String, iOSVersion: String, path: String, sizeBytes: Int64, backupDate: Date?)]
+
     /// List device support folders at `path` (iOS/watchOS/tvOS/visionOS DeviceSupport).
     /// Groups entries by device identifier and marks older versions of the same device
     /// as `isLatest: false` so the user knows which ones are safe to remove.
