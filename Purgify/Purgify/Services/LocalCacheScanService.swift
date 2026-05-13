@@ -413,22 +413,22 @@ struct LocalCacheScanService: CacheScanService {
 
     // MARK: - Xcode DerivedData with project existence check
 
-    nonisolated func xcodeDerivedData() -> [(name: String, path: String, sizeBytes: Int64, projectFound: Bool)] {
+    nonisolated func xcodeDerivedData() -> [(name: String, path: String, sizeBytes: Int64, projectFound: Bool, projectPath: String?)] {
         let derivedDataPath = NSHomeDirectory() + "/Library/Developer/Xcode/DerivedData"
         let fm = FileManager.default
         guard let entries = try? fm.contentsOfDirectory(atPath: derivedDataPath) else { return [] }
 
-        let projectLocations = Self.findXcodeProjectNames()
+        let projectLocations = Self.findXcodeProjectLocations()
 
-        var results: [(name: String, path: String, sizeBytes: Int64, projectFound: Bool)] = []
+        var results: [(name: String, path: String, sizeBytes: Int64, projectFound: Bool, projectPath: String?)] = []
         for entry in entries {
             guard entry != "ModuleCache.noindex", entry != "SDKStatCaches.noindex" else { continue }
             let dirPath = derivedDataPath + "/" + entry
             let projectName = Self.extractDerivedDataProjectName(entry)
             let size = sizeOfDirectory(at: dirPath)
             guard size > 0 else { continue }
-            let found = projectLocations.contains(projectName.lowercased())
-            results.append((name: projectName, path: dirPath, sizeBytes: size, projectFound: found))
+            let projectPath = projectLocations[projectName.lowercased()]
+            results.append((name: projectName, path: dirPath, sizeBytes: size, projectFound: projectPath != nil, projectPath: projectPath))
         }
         return results.sorted { $0.sizeBytes > $1.sizeBytes }
     }
@@ -443,7 +443,9 @@ struct LocalCacheScanService: CacheScanService {
         return String(folderName[..<dashRange.lowerBound])
     }
 
-    private nonisolated static func findXcodeProjectNames() -> Set<String> {
+    /// Returns a map of lowercased project name → project root directory path.
+    /// The project root is the parent of the `.xcodeproj` / `.xcworkspace` bundle.
+    private nonisolated static func findXcodeProjectLocations() -> [String: String] {
         let fm = FileManager.default
         let home = NSHomeDirectory()
         let roots = ["Desktop", "Documents", "Developer", "code", "repos", "work", "Projects", "Sites"]
@@ -455,18 +457,18 @@ struct LocalCacheScanService: CacheScanService {
             ".Trash", "Pods", ".pub-cache", ".cargo", ".npm", "dist"
         ]
 
-        var names = Set<String>()
+        var results = [String: String]()
         for root in roots {
-            Self.findProjectNames(in: root, depth: 0, maxDepth: 5,
-                                  fm: fm, skip: skipDirs, results: &names)
-            if names.count >= 200 { break }
+            Self.findProjectLocations(in: root, depth: 0, maxDepth: 5,
+                                      fm: fm, skip: skipDirs, results: &results)
+            if results.count >= 200 { break }
         }
-        return names
+        return results
     }
 
-    private nonisolated static func findProjectNames(
+    private nonisolated static func findProjectLocations(
         in path: String, depth: Int, maxDepth: Int,
-        fm: FileManager, skip: Set<String>, results: inout Set<String>
+        fm: FileManager, skip: Set<String>, results: inout [String: String]
     ) {
         guard depth <= maxDepth else { return }
         guard let contents = try? fm.contentsOfDirectory(atPath: path) else { return }
@@ -475,7 +477,10 @@ struct LocalCacheScanService: CacheScanService {
                 let name = item
                     .replacingOccurrences(of: ".xcodeproj", with: "")
                     .replacingOccurrences(of: ".xcworkspace", with: "")
-                results.insert(name.lowercased())
+                // First match wins — don't overwrite if same name appears in multiple folders
+                if results[name.lowercased()] == nil {
+                    results[name.lowercased()] = path
+                }
             }
         }
         guard depth < maxDepth else { return }
@@ -485,8 +490,8 @@ struct LocalCacheScanService: CacheScanService {
             let sub = path + "/" + item
             var isDir: ObjCBool = false
             if fm.fileExists(atPath: sub, isDirectory: &isDir), isDir.boolValue {
-                findProjectNames(in: sub, depth: depth + 1, maxDepth: maxDepth,
-                                 fm: fm, skip: skip, results: &results)
+                findProjectLocations(in: sub, depth: depth + 1, maxDepth: maxDepth,
+                                     fm: fm, skip: skip, results: &results)
             }
         }
     }
@@ -778,5 +783,252 @@ struct LocalCacheScanService: CacheScanService {
                 ))
             }
         }
+    }
+
+    // MARK: - Per-project build folders (RN, Rust, Flutter, Web, iOS, Android, Python)
+
+    /// Spec describing one type of per-project build scan.
+    /// Encodes how to identify projects and which folders to gather as build artifacts.
+    fileprivate struct ProjectScanSpec {
+        let requireAll: [String]            // every name must exist in project dir
+        let requireAny: [String]            // at least one must exist (skip when empty)
+        let forbiddenInParent: [String]     // none of these may exist in the parent dir
+        let buildDirs: [String]             // relative paths under project root
+        let recursiveDirs: [String]         // folder names found at any depth (e.g. __pycache__)
+        let scanNodeModulesAndroid: Bool    // RN-specific: scan node_modules/<lib>/android/build
+        let maxResults: Int
+        let maxDepth: Int
+    }
+
+    private nonisolated func runProjectScan(spec: ProjectScanSpec) -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)] {
+        let fm = FileManager.default
+        let home = NSHomeDirectory()
+        let roots = ["Desktop", "Developer", "Documents", "Projects", "code", "repos", "work", "Sites"]
+            .map { home + "/" + $0 }
+            .filter { fm.fileExists(atPath: $0) }
+
+        let skipDirs: Set<String> = [
+            "node_modules", ".git", "Library", ".Trash", "vendor", "Pods",
+            "DerivedData", ".pub-cache", ".cargo", ".npm", "target", "build",
+            ".gradle", ".dart_tool", "dist", ".next", ".nuxt", ".turbo", ".vite",
+            "out", ".parcel-cache", "__pycache__", "venv", ".venv", "env",
+            ".tox", ".idea", ".vscode"
+        ]
+        var results: [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)] = []
+
+        for root in roots {
+            findProjects(in: root, depth: 0, fm: fm, skip: skipDirs, spec: spec, results: &results)
+            if results.count >= spec.maxResults { break }
+        }
+        return results.sorted { $0.sizeBytes > $1.sizeBytes }
+    }
+
+    private nonisolated func findProjects(
+        in path: String, depth: Int,
+        fm: FileManager, skip: Set<String>, spec: ProjectScanSpec,
+        results: inout [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)]
+    ) {
+        guard depth <= spec.maxDepth, results.count < spec.maxResults else { return }
+        guard let contents = try? fm.contentsOfDirectory(atPath: path) else { return }
+
+        let matchesAll = spec.requireAll.allSatisfy { contents.contains($0) }
+        let matchesAny = spec.requireAny.isEmpty || spec.requireAny.contains(where: { contents.contains($0) })
+        var isProject = depth > 0 && matchesAll && matchesAny
+
+        if isProject && !spec.forbiddenInParent.isEmpty {
+            let parent = (path as NSString).deletingLastPathComponent
+            if let parentContents = try? fm.contentsOfDirectory(atPath: parent),
+               spec.forbiddenInParent.contains(where: { parentContents.contains($0) }) {
+                isProject = false
+            }
+        }
+
+        if isProject {
+            if let entry = collectBuildPaths(projectPath: path, spec: spec, fm: fm) {
+                results.append(entry)
+            }
+            return  // don't recurse into a project we already classified
+        }
+
+        guard depth < spec.maxDepth else { return }
+        for item in contents {
+            guard !skip.contains(item) && !item.hasPrefix(".") else { continue }
+            let sub = path + "/" + item
+            var isDir: ObjCBool = false
+            if fm.fileExists(atPath: sub, isDirectory: &isDir), isDir.boolValue {
+                findProjects(in: sub, depth: depth + 1, fm: fm, skip: skip, spec: spec, results: &results)
+            }
+        }
+    }
+
+    private nonisolated func collectBuildPaths(
+        projectPath: String, spec: ProjectScanSpec, fm: FileManager
+    ) -> (projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)? {
+        let projectName = URL(fileURLWithPath: projectPath).lastPathComponent
+        var paths: [String] = []
+        var totalSize: Int64 = 0
+        var latestDate: Date?
+
+        func consider(_ candidate: String) {
+            var isDir: ObjCBool = false
+            guard fm.fileExists(atPath: candidate, isDirectory: &isDir), isDir.boolValue else { return }
+            let size = sizeOfDirectory(at: candidate)
+            guard size > 0 else { return }
+            paths.append(candidate)
+            totalSize += size
+            if let date = (try? URL(fileURLWithPath: candidate)
+                .resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate {
+                if latestDate == nil || date > latestDate! { latestDate = date }
+            }
+        }
+
+        // Direct build dirs at known relative locations.
+        for relative in spec.buildDirs {
+            consider(projectPath + "/" + relative)
+        }
+
+        // Recursive folder-name search (e.g., __pycache__) — capped to keep scans fast.
+        if !spec.recursiveDirs.isEmpty {
+            findRecursiveDirs(in: projectPath, names: Set(spec.recursiveDirs),
+                              fm: fm, depth: 0, maxDepth: 8, hits: &paths,
+                              consider: consider)
+        }
+
+        // RN-specific: scan node_modules/<lib>/android/build + .cxx
+        if spec.scanNodeModulesAndroid {
+            let nodeModules = projectPath + "/node_modules"
+            if let libs = try? fm.contentsOfDirectory(atPath: nodeModules) {
+                for lib in libs where !lib.hasPrefix(".") {
+                    if lib.hasPrefix("@") {
+                        let scopeDir = nodeModules + "/" + lib
+                        if let scoped = try? fm.contentsOfDirectory(atPath: scopeDir) {
+                            for pkg in scoped where !pkg.hasPrefix(".") {
+                                consider(scopeDir + "/" + pkg + "/android/build")
+                                consider(scopeDir + "/" + pkg + "/android/.cxx")
+                            }
+                        }
+                    } else {
+                        consider(nodeModules + "/" + lib + "/android/build")
+                        consider(nodeModules + "/" + lib + "/android/.cxx")
+                    }
+                }
+            }
+        }
+
+        guard !paths.isEmpty else { return nil }
+        return (projectName: projectName, projectPath: projectPath,
+                paths: paths, sizeBytes: totalSize, modifiedDate: latestDate)
+    }
+
+    /// Recursively look for directories whose name is in `names`. Used for
+    /// Python's __pycache__ which is scattered throughout the source tree.
+    /// Stops descending into matched dirs and well-known skip dirs.
+    private nonisolated func findRecursiveDirs(
+        in path: String, names: Set<String>,
+        fm: FileManager, depth: Int, maxDepth: Int,
+        hits: inout [String],
+        consider: (String) -> Void
+    ) {
+        guard depth <= maxDepth, hits.count < 500 else { return }
+        guard let contents = try? fm.contentsOfDirectory(atPath: path) else { return }
+
+        let skip: Set<String> = ["node_modules", ".git", "venv", ".venv", "env",
+                                 "target", "build", "dist", "Pods"]
+
+        for item in contents {
+            let sub = path + "/" + item
+            var isDir: ObjCBool = false
+            guard fm.fileExists(atPath: sub, isDirectory: &isDir), isDir.boolValue else { continue }
+            if names.contains(item) {
+                consider(sub)
+                continue  // don't recurse into the matched dir itself
+            }
+            if skip.contains(item) || item.hasPrefix(".") { continue }
+            findRecursiveDirs(in: sub, names: names, fm: fm,
+                              depth: depth + 1, maxDepth: maxDepth,
+                              hits: &hits, consider: consider)
+        }
+    }
+
+    // MARK: - Public per-project scans
+
+    nonisolated func reactNativeBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)] {
+        runProjectScan(spec: ProjectScanSpec(
+            requireAll: ["package.json", "android"], requireAny: [], forbiddenInParent: [],
+            buildDirs: ["android/app/build", "android/build", "android/.gradle"],
+            recursiveDirs: [], scanNodeModulesAndroid: true,
+            maxResults: 20, maxDepth: 4
+        ))
+    }
+
+    nonisolated func rustBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)] {
+        runProjectScan(spec: ProjectScanSpec(
+            requireAll: ["Cargo.toml"], requireAny: [], forbiddenInParent: [],
+            buildDirs: ["target"],
+            recursiveDirs: [], scanNodeModulesAndroid: false,
+            maxResults: 30, maxDepth: 4
+        ))
+    }
+
+    nonisolated func flutterBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)] {
+        runProjectScan(spec: ProjectScanSpec(
+            requireAll: ["pubspec.yaml"], requireAny: [], forbiddenInParent: [],
+            buildDirs: [".dart_tool", "build", "ios/Pods", "android/.gradle",
+                        "android/app/build", "android/build", "android/.cxx"],
+            recursiveDirs: [], scanNodeModulesAndroid: false,
+            maxResults: 20, maxDepth: 4
+        ))
+    }
+
+    nonisolated func webFrontendBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)] {
+        runProjectScan(spec: ProjectScanSpec(
+            requireAll: [], requireAny: [
+                "next.config.js", "next.config.ts", "next.config.mjs", "next.config.cjs",
+                "nuxt.config.js", "nuxt.config.ts",
+                "vite.config.js", "vite.config.ts", "vite.config.mjs",
+                "turbo.json",
+                "astro.config.js", "astro.config.ts", "astro.config.mjs",
+                "remix.config.js", "svelte.config.js",
+                "gatsby-config.js", "gatsby-config.ts"
+            ],
+            forbiddenInParent: [],
+            buildDirs: [".next", ".nuxt", "dist", "out", ".turbo", ".vite",
+                        ".parcel-cache", ".cache", "node_modules/.cache"],
+            recursiveDirs: [], scanNodeModulesAndroid: false,
+            maxResults: 25, maxDepth: 4
+        ))
+    }
+
+    nonisolated func iosPodsBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)] {
+        runProjectScan(spec: ProjectScanSpec(
+            requireAll: ["Podfile"], requireAny: [],
+            forbiddenInParent: ["package.json", "pubspec.yaml"],
+            buildDirs: ["Pods", "build"],
+            recursiveDirs: [], scanNodeModulesAndroid: false,
+            maxResults: 20, maxDepth: 4
+        ))
+    }
+
+    nonisolated func androidNativeBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)] {
+        runProjectScan(spec: ProjectScanSpec(
+            requireAll: [],
+            requireAny: ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"],
+            forbiddenInParent: ["package.json", "pubspec.yaml"],
+            buildDirs: ["build", "app/build", ".gradle"],
+            recursiveDirs: [], scanNodeModulesAndroid: false,
+            maxResults: 20, maxDepth: 4
+        ))
+    }
+
+    nonisolated func pythonBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)] {
+        runProjectScan(spec: ProjectScanSpec(
+            requireAll: [],
+            requireAny: ["requirements.txt", "pyproject.toml", "setup.py", "Pipfile"],
+            forbiddenInParent: [],
+            buildDirs: [".pytest_cache", ".mypy_cache", ".ruff_cache", ".tox",
+                        "build", "dist", ".coverage", "htmlcov"],
+            recursiveDirs: ["__pycache__"], scanNodeModulesAndroid: false,
+            maxResults: 25, maxDepth: 4
+        ))
     }
 }

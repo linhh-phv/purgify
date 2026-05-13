@@ -326,14 +326,19 @@ class CacheScannerViewModel: ObservableObject {
         guard !files.isEmpty else { return nil }
 
         let totalSize = files.reduce(0 as Int64) { $0 + $1.sizeBytes }
+        let home = NSHomeDirectory()
         var subItems: [SubItem] = files.map { f in
-            SubItem(
+            // Parent directory pretty-printed: ~/Downloads, ~/Desktop, ~/Documents
+            let parent = (f.path as NSString).deletingLastPathComponent
+            let prettyParent = parent.hasPrefix(home) ? "~" + parent.dropFirst(home.count) : parent
+            return SubItem(
                 name: f.name,
                 path: f.path,
                 sizeBytes: f.sizeBytes,
                 modifiedDate: f.lastUsedDate,
                 isSelected: false,
-                dateLabelKey: "subitem.lastUsed"
+                dateLabelKey: "subitem.lastUsed",
+                subtitle: prettyParent
             )
         }
         // Oldest last-used first; tie-break by largest size so the most
@@ -430,13 +435,19 @@ class CacheScannerViewModel: ObservableObject {
         case .xcodeDerivedData:
             let items = service.xcodeDerivedData()
             guard !items.isEmpty else { return nil }
+            let home = NSHomeDirectory()
             subItems = items.map { d in
                 let status = d.projectFound ? "project found" : "orphaned"
+                let prettyProjectPath: String? = d.projectPath.map { p in
+                    p.hasPrefix(home) ? "~" + p.dropFirst(home.count) : p
+                }
                 return SubItem(
                     name: "\(d.name)  ·  \(status)",
                     path: d.path,
                     sizeBytes: d.sizeBytes,
-                    isSelected: false
+                    isSelected: false,
+                    subtitle: prettyProjectPath,
+                    revealPath: d.projectPath
                 )
             }
 
@@ -522,7 +533,30 @@ class CacheScannerViewModel: ObservableObject {
                     isSelected: false
                 )
             }
+
+        case .reactNativeBuild:
+            subItems = Self.mapProjectBuilds(service.reactNativeBuildFolders())
+
+        case .rustProject:
+            subItems = Self.mapProjectBuilds(service.rustBuildFolders())
+
+        case .flutterProject:
+            subItems = Self.mapProjectBuilds(service.flutterBuildFolders())
+
+        case .webFrontendProject:
+            subItems = Self.mapProjectBuilds(service.webFrontendBuildFolders())
+
+        case .iosPodsProject:
+            subItems = Self.mapProjectBuilds(service.iosPodsBuildFolders())
+
+        case .androidNativeProject:
+            subItems = Self.mapProjectBuilds(service.androidNativeBuildFolders())
+
+        case .pythonProject:
+            subItems = Self.mapProjectBuilds(service.pythonBuildFolders())
         }
+
+        if subItems.isEmpty { return nil }
 
         let totalSize = subItems.reduce(0 as Int64) { $0 + $1.sizeBytes }
 
@@ -541,6 +575,33 @@ class CacheScannerViewModel: ObservableObject {
         item.subItems = subItems
         item.deleteSubsOnly = true  // never delete the root AVD/Devices folder
         return item
+    }
+
+    /// Shared mapping for per-project build scans (RN, Rust, Flutter, Web, iOS, Android, Python).
+    /// First path becomes the primary, the rest go into associatedPaths so the trash
+    /// operation removes them all in one click.
+    private nonisolated static func mapProjectBuilds(
+        _ builds: [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)]
+    ) -> [SubItem] {
+        let home = NSHomeDirectory()
+        return builds.compactMap { b -> SubItem? in
+            guard let primary = b.paths.first else { return nil }
+            let prettyPath = b.projectPath.hasPrefix(home)
+                ? "~" + b.projectPath.dropFirst(home.count)
+                : b.projectPath
+            let subtitle = "\(prettyPath)  ·  \(b.paths.count) folders"
+            return SubItem(
+                name: b.projectName,
+                path: primary,
+                sizeBytes: b.sizeBytes,
+                modifiedDate: b.modifiedDate,
+                isSelected: false,
+                dateLabelKey: "subitem.lastBuild",
+                associatedPaths: Array(b.paths.dropFirst()),
+                subtitle: subtitle,
+                revealPath: b.projectPath
+            )
+        }
     }
 
     private nonisolated static func scanSubItems(def: CacheDefinition, expandedPath: String, service: any CacheScanService) -> [SubItem] {

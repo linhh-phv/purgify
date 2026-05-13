@@ -20,6 +20,13 @@ enum VMScanType {
     case androidSdkPlatforms
     case androidSdkBuildTools
     case androidSdkNDK
+    case reactNativeBuild
+    case rustProject
+    case flutterProject
+    case webFrontendProject
+    case iosPodsProject
+    case androidNativeProject
+    case pythonProject
 }
 
 struct CacheDefinition {
@@ -120,6 +127,12 @@ struct SubItem: Identifiable {
     /// file that accompanies each Android `.avd` directory). Deleted with
     /// `try?` so missing files are silently ignored.
     var associatedPaths: [String] = []
+    /// Optional secondary text shown under the name (e.g. project location
+    /// for React Native build entries). Truncated with middle-ellipsis when long.
+    var subtitle: String? = nil
+    /// Path that the "Reveal in Finder" button opens. Defaults to `path` when
+    /// nil. For RN builds this is the project root rather than the build folder.
+    var revealPath: String? = nil
 
     var sizeFormatted: String {
         ByteFormatter.format(sizeBytes)

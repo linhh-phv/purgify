@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 /// Detail view for items with sub-items.
 /// Adapts labels based on subItemMode: .directories (Xcode) vs .files (Homebrew).
@@ -258,6 +259,13 @@ struct SubItemsDetailView: View {
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(sub.isSelected ? .primary : .secondary)
                     .lineLimit(1)
+                if let subtitle = sub.subtitle {
+                    Text(subtitle)
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
                 if !sub.relativeTimeString.isEmpty {
                     Text(dateDisplay(for: sub))
                         .font(.system(size: 11))
@@ -270,12 +278,34 @@ struct SubItemsDetailView: View {
             Text(sub.sizeFormatted)
                 .font(.system(size: 13, weight: .medium).monospacedDigit())
                 .foregroundColor(sub.isSelected ? (sub.sizeBytes > 1_073_741_824 ? .riskModerate : .primary) : .secondary)
+
+            Button {
+                revealInFinder(path: sub.revealPath ?? sub.path)
+            } label: {
+                Image(systemName: "arrow.up.right.square")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.secondary)
+                    .frame(width: 22, height: 22)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .help(l10n.t("subitem.revealInFinder"))
         }
         .padding(.vertical, 6)
         .contentShape(Rectangle())
         .onTapGesture {
             guard !scanner.isCleaning else { return }
             scanner.toggleSubItem(itemID: item.id, subItemID: sub.id)
+        }
+    }
+
+    private func revealInFinder(path: String) {
+        let url = URL(fileURLWithPath: path)
+        if FileManager.default.fileExists(atPath: path) {
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+        } else {
+            // Fallback: open parent directory if the path itself was already deleted.
+            NSWorkspace.shared.open(url.deletingLastPathComponent())
         }
     }
 }

@@ -68,8 +68,9 @@ protocol CacheScanService: Sendable {
 
     /// List Xcode DerivedData project folders, checking whether the source project
     /// still exists on disk. `projectFound` is false for orphaned entries whose
-    /// .xcodeproj / .xcworkspace can no longer be located.
-    nonisolated func xcodeDerivedData() -> [(name: String, path: String, sizeBytes: Int64, projectFound: Bool)]
+    /// .xcodeproj / .xcworkspace can no longer be located. `projectPath` is the
+    /// project root directory when found (parent of the .xcodeproj bundle), else nil.
+    nonisolated func xcodeDerivedData() -> [(name: String, path: String, sizeBytes: Int64, projectFound: Bool, projectPath: String?)]
 
     /// List iOS Simulator runtime bundles, with `inUse` indicating whether
     /// at least one simulator device is registered against that runtime.
@@ -86,4 +87,32 @@ protocol CacheScanService: Sendable {
     /// List Android NDK version directories from the SDK ndk/ folder.
     /// Scans active projects to flag which NDK versions are referenced via ndkVersion.
     nonisolated func androidSdkNDK() -> [(version: String, path: String, sizeBytes: Int64, inUse: Bool)]
+
+    /// Scan common project roots for React Native projects and return all deletable
+    /// Android build folders per project. `paths` includes the project's own android/build,
+    /// android/app/build, android/.gradle plus every node_modules/<lib>/android/build folder.
+    /// `sizeBytes` is the aggregate size of all `paths`.
+    nonisolated func reactNativeBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)]
+
+    /// Scan for Rust projects (Cargo.toml) and return their target/ folders.
+    nonisolated func rustBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)]
+
+    /// Scan for Flutter projects (pubspec.yaml) and return their build artifacts.
+    nonisolated func flutterBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)]
+
+    /// Scan for web frontend projects (Next.js, Nuxt, Vite, Turbo, Astro, etc.) and
+    /// return their build artifacts (.next, .nuxt, dist, .turbo, .vite, node_modules/.cache, ...).
+    nonisolated func webFrontendBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)]
+
+    /// Scan for native iOS/CocoaPods projects (Podfile, not inside an RN/Flutter project)
+    /// and return Pods/ and build/ folders.
+    nonisolated func iosPodsBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)]
+
+    /// Scan for native Android Gradle projects (build.gradle at root, not RN/Flutter)
+    /// and return build/, app/build/, .gradle/ folders.
+    nonisolated func androidNativeBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)]
+
+    /// Scan for Python projects (requirements.txt, pyproject.toml, setup.py, Pipfile)
+    /// and return cache folders (__pycache__ recursively, .pytest_cache, .mypy_cache, etc.).
+    nonisolated func pythonBuildFolders() -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)]
 }
