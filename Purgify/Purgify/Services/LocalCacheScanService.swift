@@ -52,6 +52,8 @@ struct LocalCacheScanService: CacheScanService {
 
     nonisolated func findRelatedProjects(indicators: [String]) -> (projects: [RelatedApp], scannedRoots: Int) {
         guard !indicators.isEmpty else { return ([], 0) }
+        // User-initiated from the detail panel button — that click is the
+        // opt-in, so we don't gate on `projectFolderScanEnabled` here.
 
         let fm = FileManager.default
         let home = NSHomeDirectory()
@@ -446,6 +448,11 @@ struct LocalCacheScanService: CacheScanService {
     /// Returns a map of lowercased project name → project root directory path.
     /// The project root is the parent of the `.xcodeproj` / `.xcworkspace` bundle.
     private nonisolated static func findXcodeProjectLocations() -> [String: String] {
+        // Skip the home-folder walk when the user hasn't opted into project
+        // scanning. DerivedData rows still appear (with `projectFound: false`)
+        // so the row isn't hidden — they just don't carry "Reveal project" data.
+        guard ProjectFolderAccess.isEnabledFromDefaults else { return [:] }
+
         let fm = FileManager.default
         let home = NSHomeDirectory()
         let roots = ["Desktop", "Documents", "Developer", "code", "repos", "work", "Projects", "Sites"]
@@ -603,6 +610,10 @@ struct LocalCacheScanService: CacheScanService {
     }
 
     private nonisolated static func scanAndroidProjectVersions() -> AndroidUsedVersions {
+        // Skip the home-folder gradle scan when the user hasn't opted in.
+        // SDK rows still appear; the `inUse` flag will just always be false.
+        guard ProjectFolderAccess.isEnabledFromDefaults else { return AndroidUsedVersions() }
+
         let fm = FileManager.default
         let home = NSHomeDirectory()
         let roots = ["Desktop", "Documents", "Developer", "code", "repos", "work", "Projects", "Sites"]
@@ -801,6 +812,11 @@ struct LocalCacheScanService: CacheScanService {
     }
 
     private nonisolated func runProjectScan(spec: ProjectScanSpec) -> [(projectName: String, projectPath: String, paths: [String], sizeBytes: Int64, modifiedDate: Date?)] {
+        // The 7 per-project framework scans live entirely under user home
+        // folders — without opt-in, reading `~/Desktop`/`~/Documents` would
+        // trigger a TCC dialog on every launch.
+        guard ProjectFolderAccess.isEnabledFromDefaults else { return [] }
+
         let fm = FileManager.default
         let home = NSHomeDirectory()
         let roots = ["Desktop", "Developer", "Documents", "Projects", "code", "repos", "work", "Sites"]

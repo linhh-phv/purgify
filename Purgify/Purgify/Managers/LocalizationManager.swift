@@ -623,6 +623,9 @@ class LocalizationManager: ObservableObject {
             "detail.searchingProjects":      "Searching for projects...",
             "detail.noProjectsFound":        "No projects found in common folders.",
             "detail.openPrivacySettings":    "Grant file access in Privacy & Security",
+            "detail.projectScan.bannerTitle":"Project folder scanning is off",
+            "detail.projectScan.bannerBody": "Purgify won't read Desktop, Documents, or other home folders until you opt in. Enable scanning to find build folders for this category — macOS will ask for folder access.",
+            "detail.projectScan.enableButton": "Enable scanning",
 
             // Sub-items
             "subitem.totalSize":      "TOTAL SIZE",
@@ -661,6 +664,9 @@ class LocalizationManager: ObservableObject {
             "settings.advanced.grantButton": "Grant Full Disk Access",
             "settings.advanced.granted":   "Full Disk Access granted",
             "settings.advanced.manage":    "Manage…",
+            "settings.projectScan":          "PROJECT FOLDERS",
+            "settings.projectScan.toggle":   "Scan project folders",
+            "settings.projectScan.subtitle": "Walk Desktop, Documents, and dev folders to find per-project build caches. macOS will prompt for folder access the first time.",
             "settings.about":              "ABOUT",
             "settings.sendFeedback":       "Send Feedback",
 
@@ -1382,6 +1388,9 @@ class LocalizationManager: ObservableObject {
             "detail.searchingProjects":      "Đang tìm dự án...",
             "detail.noProjectsFound":        "Không tìm thấy dự án trong các thư mục thông dụng.",
             "detail.openPrivacySettings":    "Cấp quyền truy cập file trong Privacy & Security",
+            "detail.projectScan.bannerTitle":"Chưa bật quét thư mục dự án",
+            "detail.projectScan.bannerBody": "Purgify sẽ không đọc Desktop, Documents hay các thư mục home khác cho đến khi bạn cho phép. Bật quét để tìm thư mục build cho hạng mục này — macOS sẽ hỏi quyền truy cập thư mục.",
+            "detail.projectScan.enableButton": "Bật quét",
 
             // Sub-items
             "subitem.totalSize":     "TỔNG KÍCH THƯỚC",
@@ -1420,6 +1429,9 @@ class LocalizationManager: ObservableObject {
             "settings.advanced.grantButton": "Cấp Full Disk Access",
             "settings.advanced.granted":   "Đã cấp Full Disk Access",
             "settings.advanced.manage":    "Quản lý…",
+            "settings.projectScan":          "THƯ MỤC DỰ ÁN",
+            "settings.projectScan.toggle":   "Quét thư mục dự án",
+            "settings.projectScan.subtitle": "Quét Desktop, Documents và các thư mục dev để tìm cache build theo từng dự án. macOS sẽ hỏi quyền truy cập thư mục lần đầu.",
             "settings.about":              "THÔNG TIN",
             "settings.sendFeedback":       "Gửi phản hồi",
 

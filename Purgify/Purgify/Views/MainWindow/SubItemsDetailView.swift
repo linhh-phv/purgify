@@ -8,6 +8,7 @@ struct SubItemsDetailView: View {
 
     @EnvironmentObject var scanner: CacheScannerViewModel
     @EnvironmentObject var l10n: LocalizationManager
+    @EnvironmentObject var projectFolderAccess: ProjectFolderAccess
 
     private var subItems: [SubItem] {
         item.subItems ?? []
@@ -99,7 +100,15 @@ struct SubItemsDetailView: View {
                         .foregroundColor(.secondary)
 
                     HStack {
-                        if item.isLoadingSubItems {
+                        if item.isProjectFolderGated {
+                            // "Select all / 0 of 0" is meaningless when the
+                            // category is gated — banner below carries the
+                            // user-facing copy.
+                            Text(l10n.t("detail.projectScan.bannerTitle"))
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                            Spacer()
+                        } else if item.isLoadingSubItems {
                             Text(l10n.t("scan.loadingItems"))
                                 .font(.system(size: 11))
                                 .foregroundColor(.secondary)
@@ -153,7 +162,9 @@ struct SubItemsDetailView: View {
                 // being scanned in the background. Parent size is already
                 // known and shown in the header above; this just waits for the
                 // detailed list to populate.
-                if item.isLoadingSubItems {
+                if item.isProjectFolderGated {
+                    projectFolderGatedBanner
+                } else if item.isLoadingSubItems {
                     VStack(spacing: 6) {
                         Spacer().frame(height: 8)
                         ProgressView().scaleEffect(0.7)
@@ -189,6 +200,24 @@ struct SubItemsDetailView: View {
 
             Spacer()
 
+            if item.isProjectFolderGated {
+                // No Clean button — there's nothing to clean until the user
+                // enables scanning. Show the enable CTA instead.
+                Button {
+                    projectFolderAccess.isEnabled = true
+                } label: {
+                    Text(l10n.t("detail.projectScan.enableButton"))
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Color.brand)
+                        .cornerRadius(9)
+                }
+                .buttonStyle(.plain)
+                .padding(16)
+            } else {
+
             // Clean button
             Button {
                 scanner.cleanItem(item.id)
@@ -215,10 +244,50 @@ struct SubItemsDetailView: View {
             .buttonStyle(.plain)
             .disabled(scanner.isCleaning || selectedCount == 0)
             .padding(16)
+            }
         }
     }
 
     // MARK: - Helpers
+
+    /// Inline CTA shown when this category needs home-folder access but the
+    /// user hasn't opted in yet. Click → flips `ProjectFolderAccess.isEnabled`
+    /// → the VM observes the change → re-runs the scan → macOS prompts for
+    /// folder access in context.
+    private var projectFolderGatedBanner: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 13))
+                    .foregroundColor(.brand)
+                Text(l10n.t("detail.projectScan.bannerTitle"))
+                    .font(.system(size: 13, weight: .semibold))
+            }
+            Text(l10n.t("detail.projectScan.bannerBody"))
+                .font(.system(size: 11))
+                .foregroundColor(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button {
+                projectFolderAccess.isEnabled = true
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 11, weight: .medium))
+                    Text(l10n.t("detail.projectScan.enableButton"))
+                        .font(.system(size: 12, weight: .medium))
+                }
+                .foregroundColor(.brand)
+                .padding(.horizontal, 12)
+                .frame(height: 28)
+                .background(Color.brand.opacity(0.12))
+                .cornerRadius(7)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.vertical, 6)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
 
     private func dateDisplay(for sub: SubItem) -> String {
         guard let key = sub.dateLabelKey else { return sub.relativeTimeString }

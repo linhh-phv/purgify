@@ -8,6 +8,7 @@ import AppKit
 struct SettingsView: View {
     @EnvironmentObject var l10n: LocalizationManager
     @EnvironmentObject var fdaStatus: FDAStatus
+    @EnvironmentObject var projectFolderAccess: ProjectFolderAccess
 
     @Environment(\.dismiss) var dismiss
     @Environment(\.updateManager) var updater
@@ -160,6 +161,27 @@ struct SettingsView: View {
                         }
                         .buttonStyle(.plain)
                         .padding(.top, 6)
+                    }
+                }
+
+                // MARK: Project folder scanning
+                sectionLabel(l10n.t("settings.projectScan"))
+                    .padding(.top, 10)
+
+                groupBox {
+                    HStack(alignment: .center) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(l10n.t("settings.projectScan.toggle"))
+                                .font(.system(size: 13))
+                            Text(l10n.t("settings.projectScan.subtitle"))
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Spacer()
+                        Toggle("", isOn: $projectFolderAccess.isEnabled)
+                            .toggleStyle(.switch)
+                            .labelsHidden()
                     }
                 }
 

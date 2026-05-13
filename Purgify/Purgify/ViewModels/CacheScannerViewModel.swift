@@ -99,17 +99,21 @@ class CacheScannerViewModel: ObservableObject {
     private var relatedAppsCache: [String: [RelatedApp]] = [:]
     private let fdaStatus: FDAStatus?
     private var fdaGrantSubscription: AnyCancellable?
+    private let projectFolderAccess: ProjectFolderAccess?
+    private var projectFolderSubscription: AnyCancellable?
 
     // MARK: - Init
 
     init(
         service: any CacheScanService = LocalCacheScanService(),
         definitions: [CacheDefinition] = CacheDefinitions.all,
-        fdaStatus: FDAStatus? = nil
+        fdaStatus: FDAStatus? = nil,
+        projectFolderAccess: ProjectFolderAccess? = nil
     ) {
         self.service = service
         self.definitions = definitions
         self.fdaStatus = fdaStatus
+        self.projectFolderAccess = projectFolderAccess
 
         // Auto re-scan when the user grants FDA in System Settings and the
         // app returns to the foreground — surfaces the newly-readable caches
@@ -124,6 +128,23 @@ class CacheScannerViewModel: ObservableObject {
                     // races with the in-flight task and pops the success modal
                     // on top of a fresh scan. User can re-scan manually after.
                     guard advancedEnabled, self.hasScanned, !self.isScanning, !self.isCleaning else { return }
+                    self.scan()
+                }
+        }
+
+        // Re-scan when the user opts into project-folder scanning (via the
+        // detail banner or Settings toggle) so the gated rows immediately
+        // populate with real results — the macOS TCC dialog fires at that
+        // moment, in context, instead of unannounced on launch.
+        if let projectFolderAccess {
+            projectFolderSubscription = projectFolderAccess.$isEnabled
+                .dropFirst()
+                .removeDuplicates()
+                .filter { $0 }
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in
+                    guard let self else { return }
+                    guard self.hasScanned, !self.isScanning, !self.isCleaning else { return }
                     self.scan()
                 }
         }
@@ -375,6 +396,15 @@ class CacheScannerViewModel: ObservableObject {
         vmType: VMScanType,
         service: any CacheScanService
     ) -> CacheItem? {
+        // Per-project build categories (RN, Rust, Flutter, Web, iOS Pods,
+        // Android, Python) need home-folder access. Without opt-in we still
+        // surface the row — flagged so the detail panel can render an inline
+        // "Enable scanning" banner instead of hiding the category entirely.
+        if vmType.requiresProjectFolderAccess,
+           !ProjectFolderAccess.isEnabledFromDefaults {
+            return makeProjectFolderGatedItem(def: def)
+        }
+
         var subItems: [SubItem]
 
         switch vmType {
@@ -574,6 +604,28 @@ class CacheScannerViewModel: ObservableObject {
         item.isLoadingSubItems = false
         item.subItems = subItems
         item.deleteSubsOnly = true  // never delete the root AVD/Devices folder
+        return item
+    }
+
+    /// Placeholder row for project-build categories when the user hasn't opted
+    /// into home-folder scanning. The detail panel keys off `isProjectFolderGated`
+    /// to show an inline "Enable scanning" banner instead of an empty list.
+    private nonisolated static func makeProjectFolderGatedItem(def: CacheDefinition) -> CacheItem {
+        var item = CacheItem(
+            nameKey: def.nameKey,
+            detailKey: def.detailKey,
+            path: def.path,
+            icon: def.icon,
+            iconColor: def.iconColor,
+            risk: def.risk,
+            sizeBytes: 0
+        )
+        item.isSelected = false
+        item.subItemMode = .vms
+        item.isLoadingSubItems = false
+        item.subItems = []
+        item.deleteSubsOnly = true
+        item.isProjectFolderGated = true
         return item
     }
 

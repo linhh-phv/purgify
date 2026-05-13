@@ -27,6 +27,21 @@ enum VMScanType {
     case iosPodsProject
     case androidNativeProject
     case pythonProject
+
+    /// True for scans whose data lives in user home folders (Desktop, Documents,
+    /// Projects, code…) and therefore triggers a macOS folder-access prompt.
+    /// Gated behind `ProjectFolderAccess.isEnabled` so a fresh launch never
+    /// surprises the user with a TCC dialog they didn't ask for.
+    var requiresProjectFolderAccess: Bool {
+        switch self {
+        case .reactNativeBuild, .rustProject, .flutterProject,
+             .webFrontendProject, .iosPodsProject, .androidNativeProject,
+             .pythonProject:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 struct CacheDefinition {
@@ -166,6 +181,10 @@ struct CacheItem: Identifiable {
     /// removing the parent directory. Required for user-file and VM groups where
     /// the parent path (e.g. ~/Downloads, ~/.android/avd) must never be deleted.
     var deleteSubsOnly: Bool = false
+    /// True when this category needs home-folder access (Desktop, Documents,
+    /// project roots) but the user hasn't opted in yet. The detail panel
+    /// renders an inline banner so the user can enable scanning in context.
+    var isProjectFolderGated: Bool = false
 
     var sizeFormatted: String {
         ByteFormatter.format(sizeBytes)

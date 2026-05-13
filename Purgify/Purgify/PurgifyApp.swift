@@ -10,13 +10,19 @@ import SwiftUI
 struct PurgifyApp: App {
     @StateObject private var l10n = LocalizationManager()
     @StateObject private var fdaStatus: FDAStatus
+    @StateObject private var projectFolderAccess: ProjectFolderAccess
     @StateObject private var scanner: CacheScannerViewModel
     private let updater = UpdateManager()
 
     init() {
         let fda = FDAStatus()
+        let folderAccess = ProjectFolderAccess()
         _fdaStatus = StateObject(wrappedValue: fda)
-        _scanner = StateObject(wrappedValue: CacheScannerViewModel(fdaStatus: fda))
+        _projectFolderAccess = StateObject(wrappedValue: folderAccess)
+        _scanner = StateObject(wrappedValue: CacheScannerViewModel(
+            fdaStatus: fda,
+            projectFolderAccess: folderAccess
+        ))
     }
 
     var body: some Scene {
@@ -25,6 +31,7 @@ struct PurgifyApp: App {
                 .environmentObject(scanner)
                 .environmentObject(l10n)
                 .environmentObject(fdaStatus)
+                .environmentObject(projectFolderAccess)
                 .environment(\.updateManager, updater)
                 .tint(.brand)
         }
@@ -35,6 +42,7 @@ struct PurgifyApp: App {
                 .environmentObject(scanner)
                 .environmentObject(l10n)
                 .environmentObject(fdaStatus)
+                .environmentObject(projectFolderAccess)
                 .environment(\.updateManager, updater)
                 .tint(.brand)
         }
